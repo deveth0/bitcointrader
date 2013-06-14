@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bitcoin Trader</string>
+    
+    <string name="about_title">About</string>
+    <string name="about_author_twitter_title">Author at Twitter</string>
+	<string name="about_credits_bitcoinwallet_title">"This app is using 'bitcoin-wallet'"</string>
+    
+    <string name="preferences_title">Preferences</string>
+    <string name="preferences_category_labs">Labs</string>
+    <string name="preferences_labs">Here be dragons!!!</string>
+    
+    <string name="bitcointrader_options_donate">Donate</string>
+</resources>
