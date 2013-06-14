@@ -23,26 +23,26 @@ public final class PriceInfoFragment extends Fragment {
     
   }
 
-//  @Override
-//  public void onResume() {
-//    super.onResume();
-//    updateView();
-//  }
-//
-//  @Override
-//  public void onViewCreated(final View view, final Bundle savedInstanceState) {
-//    super.onViewCreated(view, savedInstanceState);
-//    viewPriceInfoMin = (CurrencyTextView) view.findViewById(R.id.price_info_min);
-//    viewPriceInfoMin.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-//    viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);
-//    viewPriceInfoCurrent.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-//    viewPriceInfoMax = (CurrencyTextView) view.findViewById(R.id.price_info_max);
-//    viewPriceInfoMax.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-//  }
-//
-//  private void updateView() {
-//    viewPriceInfoMin.setAmount(123.45);
-//    viewPriceInfoCurrent.setAmount(129.45);
-//    viewPriceInfoMax.setAmount(135.45);
-//  }
+  @Override
+  public void onResume() {
+    super.onResume();
+    updateView();
+  }
+
+  @Override
+  public void onViewCreated(final View view, final Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    viewPriceInfoMin = (CurrencyTextView) view.findViewById(R.id.price_info_min);
+    viewPriceInfoMin.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
+    viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);
+    viewPriceInfoCurrent.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
+    viewPriceInfoMax = (CurrencyTextView) view.findViewById(R.id.price_info_max);
+    viewPriceInfoMax.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
+  }
+
+  private void updateView() {
+    viewPriceInfoMin.setAmount(123.45);
+    viewPriceInfoCurrent.setAmount(129.45);
+    viewPriceInfoMax.setAmount(135.45);
+  }
 }
