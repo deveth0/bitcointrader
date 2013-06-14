@@ -1,4 +1,4 @@
-package de.dev.eth0.ui;
+package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -8,8 +8,8 @@ import android.preference.PreferenceScreen;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import de.dev.eth0.BitcoinTraderApplication;
-import de.dev.eth0.Constants;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
 
 public class AboutActivity extends SherlockPreferenceActivity {

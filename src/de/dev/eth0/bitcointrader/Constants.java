@@ -1,7 +1,11 @@
-package de.dev.eth0;
+package de.dev.eth0.bitcointrader;
 
 public class Constants {
 
+  public static final char CHAR_HAIR_SPACE = '\u200a';
+  public static final char CHAR_THIN_SPACE = '\u2009';
+  public static final String CURRENCY_CODE_BITCOIN = "BTC";
+  public static final String CURRENCY_CODE_DOLLAR = "$";
   public static final String DONATION_ADDRESS = "1JSwxwdHxc4GkXPDyx3UiSCFnqron93ozS";
   public static final String REPORT_EMAIL = "bitcointrader@dev-eth0.de";
   public static final String REPORT_SUBJECT_ISSUE = "Reported issue";

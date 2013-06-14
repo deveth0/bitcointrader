@@ -1,11 +1,11 @@
-package de.dev.eth0.ui;
+package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import de.dev.eth0.Constants;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 

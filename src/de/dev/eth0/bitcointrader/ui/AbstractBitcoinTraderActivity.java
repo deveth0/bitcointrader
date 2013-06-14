@@ -1,10 +1,10 @@
-package de.dev.eth0.ui;
+package de.dev.eth0.bitcointrader.ui;
 
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import de.dev.eth0.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 
 public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActivity {
 

@@ -1,4 +1,4 @@
-package de.dev.eth0.ui;
+package de.dev.eth0.bitcointrader.ui;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -11,7 +11,7 @@ import android.text.TextUtils;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
-import de.dev.eth0.Constants;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
 
 public final class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {

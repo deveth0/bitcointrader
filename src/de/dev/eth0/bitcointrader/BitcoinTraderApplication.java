@@ -1,4 +1,4 @@
-package de.dev.eth0;
+package de.dev.eth0.bitcointrader;
 
 import android.app.Application;
 import android.content.pm.PackageManager.NameNotFoundException;
