@@ -1,14 +1,20 @@
 package de.dev.eth0.ui;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
+import android.preference.Preference;
+import android.provider.SyncStateContract;
+import android.text.TextUtils;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
+import de.dev.eth0.Constants;
 import de.dev.eth0.R;
 
-public final class PreferencesActivity extends SherlockPreferenceActivity {
-
+public final class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -18,6 +24,19 @@ public final class PreferencesActivity extends SherlockPreferenceActivity {
 
     final ActionBar actionBar = getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
+
+    SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
+    sp.registerOnSharedPreferenceChangeListener(this);
+
+    //@TODO remove mtgox settings if not activated
+    
+    // if api key has not been set yet, add the summary, otherwise the current value
+    String mtgoxApiKey = sp.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
+    if (TextUtils.isEmpty(mtgoxApiKey)) {
+      findPreference(Constants.PREFS_KEY_MTGOX_APIKEY).setSummary(R.string.preferences_mtgox_api_key_summary);
+    } else {
+      findPreference(Constants.PREFS_KEY_MTGOX_APIKEY).setSummary(mtgoxApiKey);
+    }
   }
 
   @Override
@@ -27,7 +46,19 @@ public final class PreferencesActivity extends SherlockPreferenceActivity {
         finish();
         return true;
     }
-
     return super.onOptionsItemSelected(item);
+  }
+
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    // Update summary for api key changed
+    if (TextUtils.equals(key, Constants.PREFS_KEY_MTGOX_APIKEY)) {
+      Preference pref = findPreference(key);
+      EditTextPreference etp = (EditTextPreference) pref;
+      if (TextUtils.isEmpty(etp.getText())) {
+        pref.setSummary(R.string.preferences_mtgox_api_key_summary);
+      } else {
+        pref.setSummary(etp.getText());
+      }
+    }
   }
 }

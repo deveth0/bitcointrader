@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	<PreferenceCategory android:title="@string/preferences_category_labs" >
-		<Preference
-			android:icon="@drawable/ic_menu_warning"
-			android:summary="@string/preferences_labs"
-			android:title="Warning" />
-	</PreferenceCategory>
+  <PreferenceCategory android:title="@string/preferences_category_mtgox" >
+    <CheckBoxPreference
+      android:defaultValue="false"
+      android:key="mtgox_enabled"
+      android:summary="@string/preferences_mtgox_enabled_summary"
+      android:title="@string/preferences_mtgox_enabled_title" />
+    <EditTextPreference
+      android:key="mtgox_apikey"
+      android:title="@string/preferences_mtgox_api_key_title" />
+    <EditTextPreference
+      android:key="mtgox_secretkey"
+      android:summary="@string/preferences_mtgox_secret_key_summary"
+      android:title="@string/preferences_mtgox_secret_key_title"
+      android:inputType="textPassword"
+    />
+  </PreferenceCategory>
+  
+  <PreferenceCategory android:title="@string/preferences_category_labs" >
+    <Preference
+      android:icon="@drawable/ic_menu_warning"
+      android:summary="@string/preferences_labs"
+      android:title="Warning" />
+  </PreferenceCategory>
 
 </PreferenceScreen>
