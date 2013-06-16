@@ -2,6 +2,7 @@ package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -29,10 +30,12 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   @Override
   public boolean onOptionsItemSelected(final MenuItem item) {
     switch (item.getItemId()) {
+      case R.id.bitcointrader_options_refresh:
+        Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
+        return true;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
         return true;
-
       case R.id.bitcointrader_options_preferences:
         startActivity(new Intent(this, PreferencesActivity.class));
         return true;

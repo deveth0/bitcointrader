@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+  <item
+    android:id="@+id/order_context_delete"
+    android:icon="@drawable/ic_action_delete"
+    android:showAsAction="ifRoom|withText"
+    android:title="@string/button_delete_order"
+    android:titleCondensed="@string/button_delete"/>
+
+</menu>

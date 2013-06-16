@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bitcoin Trader</string>
+
+    <string name="bitcoin_order_tab_ask">Ask</string>
+    <string name="bitcoin_order_tab_bid">Bid</string>
+    <string name="bitcoin_order_tab_both">Both</string>
+    <string name="bitcoin_order_fragment_empty_text_ask">No Ask Orders.</string>
+    <string name="bitcoin_order_fragment_empty_text_both">No Open Orders.</string>
+    <string name="bitcoin_order_fragment_empty_text_bid">No Bid Orders.</string>
+    <string name="bitcoin_action_buy">Buy</string>
+    <string name="bitcoin_action_sell">Sell</string>
+    <string name="button_delete_order">Delete Order.</string>
+    <string name="button_delete">Delete foo </string>
+
+    <string name="your_wallet_label">Your Wallet:</string>
+
+    <string name="refresh_title">Refresh</string>
+
+    <string name="placeorder_title">Place Order</string>
+    <string name="place_order_fragment_amount_label">Amount</string>
+    <string name="place_order_fragment_price_label">Price</string>
+    <string name="place_order_perform">Place Order</string>
+    <string name="place_order_cancel">Cancel</string>
     
     <string name="about_title">About</string>
     <string name="about_author_twitter_title">Author at Twitter</string>
@@ -15,6 +36,9 @@
     <string name="preferences_mtgox_secret_key_summary">Secret summary</string>
     <string name="preferences_mtgox_secret_key_title">Your MtGox Secret Key</string>
     <string name="preferences_category_labs">Labs</string>
+    <string name="preferences_category_general">General Settings</string>
+    <string name="preferences_general_update_summary">Update summary</string>
+    <string name="preferences_general_update_title">Update title</string>
     <string name="preferences_labs">Here be dragons!!!</string>
     
     <string name="bitcointrader_options_donate">Donate</string>

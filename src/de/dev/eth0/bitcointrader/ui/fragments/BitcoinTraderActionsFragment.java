@@ -10,8 +10,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.ui.AboutActivity;
-import de.dev.eth0.bitcointrader.ui.PreferencesActivity;
+import de.dev.eth0.bitcointrader.model.Order;
+import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 
 public final class BitcoinTraderActionsFragment extends Fragment {
 
@@ -28,17 +28,21 @@ public final class BitcoinTraderActionsFragment extends Fragment {
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.bitcointrader_actions_fragment, container);
 
-    final Button requestButton = (Button)view.findViewById(R.id.bitcointrader_actions_request);
-    requestButton.setOnClickListener(new OnClickListener() {
+    final Button buyButton = (Button)view.findViewById(R.id.bitcointrader_actions_buy);
+    buyButton.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
-        startActivity(new Intent(activity, AboutActivity.class));
+        Intent i = new Intent(activity, PlaceOrderActivity.class);
+        i.putExtra(PlaceOrderActivity.INTENT_EXTRA_TYPE, Order.OrderType.BID.name());
+        startActivity(i);
       }
     });
 
-    final Button sendButton = (Button)view.findViewById(R.id.bitcointrader_actions_send);
-    sendButton.setOnClickListener(new OnClickListener() {
+    final Button sellButton = (Button)view.findViewById(R.id.bitcointrader_actions_sell);
+    sellButton.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
-        startActivity(new Intent(activity, PreferencesActivity.class));
+        Intent i = new Intent(activity, PlaceOrderActivity.class);
+        i.putExtra(PlaceOrderActivity.INTENT_EXTRA_TYPE, Order.OrderType.ASK.name());
+        startActivity(i);
       }
     });
 
