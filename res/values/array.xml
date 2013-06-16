@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string-array name="listUpdateWord">
-    <item>Option 1</item>
-    <item>Option 2</item>
-    <item>Option 3</item>
+    <item>Never</item>
+    <item>5 Min</item>
+    <item>15 Min</item>
+    <item>30 Min</item>
+    <item>60 Min</item>
   </string-array>
   <string-array name="listUpdateValue">
-    <item>1 is selected</item>
-    <item>2 is selected</item>
-    <item>3 is selected</item>
+    <item>0</item>
+    <item>5</item>
+    <item>15</item>
+    <item>30</item>
+    <item>60</item>
   </string-array>
 </resources>

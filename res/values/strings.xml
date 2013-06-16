@@ -31,14 +31,12 @@
     <string name="preferences_category_mtgox">MtGox</string>
     <string name="preferences_mtgox_enabled_summary">Enable MtGox trading</string>
     <string name="preferences_mtgox_enabled_title">Use MtGox</string>
-    <string name="preferences_mtgox_api_key_summary">Your MtGox API key</string>
-    <string name="preferences_mtgox_api_key_title">API key</string>
-    <string name="preferences_mtgox_secret_key_summary">Secret summary</string>
-    <string name="preferences_mtgox_secret_key_title">Your MtGox Secret Key</string>
+    <string name="preferences_mtgox_activation_key_summary">Your MtGox Activation key</string>
+    <string name="preferences_mtgox_activation_key_title">Activation key</string>
     <string name="preferences_category_labs">Labs</string>
     <string name="preferences_category_general">General Settings</string>
-    <string name="preferences_general_update_summary">Update summary</string>
-    <string name="preferences_general_update_title">Update title</string>
+    <string name="preferences_general_update_summary">Please set value</string>
+    <string name="preferences_general_update_title">Automatically update every...</string>
     <string name="preferences_labs">Here be dragons!!!</string>
     
     <string name="bitcointrader_options_donate">Donate</string>

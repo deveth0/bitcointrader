@@ -3,13 +3,8 @@
 
   <PreferenceCategory android:title="@string/preferences_category_mtgox" >
     <EditTextPreference
-      android:key="mtgox_apikey"
-      android:title="@string/preferences_mtgox_api_key_title" />
-    <EditTextPreference
-      android:key="mtgox_secretkey"
-      android:summary="@string/preferences_mtgox_secret_key_summary"
-      android:title="@string/preferences_mtgox_secret_key_title"
-      android:inputType="textPassword"
+      android:key="mtgox_activationkey"
+      android:title="@string/preferences_mtgox_activation_key_title" />
     />
   </PreferenceCategory>
 
@@ -17,7 +12,7 @@
     <ListPreference
       android:title="@string/preferences_general_update_title"
       android:summary="@string/preferences_general_update_summary"
-      android:key="update"
+      android:key="general_update"
       android:entries="@array/listUpdateWord"
       android:entryValues="@array/listUpdateValue" />
   </PreferenceCategory>
