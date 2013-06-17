@@ -34,8 +34,10 @@
     <string name="preferences_category_mtgox">MtGox</string>
     <string name="preferences_mtgox_enabled_summary">Enable MtGox trading</string>
     <string name="preferences_mtgox_enabled_title">Use MtGox</string>
-    <string name="preferences_mtgox_activation_key_summary">Your MtGox Activation key</string>
-    <string name="preferences_mtgox_activation_key_title">Activation key</string>
+    <string name="preferences_mtgox_api_key_summary">Your MtGox API key</string>
+    <string name="preferences_mtgox_api_key_title">API key</string>
+    <string name="preferences_mtgox_secret_key_summary">Your MtGox Secret key</string>
+    <string name="preferences_mtgox_secret_key_title">Secret key</string>
     <string name="preferences_category_labs">Labs</string>
     <string name="preferences_category_general">General Settings</string>
     <string name="preferences_general_update_summary">Please set value</string>

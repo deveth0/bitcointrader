@@ -1,11 +1,10 @@
-package de.dev.eth0.bitcointrader;
+package de.dev.eth0.bitcointrader.service;
 
-import android.app.Application;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.StrictMode;
-import android.os.StrictMode.ThreadPolicy.Builder;
+import android.os.Binder;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,18 +12,36 @@ import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
+import de.dev.eth0.bitcointrader.Constants;
 
-public class BitcoinTraderApplication extends Application {
+public class MtGoxConnectionService extends Service implements ExchangeConnectionService {
 
-  private static final String TAG = BitcoinTraderApplication.class.getSimpleName();
+  private static final String TAG = MtGoxConnectionService.class.getSimpleName();
   private Exchange exchange;
 
+  public class LocalBinder extends Binder {
+
+    public ExchangeConnectionService getService() {
+      return MtGoxConnectionService.this;
+    }
+  }
+  private final IBinder mBinder = new LocalBinder();
+
   @Override
-  public void onCreate() {
-    Builder policy = new StrictMode.ThreadPolicy.Builder().detectNetwork();
-    policy.penaltyLog();
-    StrictMode.setThreadPolicy(policy.build());
-    Log.d(TAG, ".onCreate()");
+  public IBinder onBind(final Intent intent) {
+    Log.d(TAG, ".onBind()");
+    return mBinder;
+  }
+
+  @Override
+  public boolean onUnbind(final Intent intent) {
+    Log.d(TAG, ".onUnbind()");
+    return super.onUnbind(intent);
+  }
+
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    Log.d(TAG, "Received start id " + startId + ": " + intent);
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     String mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
     String mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
@@ -37,25 +54,10 @@ public class BitcoinTraderApplication extends Application {
       exSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
       exchange = ExchangeFactory.INSTANCE.createExchange(exSpec);
     }
-    super.onCreate();
+    return START_NOT_STICKY;
   }
 
-  public final int applicationVersionCode() {
-    try {
-      return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-    } catch (NameNotFoundException x) {
-      return 0;
-    }
-  }
-
-  public final String applicationVersionName() {
-    try {
-      return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-    } catch (NameNotFoundException x) {
-      return "unknown";
-    }
-  }
-
+  @Override
   public Exchange getExchange() {
     return exchange;
   }

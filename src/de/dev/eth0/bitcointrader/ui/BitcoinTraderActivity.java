@@ -16,7 +16,11 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
+  }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
   }
 
   @Override
@@ -31,8 +35,8 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   public boolean onOptionsItemSelected(final MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_refresh:
-        Toast.makeText(this, "Refresh", Toast.LENGTH_SHORT).show();
-        return true;
+        //@TODO: anything todo?
+        break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
         return true;

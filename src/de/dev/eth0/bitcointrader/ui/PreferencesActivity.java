@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.text.TextUtils;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -29,15 +28,13 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
     SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
     sp.registerOnSharedPreferenceChangeListener(this);
 
-    //@TODO remove mtgox settings if not activated
-
     // if api key has not been set yet, add the summary, otherwise the current value
-    String mtgoxApiKey = sp.getString(Constants.PREFS_KEY_MTGOX_ACTIVATIONKEY, null);
+    String mtgoxApiKey = sp.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
     if (TextUtils.isEmpty(mtgoxApiKey)) {
-      findPreference(Constants.PREFS_KEY_MTGOX_ACTIVATIONKEY).setSummary(R.string.preferences_mtgox_activation_key_summary);
+      findPreference(Constants.PREFS_KEY_MTGOX_APIKEY).setSummary(R.string.preferences_mtgox_api_key_summary);
     }
     else {
-      findPreference(Constants.PREFS_KEY_MTGOX_ACTIVATIONKEY).setSummary(mtgoxApiKey);
+      findPreference(Constants.PREFS_KEY_MTGOX_APIKEY).setSummary(mtgoxApiKey);
     }
 
     final ListPreference listPreference = (ListPreference)findPreference(Constants.PREFS_KEY_GENERAL_UPDATE);
@@ -59,11 +56,11 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     // Update summary for api key changed
-    if (TextUtils.equals(key, Constants.PREFS_KEY_MTGOX_ACTIVATIONKEY)) {
+    if (TextUtils.equals(key, Constants.PREFS_KEY_MTGOX_APIKEY)) {
       Preference pref = findPreference(key);
       EditTextPreference etp = (EditTextPreference)pref;
       if (TextUtils.isEmpty(etp.getText())) {
-        pref.setSummary(R.string.preferences_mtgox_activation_key_summary);
+        pref.setSummary(R.string.preferences_mtgox_api_key_summary);
       }
       else {
         pref.setSummary(etp.getText());

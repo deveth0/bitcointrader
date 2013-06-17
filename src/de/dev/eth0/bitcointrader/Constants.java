@@ -15,6 +15,11 @@ public class Constants {
   public static final String AUTHOR_URL = "http://www.dev-eth0.de";
   public static final String AUTHOR_TWITTER_URL = "https://twitter.com/#!/deveth0";
   public static final String CREDITS_BITCOINWALLET_URL = "http://code.google.com/p/bitcoin-wallet/";
-  public static final String PREFS_KEY_MTGOX_ACTIVATIONKEY = "mtgox_activationkey";
+  public static final String PREFS_KEY_MTGOX_APIKEY = "mtgox_apikey";
+  public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";
+  
+  public static final String MTGOX_SSL_URI = "https://data.mtgox.com";
+  public static final String MTGOX_PLAIN_WEBSOCKET_URI = "ws://websocket.mtgox.com";
+  public static final String MTGOX_SSL_WEBSOCKET_URI = "ws://websocket.mtgox.com";
 }
