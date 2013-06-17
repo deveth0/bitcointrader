@@ -1,7 +1,5 @@
 package de.dev.eth0.bitcointrader.ui.views;
 
-import java.math.BigInteger;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -52,11 +50,11 @@ public final class CurrencyAmountView extends FrameLayout {
     this.precision = precision;
   }
 
-  public BigInteger getAmount() {
-    return new BigInteger(textView.getText().toString());
+  public Long getAmount() {
+    return new Long(textView.getText().toString());
   }
 
-  public void setAmount(final BigInteger amount) {
+  public void setAmount(final Long amount) {
     if (amount != null) {
       textView.setText(GenericUtils.formatValue(amount, precision));
     }
@@ -97,7 +95,7 @@ public final class CurrencyAmountView extends FrameLayout {
       final Bundle bundle = (Bundle)state;
       super.onRestoreInstanceState(bundle.getParcelable("super_state"));
       textView.onRestoreInstanceState(bundle.getParcelable("child_textview"));
-      setAmount((BigInteger)bundle.getSerializable("amount"));
+      setAmount((Long)bundle.getSerializable("amount"));
     }
     else {
       super.onRestoreInstanceState(state);

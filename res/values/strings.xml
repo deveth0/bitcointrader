@@ -18,7 +18,9 @@
     <string name="refresh_title">Refresh</string>
 
     <string name="placeorder_title">Place Order</string>
+    <string name="place_order_fragment_type_label">Ordertype</string>
     <string name="place_order_fragment_amount_label">Amount</string>
+    <string name="place_order_fragment_market_order">Market Order</string>
     <string name="place_order_fragment_price_label">Price</string>
     <string name="place_order_perform">Place Order</string>
     <string name="place_order_cancel">Cancel</string>

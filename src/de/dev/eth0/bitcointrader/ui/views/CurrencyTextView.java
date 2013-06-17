@@ -7,14 +7,12 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import de.dev.eth0.bitcointrader.Constants;
-import de.schildbach.wallet.util.GenericUtils;
-import java.math.BigInteger;
+import org.joda.money.BigMoney;
 
 public class CurrencyTextView extends TextView {
 
   private String prefix = null;
-  private BigInteger amount = null;
-  private int precision = Constants.PRECISION_BITCOIN;
+  private BigMoney amount = null;
 
 
   public CurrencyTextView(Context context) {
@@ -25,16 +23,12 @@ public class CurrencyTextView extends TextView {
     super(context, attrs);
   }
 
-  public void setPrecision(int precision) {
-    this.precision = precision;
-  }
-
   public void setPrefix(String prefix) {
     this.prefix = prefix + Constants.CHAR_HAIR_SPACE;
     updateView();
   }
 
-  public void setAmount(BigInteger amount) {
+  public void setAmount(BigMoney amount) {
     this.amount = amount;
     updateView();
   }
@@ -43,7 +37,7 @@ public class CurrencyTextView extends TextView {
     Editable text = null;
 
     if (amount != null) {
-      text = new SpannableStringBuilder(GenericUtils.formatValue(amount, precision));
+      text = new SpannableStringBuilder(amount.toString());
       if (prefix != null) {
         text.insert(0, prefix);
       }

@@ -6,12 +6,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import com.xeiam.xchange.currency.MoneyUtils;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import java.math.BigInteger;
-import java.util.Date;
+import java.math.BigDecimal;
+import org.joda.money.BigMoney;
+import org.joda.money.CurrencyUnit;
 
 public final class AccountInfoFragment extends Fragment {
 
@@ -37,7 +38,6 @@ public final class AccountInfoFragment extends Fragment {
     int textColor = resources.getColor(R.color.fg_significant);
     viewDollar = (CurrencyTextView)view.findViewById(R.id.your_wallet_dollar);
     viewDollar.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    viewDollar.setPrecision(Constants.PRECISION_DOLLAR);
     viewDollar.setTextColor(textColor);
     viewBtc = (CurrencyTextView)view.findViewById(R.id.your_wallet_btc);
     viewBtc.setPrefix(Constants.CURRENCY_CODE_BITCOIN);
@@ -45,7 +45,7 @@ public final class AccountInfoFragment extends Fragment {
   }
 
   private void updateView() {
-    viewDollar.setAmount(BigInteger.valueOf(12300000000L));
-    viewBtc.setAmount(BigInteger.valueOf(13500000000L));
+    viewDollar.setAmount(MoneyUtils.parseBitcoin("BTC 123.232"));
+    viewBtc.setAmount(BigMoney.of(CurrencyUnit.USD, 44.21));
   }
 }

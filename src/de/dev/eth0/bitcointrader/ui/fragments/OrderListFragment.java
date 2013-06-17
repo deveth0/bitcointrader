@@ -12,7 +12,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.SpannableStringBuilder;
-import android.text.format.DateUtils;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
@@ -24,16 +23,18 @@ import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.model.Order;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
-import java.math.BigInteger;
-import java.text.DateFormat;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Random;
+import org.joda.money.BigMoney;
+import org.joda.money.CurrencyUnit;
 
-public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<Order>> {
+public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<LimitOrder>> {
 
   private AbstractBitcoinTraderActivity activity;
   private LoaderManager loaderManager;
@@ -143,19 +144,19 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     });
   }
 
-  public Loader<List<Order>> onCreateLoader(int id, Bundle args) {
+  public Loader<List<LimitOrder>> onCreateLoader(int id, Bundle args) {
     return new OrdersLoader(activity, orderType);
   }
 
-  public void onLoadFinished(Loader<List<Order>> loader, List<Order> orders) {
+  public void onLoadFinished(Loader<List<LimitOrder>> loader, List<LimitOrder> orders) {
     adapter.replace(orders);
   }
 
-  public void onLoaderReset(Loader<List<Order>> loader) {
+  public void onLoaderReset(Loader<List<LimitOrder>> loader) {
     // don't clear the adapter, because it will confuse users
   }
 
-  private static class OrdersLoader extends AsyncTaskLoader<List<Order>> {
+  private static class OrdersLoader extends AsyncTaskLoader<List<LimitOrder>> {
 
     private final Order.OrderType orderType;
 
@@ -171,14 +172,20 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     }
 
     @Override
-    public List<Order> loadInBackground() {
-      List<Order> orders = new ArrayList<Order>();
+    public List<LimitOrder> loadInBackground() {
+      List<LimitOrder> orders = new ArrayList<LimitOrder>();
       Random rand = new Random();
       for (int i = 0; i < rand.nextInt(20); i++) {
-        BigInteger price = BigInteger.valueOf(rand.nextInt(20000) * 100000L);
-        BigInteger amount = BigInteger.valueOf(rand.nextInt(130000000) * 10L);
+        Long price = (long)(rand.nextDouble() * 260 * 10000000L);
+        Long amount = (long)(rand.nextDouble() * 260 * 10000000L);
         Long time = Math.abs(rand.nextLong());
-        Order order = new Order(price, amount, time);
+        LimitOrder order = new LimitOrder(
+                rand.nextBoolean() ? Order.OrderType.ASK : Order.OrderType.BID,
+                BigDecimal.valueOf(amount, Constants.PRECISION_BITCOIN),
+                "FooOrder",
+                Constants.CURRENCY_CODE_DOLLAR,
+                BigMoney.of(CurrencyUnit.USD, rand.nextDouble()),
+                new Date(time));
         Log.d(OrderListFragment.class.getSimpleName(), order.toString());
         orders.add(order);
       }

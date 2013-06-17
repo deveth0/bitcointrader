@@ -12,18 +12,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.model.Order;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.joda.money.BigMoney;
+import org.joda.money.CurrencyUnit;
 
 public class OrderListAdapter extends BaseAdapter {
   private final Context context;
   private final LayoutInflater inflater;
-  private final List<Order> orders = new ArrayList<Order>();
+  private final List<LimitOrder> orders = new ArrayList<LimitOrder>();
   private boolean showEmptyText = false;
   private final int colorSignificant;
   private final Map<String, String> labelCache = new HashMap<String, String>();
@@ -42,16 +45,16 @@ public class OrderListAdapter extends BaseAdapter {
     notifyDataSetChanged();
   }
 
-  public void replace(final Order tx) {
+  public void replace(final LimitOrder tx) {
     orders.clear();
     orders.add(tx);
 
     notifyDataSetChanged();
   }
 
-  public void replace(final Collection<Order> transactions) {
+  public void replace(final Collection<LimitOrder> orders) {
     this.orders.clear();
-    this.orders.addAll(transactions);
+    this.orders.addAll(orders);
 
     showEmptyText = true;
 
@@ -67,7 +70,7 @@ public class OrderListAdapter extends BaseAdapter {
     return orders.size();
   }
 
-  public Order getItem(final int position) {
+  public LimitOrder getItem(final int position) {
     return orders.get(position);
   }
 
@@ -98,7 +101,7 @@ public class OrderListAdapter extends BaseAdapter {
         row = inflater.inflate(R.layout.order_row_extended, null);
       }
 
-      final Order tx = getItem(position);
+      final LimitOrder tx = getItem(position);
       bindView(row, tx);
     }
     else {
@@ -108,7 +111,7 @@ public class OrderListAdapter extends BaseAdapter {
     return row;
   }
 
-  public void bindView(final View row, final Order tx) {
+  public void bindView(final View row, final LimitOrder tx) {
 
     int textColor = colorSignificant;
     // ask or bid
@@ -118,28 +121,27 @@ public class OrderListAdapter extends BaseAdapter {
 
     // date
     TextView rowDate = (TextView)row.findViewById(R.id.order_row_date);
-    rowDate.setText(DateUtils.getRelativeDateTimeString(context, tx.getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+    rowDate.setText(DateUtils.getRelativeDateTimeString(context, tx.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
     rowDate.setTextColor(textColor);
 
     // amount
     CurrencyTextView rowAmount = (CurrencyTextView)row.findViewById(R.id.order_row_amount);
-    rowAmount.setAmount(tx.getAmount());
+    rowAmount.setAmount(BigMoney.of(CurrencyUnit.USD, tx.getTradableAmount()));
     rowAmount.setTextColor(textColor);
     rowAmount.setPrefix(Constants.CURRENCY_CODE_BITCOIN);
 
     // value
     CurrencyTextView rowValue = (CurrencyTextView)row.findViewById(R.id.order_row_value);
     rowValue.setTextColor(textColor);
-    rowValue.setPrecision(Constants.PRECISION_DOLLAR);
     rowValue.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    rowValue.setAmount(tx.getPrice());
+    rowValue.setAmount(tx.getLimitPrice());
 
     // total
     CurrencyTextView rowTotal = (CurrencyTextView)row.findViewById(R.id.order_row_total);
     rowTotal.setTextColor(textColor);
-    rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
     rowTotal.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    rowTotal.setAmount(tx.getValue());
+    //@TODO: multiply limitprice with amount
+    rowTotal.setAmount(tx.getLimitPrice().multipliedBy(tx.getTradableAmount()));
   }
 
   public void clearLabelCache() {

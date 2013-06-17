@@ -4,34 +4,40 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.xeiam.xchange.dto.Order;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.model.Order;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import java.math.BigInteger;
-import java.util.Random;
+import de.schildbach.wallet.util.GenericUtils;
 
 public final class PlaceOrderFragment extends SherlockFragment {
 
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
   private ContentResolver contentResolver;
+  private Spinner orderTypeSpinner;
   private CurrencyAmountView amountView;
   private EditText amountViewText;
+  private CheckBox marketOrderCheckbox;
   private CurrencyAmountView priceView;
   private EditText priceViewText;
   private CurrencyTextView totalView;
@@ -78,17 +84,30 @@ public final class PlaceOrderFragment extends SherlockFragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
-
-
+    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
+    ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
+            android.R.layout.simple_spinner_item, Order.OrderType.values());
+    orderTypeSpinner.setAdapter(adapter);
     amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
     amountViewText = (EditText)view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
+
     priceView = (CurrencyAmountView)view.findViewById(R.id.place_order_price);
     priceView.setCurrencyCode(Constants.CURRENCY_CODE_DOLLAR);
     priceViewText = (EditText)view.findViewById(R.id.place_order_price_text);
     priceViewText.addTextChangedListener(valueChangedListener);
+
+    marketOrderCheckbox = (CheckBox)view.findViewById(R.id.place_order_marketorder);
+    marketOrderCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        priceView.setEnabled(!isChecked);
+        //@TODO: set value
+        priceViewText.setText("current value");
+        updateView();
+      }
+    });
 
     totalView = (CurrencyTextView)view.findViewById(R.id.place_order_total);
 
@@ -123,38 +142,53 @@ public final class PlaceOrderFragment extends SherlockFragment {
   protected void updateView() {
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
-    if (amount != null && price != null) {
-      BigInteger amountInt = new BigInteger(amount.toString());
-      BigInteger priceInt = new BigInteger(price.toString());
-      totalView.setText(amountInt.multiply(priceInt).toString());
+    if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
+
+      Double amountInt = new Double(amount.toString());
+      Double priceInt = new Double(price.toString());
+      //@TODO: fix multiply
+      totalView.setText(((Double)(amountInt * priceInt)).toString());
     }
   }
 
   private void handleGo() {
+    //@TODO: create Order and submit
     Toast.makeText(activity, "handleGo", Toast.LENGTH_SHORT).show();
+    activity.setResult(Activity.RESULT_OK);
+    activity.finish();
   }
 
   private boolean everythingValid() {
-    return new Random().nextBoolean();
+    Editable amount = amountViewText.getEditableText();
+    Editable price = priceViewText.getEditableText();
+    boolean marketOrder = marketOrderCheckbox.isChecked();
+    if (!TextUtils.isEmpty(amount) && (!TextUtils.isEmpty(price) || marketOrder)) {
+      return true;
+    }
+    return false;
   }
 
   public void update(Order.OrderType ordertype) {
+    for (int i = 0; i < orderTypeSpinner.getCount(); i++) {
+      if (orderTypeSpinner.getItemAtPosition(i).equals(ordertype)) {
+        orderTypeSpinner.setSelection(i);
+        return;
+      }
+    }
   }
 
-  private final class ValueChangedListener implements OnFocusChangeListener, TextWatcher {
+  private final class ValueChangedListener implements TextWatcher {
 
-    public void onFocusChange(final View v, final boolean hasFocus) {
-      //if (!hasFocus)
-      //validateReceivingAddress(true);
-    }
-
+    @Override
     public void afterTextChanged(final Editable s) {
       updateView();
     }
 
+    @Override
     public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
     }
 
+    @Override
     public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
     }
   }

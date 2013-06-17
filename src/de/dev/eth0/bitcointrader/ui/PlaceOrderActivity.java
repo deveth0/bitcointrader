@@ -5,8 +5,8 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.ActionBar;
 
 import com.actionbarsherlock.view.MenuItem;
+import com.xeiam.xchange.dto.Order;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.model.Order;
 import de.dev.eth0.bitcointrader.ui.fragments.PlaceOrderFragment;
 
 public final class PlaceOrderActivity extends AbstractBitcoinTraderActivity {

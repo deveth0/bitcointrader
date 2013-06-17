@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.xeiam.xchange.dto.Order;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.model.Order;
 import de.dev.eth0.bitcointrader.util.ViewPagerTabs;
 
 public class OrderFragment extends Fragment {

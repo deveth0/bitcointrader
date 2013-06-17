@@ -27,6 +27,10 @@ public class GenericUtils {
   public static final BigInteger COIN = new BigInteger("100000000", 10);
   private static final int COIN_INT = COIN.intValue();
 
+  public static String formatValue(final Long value, final int precision) {
+    return formatValue(BigInteger.valueOf(value), precision);
+  }
+
   public static String formatValue(final BigInteger value, final int precision) {
     return formatValue(value, "", "-", precision);
   }

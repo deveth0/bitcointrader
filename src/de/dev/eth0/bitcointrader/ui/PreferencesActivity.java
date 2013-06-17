@@ -45,15 +45,6 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       listPreference.setValueIndex(0);
     }
     listPreference.setSummary(listPreference.getEntry());
-    listPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-      @Override
-      public boolean onPreferenceChange(Preference preference, Object newValue) {
-        listPreference.setValue(newValue.toString());
-        // Get the entry which corresponds to the current value and set as summary
-        preference.setSummary(listPreference.getEntry());
-        return false;
-      }
-    });
   }
 
   @Override
@@ -77,6 +68,11 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       else {
         pref.setSummary(etp.getText());
       }
+    }
+    if (TextUtils.equals(key, Constants.PREFS_KEY_GENERAL_UPDATE)) {
+      Preference pref = findPreference(key);
+      ListPreference lp = (ListPreference)pref;
+      pref.setSummary(lp.getEntry());
     }
   }
 }
