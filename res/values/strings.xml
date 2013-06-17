@@ -25,6 +25,7 @@
     <string name="place_order_fragment_total_label">Total</string>
     <string name="place_order_perform">Place Order</string>
     <string name="place_order_cancel">Cancel</string>
+    <string name="place_order_submitting">Submitting Order</string>
     
     <string name="about_title">About</string>
     <string name="about_author_twitter_title">Author at Twitter</string>

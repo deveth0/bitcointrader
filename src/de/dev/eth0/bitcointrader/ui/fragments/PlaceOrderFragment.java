@@ -1,8 +1,14 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
-import android.content.ContentResolver;
+import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -20,19 +26,25 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.trade.LimitOrder;
+import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
+import java.math.BigDecimal;
+import org.joda.money.BigMoney;
+import org.joda.money.CurrencyUnit;
 
 public final class PlaceOrderFragment extends SherlockFragment {
 
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
-  private ContentResolver contentResolver;
   private Spinner orderTypeSpinner;
   private CurrencyAmountView amountView;
   private EditText amountViewText;
@@ -42,20 +54,35 @@ public final class PlaceOrderFragment extends SherlockFragment {
   private CurrencyTextView totalView;
   private Button viewGo;
   private Button viewCancel;
+  private ExchangeService exchangeService;
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
+    public void onServiceConnected(final ComponentName name, final IBinder binder) {
+      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+    }
+
+    public void onServiceDisconnected(final ComponentName name) {
+      exchangeService = null;
+    }
+  };
+
+  @Override
+  public void onDestroy() {
+    activity.bindService(new Intent(activity, ExchangeService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+    super.onDestroy();
+  }
 
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
 
-    this.activity = (AbstractBitcoinTraderActivity)activity;
-    application = (BitcoinTraderApplication)activity.getApplication();
-    contentResolver = activity.getContentResolver();
+    this.activity = (AbstractBitcoinTraderActivity) activity;
+    application = (BitcoinTraderApplication) activity.getApplication();
   }
 
   @Override
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
+    activity.bindService(new Intent(activity, ExchangeService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     setHasOptionsMenu(true);
 
 //    if (savedInstanceState != null) {
@@ -83,22 +110,22 @@ public final class PlaceOrderFragment extends SherlockFragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
-    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
+    orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
     ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
             android.R.layout.simple_spinner_item, Order.OrderType.values());
     orderTypeSpinner.setAdapter(adapter);
-    amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
+    amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
-    amountViewText = (EditText)view.findViewById(R.id.place_order_amount_text);
+    amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
 
-    priceView = (CurrencyAmountView)view.findViewById(R.id.place_order_price);
+    priceView = (CurrencyAmountView) view.findViewById(R.id.place_order_price);
     priceView.setCurrencyCode(Constants.CURRENCY_CODE_DOLLAR);
-    priceViewText = (EditText)view.findViewById(R.id.place_order_price_text);
+    priceViewText = (EditText) view.findViewById(R.id.place_order_price_text);
     priceViewText.addTextChangedListener(valueChangedListener);
 
-    marketOrderCheckbox = (CheckBox)view.findViewById(R.id.place_order_marketorder);
+    marketOrderCheckbox = (CheckBox) view.findViewById(R.id.place_order_marketorder);
     marketOrderCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         priceView.setEnabled(!isChecked);
@@ -108,22 +135,21 @@ public final class PlaceOrderFragment extends SherlockFragment {
       }
     });
 
-    totalView = (CurrencyTextView)view.findViewById(R.id.place_order_total);
+    totalView = (CurrencyTextView) view.findViewById(R.id.place_order_total);
 
-    viewGo = (Button)view.findViewById(R.id.place_order_perform);
+    viewGo = (Button) view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
 
         if (everythingValid()) {
           handleGo();
-        }
-        else {
+        } else {
           Toast.makeText(activity, "something wrong..", Toast.LENGTH_SHORT).show();
         }
       }
     });
 
-    viewCancel = (Button)view.findViewById(R.id.place_order_cancel);
+    viewCancel = (Button) view.findViewById(R.id.place_order_cancel);
     viewCancel.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
         activity.setResult(Activity.RESULT_CANCELED);
@@ -146,15 +172,14 @@ public final class PlaceOrderFragment extends SherlockFragment {
       Double amountInt = new Double(amount.toString());
       Double priceInt = new Double(price.toString());
       //@TODO: fix multiply
-      totalView.setText(((Double)(amountInt * priceInt)).toString());
+      totalView.setText(((Double) (amountInt * priceInt)).toString());
     }
   }
 
   private void handleGo() {
-    //@TODO: create Order and submit
-    Toast.makeText(activity, "handleGo", Toast.LENGTH_SHORT).show();
-    activity.setResult(Activity.RESULT_OK);
-    activity.finish();
+    PlaceOrderTask task = new PlaceOrderTask();
+    task.execute(activity);
+    //@TODO: Give feedback..
   }
 
   private boolean everythingValid() {
@@ -175,6 +200,40 @@ public final class PlaceOrderFragment extends SherlockFragment {
       }
     }
   }
+
+  private class PlaceOrderTask extends AsyncTask<Activity, Void, Void> {
+
+    private ProgressDialog mDialog;
+
+    @Override
+    protected void onPreExecute() {
+      mDialog = new ProgressDialog(activity);
+      mDialog.setMessage(getString(R.string.place_order_submitting));
+      mDialog.show();
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+      mDialog.dismiss();
+    }
+
+    @Override
+    protected Void doInBackground(Activity... params) {
+      boolean marketOrder = marketOrderCheckbox.isChecked();
+      Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
+      Double price = Double.parseDouble(priceViewText.getEditableText().toString());
+      if (marketOrder) {
+        MarketOrder order = new MarketOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD");
+        exchangeService.placeMarketOrder(order);
+      } else {
+        LimitOrder order = new LimitOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
+        exchangeService.placeLimitOrder(order);
+      }
+      activity.setResult(Activity.RESULT_OK);
+      activity.finish();
+      return null;
+    }
+  };
 
   private final class ValueChangedListener implements TextWatcher {
 

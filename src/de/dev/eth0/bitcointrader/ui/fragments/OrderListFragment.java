@@ -4,15 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,25 +31,46 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.Order;
-import com.xeiam.xchange.dto.trade.LimitOrder;
-import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
-import org.joda.money.BigMoney;
-import org.joda.money.CurrencyUnit;
 
 public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<Order>> {
 
+  private static final String TAG = OrderListFragment.class.getSimpleName();
+  private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
   private LoaderManager loaderManager;
   private OrderListAdapter adapter;
   private Order.OrderType orderType;
   private static final String KEY_ORDERTYPE = "ordertype";
+  private BroadcastReceiver broadcastReceiver;
+  private LocalBroadcastManager broadcastManager;
+  private ExchangeService exchangeService;
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
+    public void onServiceConnected(final ComponentName name, final IBinder binder) {
+      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+    }
+
+    public void onServiceDisconnected(final ComponentName name) {
+      exchangeService = null;
+    }
+  };
+
+  @Override
+  public void onActivityCreated(final Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+    activity.bindService(new Intent(activity, ExchangeService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+  }
+
+  @Override
+  public void onDestroy() {
+    activity.unbindService(serviceConnection);
+    super.onDestroy();
+  }
 
   public static OrderListFragment instance(Order.OrderType orderType) {
     final OrderListFragment fragment = new OrderListFragment();
@@ -57,6 +86,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.application = (BitcoinTraderApplication) activity.getApplication();
     this.loaderManager = getLoaderManager();
   }
 
@@ -76,6 +106,15 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   public void onResume() {
     super.onResume();
     loaderManager.initLoader(0, null, this);
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, ".onReceive");
+        updateView();
+      }
+    };
+    broadcastManager = LocalBroadcastManager.getInstance(application);
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_ACTION));
   }
 
   @Override
@@ -98,8 +137,17 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
 
   @Override
   public void onPause() {
-    loaderManager.destroyLoader(0);
     super.onPause();
+    loaderManager.destroyLoader(0);
+    if (broadcastReceiver != null) {
+      broadcastManager.unregisterReceiver(broadcastReceiver);
+      broadcastReceiver = null;
+    }
+  }
+
+  protected void updateView() {
+    Log.d(TAG, ".updateView");
+    loaderManager.restartLoader(0, null, this);
   }
 
   @Override
@@ -145,7 +193,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   }
 
   public Loader<List<Order>> onCreateLoader(int id, Bundle args) {
-    return new OrdersLoader(activity, orderType);
+    return new OrdersLoader(activity, orderType, application);
   }
 
   public void onLoadFinished(Loader<List<Order>> loader, List<Order> orders) {
@@ -159,10 +207,12 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   private static class OrdersLoader extends AsyncTaskLoader<List<Order>> {
 
     private final Order.OrderType orderType;
+    private BitcoinTraderApplication application;
 
-    private OrdersLoader(final Context context, final Order.OrderType orderType) {
+    private OrdersLoader(final Context context, Order.OrderType orderType, BitcoinTraderApplication application) {
       super(context);
       this.orderType = orderType;
+      this.application = application;
     }
 
     @Override
@@ -174,28 +224,8 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     @Override
     public List<Order> loadInBackground() {
       Set<Order> orders = new HashSet<Order>();
-      Random rand = new Random();
-      for (int i = 0; i < rand.nextInt(20); i++) {
-        Order order;
-        Double amount = rand.nextDouble();
-        Long time = Math.abs(rand.nextLong());
-        Order.OrderType ordertype = rand.nextBoolean() ? Order.OrderType.ASK : Order.OrderType.BID;
-        if (rand.nextBoolean()) {
-          order = new LimitOrder(
-                  ordertype,
-                  BigDecimal.valueOf(amount),
-                  "FooOrder",
-                  CurrencyUnit.USD.getCurrencyCode(),
-                  BigMoney.of(CurrencyUnit.USD, rand.nextDouble()),
-                  new Date(time));
-        } else {
-          order = new MarketOrder(ordertype,
-                  BigDecimal.valueOf(amount),
-                  "FooOrder",
-                  CurrencyUnit.USD.getCurrencyCode(),
-                  new Date(time));
-        }
-        orders.add(order);
+      if (application != null) {
+        //orders.addAll(exchangeService.getOpenOrders());
       }
       List<Order> filteredOrders = new ArrayList<Order>(orders.size());
       // Remove all orders which don't fit the current type
@@ -204,6 +234,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
           filteredOrders.add(order);
         }
       }
+      Log.d(TAG, "Open orders: " + orders.size());
       return filteredOrders;
     }
   }

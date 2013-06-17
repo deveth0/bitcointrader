@@ -12,18 +12,14 @@ import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
+
   private LocalBroadcastManager broadcastManager;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
-    broadcastManager = LocalBroadcastManager.getInstance(getApplication());
-  }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
+    broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
   }
 
   @Override

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.actionbarsherlock.app.SherlockFragment;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -14,7 +15,7 @@ import java.util.Date;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
-public final class PriceInfoFragment extends Fragment {
+public final class PriceInfoFragment extends SherlockFragment {
 
   private CurrencyTextView viewPriceInfoMin;
   private CurrencyTextView viewPriceInfoCurrent;
@@ -39,13 +40,13 @@ public final class PriceInfoFragment extends Fragment {
   @Override
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewPriceInfoMin = (CurrencyTextView)view.findViewById(R.id.price_info_min);
-    viewPriceInfoCurrent = (CurrencyTextView)view.findViewById(R.id.price_info_current);
-    viewPriceInfoMax = (CurrencyTextView)view.findViewById(R.id.price_info_max);
-    viewPriceInfoAsk = (CurrencyTextView)view.findViewById(R.id.price_info_ask);
-    viewPriceInfoBid = (CurrencyTextView)view.findViewById(R.id.price_info_bid);
-    viewPriceInfoVolume = (AmountTextView)view.findViewById(R.id.price_info_volume);
-    viewPriceInfoLastUpdate = (TextView)view.findViewById(R.id.price_info_lastupdate);
+    viewPriceInfoMin = (CurrencyTextView) view.findViewById(R.id.price_info_min);
+    viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);
+    viewPriceInfoMax = (CurrencyTextView) view.findViewById(R.id.price_info_max);
+    viewPriceInfoAsk = (CurrencyTextView) view.findViewById(R.id.price_info_ask);
+    viewPriceInfoBid = (CurrencyTextView) view.findViewById(R.id.price_info_bid);
+    viewPriceInfoVolume = (AmountTextView) view.findViewById(R.id.price_info_volume);
+    viewPriceInfoLastUpdate = (TextView) view.findViewById(R.id.price_info_lastupdate);
   }
 
   private void updateView() {

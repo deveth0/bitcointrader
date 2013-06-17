@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.actionbarsherlock.app.SherlockFragment;
-import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
@@ -33,7 +32,19 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
   private CurrencyTextView viewDollar;
   private CurrencyTextView viewBtc;
   private BroadcastReceiver broadcastReceiver;
-private LocalBroadcastManager broadcastManager;
+  private LocalBroadcastManager broadcastManager;
+  
+
+  @Override
+  public void onActivityCreated(final Bundle savedInstanceState) {
+    super.onActivityCreated(savedInstanceState);
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+  }
+
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -94,8 +105,10 @@ private LocalBroadcastManager broadcastManager;
   }
 
   public void onLoadFinished(Loader<AccountInfo> loader, AccountInfo accountInfo) {
-    viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
-    viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
+    if (accountInfo != null) {
+      viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
+      viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
+    }
   }
 
   public void onLoaderReset(Loader<AccountInfo> loader) {
@@ -119,8 +132,10 @@ private LocalBroadcastManager broadcastManager;
     @Override
     public AccountInfo loadInBackground() {
       Log.d(TAG, ".loadInBackground");
-      Exchange exchange = application.getExchange();
-      return exchange != null ? exchange.getPollingAccountService().getAccountInfo() : null;
+      if (application != null) {
+        return application.getExchange().getPollingAccountService().getAccountInfo();
+      }
+      return null;
     }
   }
 }

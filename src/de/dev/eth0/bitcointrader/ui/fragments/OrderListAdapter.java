@@ -19,7 +19,6 @@ import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class OrderListAdapter extends BaseAdapter {
 
