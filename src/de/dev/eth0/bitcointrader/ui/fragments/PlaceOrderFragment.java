@@ -27,7 +27,6 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import de.schildbach.wallet.util.GenericUtils;
 
 public final class PlaceOrderFragment extends SherlockFragment {
 

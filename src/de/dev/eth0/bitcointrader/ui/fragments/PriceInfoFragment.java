@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,7 +21,7 @@ public final class PriceInfoFragment extends Fragment {
   private CurrencyTextView viewPriceInfoMax;
   private CurrencyTextView viewPriceInfoAsk;
   private CurrencyTextView viewPriceInfoBid;
-  private TextView viewPriceInfoVolume;
+  private AmountTextView viewPriceInfoVolume;
   private TextView viewPriceInfoLastUpdate;
 
   @Override
@@ -40,16 +40,11 @@ public final class PriceInfoFragment extends Fragment {
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     viewPriceInfoMin = (CurrencyTextView)view.findViewById(R.id.price_info_min);
-    viewPriceInfoMin.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
     viewPriceInfoCurrent = (CurrencyTextView)view.findViewById(R.id.price_info_current);
-    viewPriceInfoCurrent.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
     viewPriceInfoMax = (CurrencyTextView)view.findViewById(R.id.price_info_max);
-    viewPriceInfoMax.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
     viewPriceInfoAsk = (CurrencyTextView)view.findViewById(R.id.price_info_ask);
-    viewPriceInfoAsk.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
     viewPriceInfoBid = (CurrencyTextView)view.findViewById(R.id.price_info_bid);
-    viewPriceInfoBid.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    viewPriceInfoVolume = (TextView)view.findViewById(R.id.price_info_volume);
+    viewPriceInfoVolume = (AmountTextView)view.findViewById(R.id.price_info_volume);
     viewPriceInfoLastUpdate = (TextView)view.findViewById(R.id.price_info_lastupdate);
   }
 
@@ -59,7 +54,7 @@ public final class PriceInfoFragment extends Fragment {
     viewPriceInfoMax.setAmount(BigMoney.of(CurrencyUnit.USD, 104.334));
     viewPriceInfoAsk.setAmount(BigMoney.of(CurrencyUnit.USD, 101));
     viewPriceInfoBid.setAmount(BigMoney.of(CurrencyUnit.USD, 99));
-    viewPriceInfoVolume.setText("12345");
+    viewPriceInfoVolume.setAmount(BigDecimal.valueOf(12342.12));
     viewPriceInfoLastUpdate.setText(new Date().toLocaleString());
   }
 }

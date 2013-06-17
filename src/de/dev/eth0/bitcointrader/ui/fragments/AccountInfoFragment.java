@@ -37,15 +37,13 @@ public final class AccountInfoFragment extends Fragment {
     Resources resources = getResources();
     int textColor = resources.getColor(R.color.fg_significant);
     viewDollar = (CurrencyTextView)view.findViewById(R.id.your_wallet_dollar);
-    viewDollar.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
     viewDollar.setTextColor(textColor);
     viewBtc = (CurrencyTextView)view.findViewById(R.id.your_wallet_btc);
-    viewBtc.setPrefix(Constants.CURRENCY_CODE_BITCOIN);
     viewBtc.setTextColor(textColor);
   }
 
   private void updateView() {
-    viewDollar.setAmount(MoneyUtils.parseBitcoin("BTC 123.232"));
-    viewBtc.setAmount(BigMoney.of(CurrencyUnit.USD, 44.21));
+    viewDollar.setAmount(BigMoney.of(CurrencyUnit.USD, 44.21));
+    viewBtc.setAmount(MoneyUtils.parseBitcoin("BTC 123.232"));
   }
 }

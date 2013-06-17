@@ -25,16 +25,19 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
+import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
-public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<LimitOrder>> {
+public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<Order>> {
 
   private AbstractBitcoinTraderActivity activity;
   private LoaderManager loaderManager;
@@ -55,7 +58,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity)activity;
+    this.activity = (AbstractBitcoinTraderActivity) activity;
     this.loaderManager = getLoaderManager();
   }
 
@@ -65,7 +68,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
 
     setRetainInstance(true);
 
-    this.orderType = (Order.OrderType)getArguments().getSerializable(KEY_ORDERTYPE);
+    this.orderType = (Order.OrderType) getArguments().getSerializable(KEY_ORDERTYPE);
 
     adapter = new OrderListAdapter(activity);
     setListAdapter(adapter);
@@ -84,8 +87,7 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     int text = R.string.bitcoin_order_fragment_empty_text_both;
     if (orderType == Order.OrderType.BID) {
       text = R.string.bitcoin_order_fragment_empty_text_bid;
-    }
-    else if (orderType == Order.OrderType.ASK) {
+    } else if (orderType == Order.OrderType.ASK) {
       text = R.string.bitcoin_order_fragment_empty_text_ask;
     }
 
@@ -144,19 +146,19 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     });
   }
 
-  public Loader<List<LimitOrder>> onCreateLoader(int id, Bundle args) {
+  public Loader<List<Order>> onCreateLoader(int id, Bundle args) {
     return new OrdersLoader(activity, orderType);
   }
 
-  public void onLoadFinished(Loader<List<LimitOrder>> loader, List<LimitOrder> orders) {
+  public void onLoadFinished(Loader<List<Order>> loader, List<Order> orders) {
     adapter.replace(orders);
   }
 
-  public void onLoaderReset(Loader<List<LimitOrder>> loader) {
+  public void onLoaderReset(Loader<List<Order>> loader) {
     // don't clear the adapter, because it will confuse users
   }
 
-  private static class OrdersLoader extends AsyncTaskLoader<List<LimitOrder>> {
+  private static class OrdersLoader extends AsyncTaskLoader<List<Order>> {
 
     private final Order.OrderType orderType;
 
@@ -172,24 +174,41 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
     }
 
     @Override
-    public List<LimitOrder> loadInBackground() {
-      List<LimitOrder> orders = new ArrayList<LimitOrder>();
+    public List<Order> loadInBackground() {
+      Set<Order> orders = new HashSet<Order>();
       Random rand = new Random();
       for (int i = 0; i < rand.nextInt(20); i++) {
-        Long price = (long)(rand.nextDouble() * 260 * 10000000L);
-        Long amount = (long)(rand.nextDouble() * 260 * 10000000L);
+        Order order;
+        Double amount = rand.nextDouble();
         Long time = Math.abs(rand.nextLong());
-        LimitOrder order = new LimitOrder(
-                rand.nextBoolean() ? Order.OrderType.ASK : Order.OrderType.BID,
-                BigDecimal.valueOf(amount, Constants.PRECISION_BITCOIN),
-                "FooOrder",
-                Constants.CURRENCY_CODE_DOLLAR,
-                BigMoney.of(CurrencyUnit.USD, rand.nextDouble()),
-                new Date(time));
+        Order.OrderType ordertype = rand.nextBoolean() ? Order.OrderType.ASK : Order.OrderType.BID;
+        if (rand.nextBoolean()) {
+          order = new LimitOrder(
+                  ordertype,
+                  BigDecimal.valueOf(amount),
+                  "FooOrder",
+                  CurrencyUnit.USD.getCurrencyCode(),
+                  BigMoney.of(CurrencyUnit.USD, rand.nextDouble()),
+                  new Date(time));
+        } else {
+          order = new MarketOrder(ordertype,
+                  BigDecimal.valueOf(amount),
+                  "FooOrder",
+                  CurrencyUnit.USD.getCurrencyCode(),
+                  new Date(time));
+        }
+
         Log.d(OrderListFragment.class.getSimpleName(), order.toString());
         orders.add(order);
       }
-      return orders;
+      List<Order> filteredOrders = new ArrayList<Order>(orders.size());
+      // Remove all orders which don't fit the current type
+      for (Order order : orders) {
+        if (order.getType().equals(orderType)) {
+          filteredOrders.add(order);
+        }
+      }
+      return filteredOrders;
     }
   }
 }

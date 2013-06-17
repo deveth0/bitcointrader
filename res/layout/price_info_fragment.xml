@@ -23,13 +23,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_normal" />
+        android:textSize="@dimen/font_size_small" />
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/price_info_max"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_normal" />
+        android:textSize="@dimen/font_size_small" />
     </LinearLayout>
 
     <LinearLayout
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_huge"
+        android:textSize="@dimen/font_size_normal"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"    />
     </LinearLayout>
@@ -56,13 +56,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_normal" />
+        android:textSize="@dimen/font_size_small" />
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/price_info_bid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_normal" />
+        android:textSize="@dimen/font_size_small" />
     </LinearLayout>
   </LinearLayout>
   <LinearLayout
@@ -70,7 +70,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical" >
-    <TextView
+    <de.dev.eth0.bitcointrader.ui.views.AmountTextView
       android:id="@+id/price_info_volume"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"

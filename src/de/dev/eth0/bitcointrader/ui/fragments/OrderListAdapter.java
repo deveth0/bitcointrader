@@ -12,21 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.joda.money.BigMoney;
-import org.joda.money.CurrencyUnit;
 
 public class OrderListAdapter extends BaseAdapter {
+
   private final Context context;
   private final LayoutInflater inflater;
-  private final List<LimitOrder> orders = new ArrayList<LimitOrder>();
+  private final List<Order> orders = new ArrayList<Order>();
   private boolean showEmptyText = false;
   private final int colorSignificant;
   private final Map<String, String> labelCache = new HashMap<String, String>();
@@ -45,14 +44,14 @@ public class OrderListAdapter extends BaseAdapter {
     notifyDataSetChanged();
   }
 
-  public void replace(final LimitOrder tx) {
+  public void replace(final Order tx) {
     orders.clear();
     orders.add(tx);
 
     notifyDataSetChanged();
   }
 
-  public void replace(final Collection<LimitOrder> orders) {
+  public void replace(final Collection<Order> orders) {
     this.orders.clear();
     this.orders.addAll(orders);
 
@@ -70,7 +69,7 @@ public class OrderListAdapter extends BaseAdapter {
     return orders.size();
   }
 
-  public LimitOrder getItem(final int position) {
+  public Order getItem(final int position) {
     return orders.get(position);
   }
 
@@ -101,47 +100,45 @@ public class OrderListAdapter extends BaseAdapter {
         row = inflater.inflate(R.layout.order_row_extended, null);
       }
 
-      final LimitOrder tx = getItem(position);
+      final Order tx = getItem(position);
       bindView(row, tx);
-    }
-    else {
+    } else {
       throw new IllegalStateException("unknown type: " + type);
     }
 
     return row;
   }
 
-  public void bindView(final View row, final LimitOrder tx) {
+  public void bindView(final View row, final Order tx) {
 
     int textColor = colorSignificant;
     // ask or bid
-    TextView rowFromTo = (TextView)row.findViewById(R.id.order_row_fromto);
-    rowFromTo.setText(new Random().nextBoolean() ? R.string.symbol_bid : R.string.symbol_ask);
+    TextView rowFromTo = (TextView) row.findViewById(R.id.order_row_fromto);
+    rowFromTo.setText(tx.getType().equals(Order.OrderType.BID) ? R.string.symbol_bid : R.string.symbol_ask);
     rowFromTo.setTextColor(textColor);
 
     // date
-    TextView rowDate = (TextView)row.findViewById(R.id.order_row_date);
+    TextView rowDate = (TextView) row.findViewById(R.id.order_row_date);
     rowDate.setText(DateUtils.getRelativeDateTimeString(context, tx.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
     rowDate.setTextColor(textColor);
 
     // amount
-    CurrencyTextView rowAmount = (CurrencyTextView)row.findViewById(R.id.order_row_amount);
-    rowAmount.setAmount(BigMoney.of(CurrencyUnit.USD, tx.getTradableAmount()));
+    AmountTextView rowAmount = (AmountTextView) row.findViewById(R.id.order_row_amount);
+    rowAmount.setAmount(tx.getTradableAmount());
     rowAmount.setTextColor(textColor);
-    rowAmount.setPrefix(Constants.CURRENCY_CODE_BITCOIN);
 
     // value
-    CurrencyTextView rowValue = (CurrencyTextView)row.findViewById(R.id.order_row_value);
-    rowValue.setTextColor(textColor);
-    rowValue.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    rowValue.setAmount(tx.getLimitPrice());
-
-    // total
-    CurrencyTextView rowTotal = (CurrencyTextView)row.findViewById(R.id.order_row_total);
-    rowTotal.setTextColor(textColor);
-    rowTotal.setPrefix(Constants.CURRENCY_CODE_DOLLAR);
-    //@TODO: multiply limitprice with amount
-    rowTotal.setAmount(tx.getLimitPrice().multipliedBy(tx.getTradableAmount()));
+    CurrencyTextView rowValue = (CurrencyTextView) row.findViewById(R.id.order_row_value);
+    if (tx instanceof LimitOrder) {
+      LimitOrder order = (LimitOrder) tx;
+      rowValue.setTextColor(textColor);
+      rowValue.setAmount(order.getLimitPrice());
+      // total
+      CurrencyTextView rowTotal = (CurrencyTextView) row.findViewById(R.id.order_row_total);
+      rowTotal.setTextColor(textColor);
+      //@TODO: multiply limitprice with amount
+      rowTotal.setAmount(order.getLimitPrice().multipliedBy(tx.getTradableAmount()));
+    }
   }
 
   public void clearLabelCache() {

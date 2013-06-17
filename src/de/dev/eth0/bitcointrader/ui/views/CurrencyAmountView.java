@@ -51,7 +51,7 @@ public final class CurrencyAmountView extends FrameLayout {
   }
 
   public Long getAmount() {
-    return new Long(textView.getText().toString());
+    return Long.valueOf(textView.getText().toString());
   }
 
   public void setAmount(final Long amount) {

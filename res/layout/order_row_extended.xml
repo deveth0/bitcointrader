@@ -36,7 +36,7 @@
     android:baselineAligned="true"
     android:orientation="horizontal" >
 
-    <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+    <de.dev.eth0.bitcointrader.ui.views.AmountTextView
       android:id="@+id/order_row_amount"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
