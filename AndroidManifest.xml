@@ -64,8 +64,10 @@
       android:screenOrientation="behind"
       android:windowSoftInputMode="adjustResize" />
     
-    		<service
-			android:name="de.dev.eth0.bitcointrader.service.MtGoxConnectionService"
-			android:exported="false" />
+    <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver" >
+      <intent-filter>
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_ACTION" />
+      </intent-filter>
+    </receiver>
   </application>
 </manifest> 

@@ -13,7 +13,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -196,8 +195,6 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
                   CurrencyUnit.USD.getCurrencyCode(),
                   new Date(time));
         }
-
-        Log.d(OrderListFragment.class.getSimpleName(), order.toString());
         orders.add(order);
       }
       List<Order> filteredOrders = new ArrayList<Order>(orders.size());

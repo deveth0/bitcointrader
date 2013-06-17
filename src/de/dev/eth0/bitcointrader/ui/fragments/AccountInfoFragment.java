@@ -1,18 +1,20 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import com.actionbarsherlock.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.dto.account.AccountInfo;
@@ -30,7 +32,8 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
   private LoaderManager loaderManager;
   private CurrencyTextView viewDollar;
   private CurrencyTextView viewBtc;
-
+  private BroadcastReceiver broadcastReceiver;
+private LocalBroadcastManager broadcastManager;
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -45,20 +48,28 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    this.setHasOptionsMenu(true);
-  }
-
-  @Override
   public void onResume() {
     super.onResume();
     loaderManager.initLoader(0, null, this);
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, ".onReceive");
+        updateView();
+      }
+    };
+    broadcastManager = LocalBroadcastManager.getInstance(application);
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_ACTION));
   }
 
   @Override
   public void onPause() {
+    super.onPause();
     loaderManager.destroyLoader(0);
+    if (broadcastReceiver != null) {
+      broadcastManager.unregisterReceiver(broadcastReceiver);
+      broadcastReceiver = null;
+    }
   }
 
   @Override
@@ -73,15 +84,9 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
     viewBtc.setTextColor(textColor);
   }
 
-  @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.bitcointrader_options_refresh:
-        loaderManager.restartLoader(0, null, this);
-        Toast.makeText(activity, "Refresh on accountInfofragment", Toast.LENGTH_SHORT).show();
-        return true;
-    }
-    return super.onOptionsItemSelected(item);
+  protected void updateView() {
+    Log.d(TAG, ".updateView");
+    loaderManager.restartLoader(0, null, this);
   }
 
   public Loader<AccountInfo> onCreateLoader(int i, Bundle bundle) {

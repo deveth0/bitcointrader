@@ -2,20 +2,23 @@ package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
+  private LocalBroadcastManager broadcastManager;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
+    broadcastManager = LocalBroadcastManager.getInstance(getApplication());
   }
 
   @Override
@@ -26,7 +29,6 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
     super.onCreateOptionsMenu(menu);
-
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);
     return true;
   }
@@ -35,7 +37,7 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   public boolean onOptionsItemSelected(final MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_refresh:
-        //@TODO: anything todo?
+        broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_ACTION));
         break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
