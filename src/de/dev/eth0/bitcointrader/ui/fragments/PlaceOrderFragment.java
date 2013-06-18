@@ -47,6 +47,7 @@ public final class PlaceOrderFragment extends SherlockFragment {
   private CurrencyTextView totalView;
   private Button viewGo;
   private Button viewCancel;
+  
 
   @Override
   public void onAttach(final Activity activity) {

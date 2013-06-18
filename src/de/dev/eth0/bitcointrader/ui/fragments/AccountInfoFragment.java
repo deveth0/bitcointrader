@@ -2,49 +2,35 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
-import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
 
-public final class AccountInfoFragment extends SherlockFragment {
+public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = AccountInfoFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
   private TextView viewName;
+  private TextView viewLastUpdate;
   private CurrencyTextView viewDollar;
   private CurrencyTextView viewBtc;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
-  private ExchangeService exchangeService;
-  private ServiceConnection mConnection = new ServiceConnection() {
-    public void onServiceConnected(ComponentName className, IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
-    }
-
-    public void onServiceDisconnected(ComponentName className) {
-      exchangeService = null;
-    }
-  };
 
   @Override
   public void onActivityCreated(final Bundle savedInstanceState) {
@@ -71,7 +57,6 @@ public final class AccountInfoFragment extends SherlockFragment {
   @Override
   public void onResume() {
     super.onResume();
-    activity.bindService(new Intent(activity, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
     broadcastReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
@@ -90,7 +75,6 @@ public final class AccountInfoFragment extends SherlockFragment {
       broadcastManager.unregisterReceiver(broadcastReceiver);
       broadcastReceiver = null;
     }
-    activity.unbindService(mConnection);
   }
 
   @Override
@@ -99,7 +83,7 @@ public final class AccountInfoFragment extends SherlockFragment {
     Resources resources = getResources();
     int textColor = resources.getColor(R.color.fg_significant);
     viewName = (TextView) view.findViewById(R.id.your_wallet_name);
-    viewName.setTextColor(textColor);
+    viewLastUpdate = (TextView) view.findViewById(R.id.your_wallet_lastupdate);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
     viewDollar.setTextColor(textColor);
     viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
@@ -108,12 +92,13 @@ public final class AccountInfoFragment extends SherlockFragment {
 
   private void updateView() {
     Log.d(TAG, ".updateView");
-    if (exchangeService != null) {
-      AccountInfo accountInfo = exchangeService.getAccountInfo();
+    if (getExchangeService() != null) {
+      AccountInfo accountInfo = getExchangeService().getAccountInfo();
       if (accountInfo != null) {
         viewName.setText(accountInfo.getUsername());
         viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
         viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
+        viewLastUpdate.setText(getExchangeService().getLastUpdate().toString());
       }
     }
   }

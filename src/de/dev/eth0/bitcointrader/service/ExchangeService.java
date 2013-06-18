@@ -25,6 +25,7 @@ import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,6 +56,7 @@ public class ExchangeService extends Service {
   private final Binder binder = new LocalBinder();
   private AccountInfo accountInfo;
   private List<LimitOrder> openOrders;
+  private Date lastUpdate;
 
   private class updateTask extends AsyncTask<Void, Void, Void> {
 
@@ -63,6 +65,7 @@ public class ExchangeService extends Service {
       if (exchange != null) {
         accountInfo = exchange.getPollingAccountService().getAccountInfo();
         openOrders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
+        lastUpdate = new Date();
       }
       return null;
     }
@@ -112,5 +115,9 @@ public class ExchangeService extends Service {
 
   public List<LimitOrder> getOpenOrders() {
     return openOrders;
+  }
+
+  public Date getLastUpdate() {
+    return lastUpdate;
   }
 }

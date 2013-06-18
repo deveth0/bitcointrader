@@ -144,7 +144,7 @@ public class OrderListFragment extends SherlockListFragment {
   protected void updateView() {
     Log.d(TAG, ".updateView");
     Set<Order> orders = new HashSet<Order>();
-    if (exchangeService != null) {
+    if (exchangeService != null && exchangeService.getOpenOrders() != null) {
       orders.addAll(exchangeService.getOpenOrders());
     }
     List<Order> filteredOrders = new ArrayList<Order>(orders.size());
