@@ -1,6 +1,5 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -14,9 +13,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -35,10 +31,11 @@ import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OrderListFragment extends SherlockListFragment implements LoaderCallbacks<List<Order>> {
+public class OrderListFragment extends SherlockListFragment {
 
   private static final String TAG = OrderListFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
@@ -105,7 +102,6 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
   @Override
   public void onResume() {
     super.onResume();
-    loaderManager.initLoader(0, null, this);
     broadcastReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
@@ -147,7 +143,19 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
 
   protected void updateView() {
     Log.d(TAG, ".updateView");
-    loaderManager.restartLoader(0, null, this);
+    Set<Order> orders = new HashSet<Order>();
+    if (exchangeService != null) {
+      orders.addAll(exchangeService.getOpenOrders());
+    }
+    List<Order> filteredOrders = new ArrayList<Order>(orders.size());
+    // Remove all orders which don't fit the current type
+    for (Order order : orders) {
+      if (orderType == null || order.getType().equals(orderType)) {
+        filteredOrders.add(order);
+      }
+    }
+    Log.d(TAG, "Open orders: " + orders.size());
+    adapter.replace(filteredOrders);
   }
 
   @Override
@@ -169,7 +177,6 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
 
       public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
         mode.setTitle(order.toString());
-        //mode.setSubtitle(label != null ? prefix + label : WalletUtils.formatAddress(prefix, address, Constants.ADDRESS_FORMAT_GROUP_SIZE,                  Constants.ADDRESS_FORMAT_LINE_SIZE));
         return true;
       }
 
@@ -190,52 +197,5 @@ public class OrderListFragment extends SherlockListFragment implements LoaderCal
         Toast.makeText(activity, "delete: " + order.toString(), Toast.LENGTH_SHORT).show();
       }
     });
-  }
-
-  public Loader<List<Order>> onCreateLoader(int id, Bundle args) {
-    return new OrdersLoader(activity, orderType, application);
-  }
-
-  public void onLoadFinished(Loader<List<Order>> loader, List<Order> orders) {
-    adapter.replace(orders);
-  }
-
-  public void onLoaderReset(Loader<List<Order>> loader) {
-    // don't clear the adapter, because it will confuse users
-  }
-
-  private static class OrdersLoader extends AsyncTaskLoader<List<Order>> {
-
-    private final Order.OrderType orderType;
-    private BitcoinTraderApplication application;
-
-    private OrdersLoader(final Context context, Order.OrderType orderType, BitcoinTraderApplication application) {
-      super(context);
-      this.orderType = orderType;
-      this.application = application;
-    }
-
-    @Override
-    protected void onStartLoading() {
-      super.onStartLoading();
-      forceLoad();
-    }
-
-    @Override
-    public List<Order> loadInBackground() {
-      Set<Order> orders = new HashSet<Order>();
-      if (application != null) {
-        //orders.addAll(exchangeService.getOpenOrders());
-      }
-      List<Order> filteredOrders = new ArrayList<Order>(orders.size());
-      // Remove all orders which don't fit the current type
-      for (Order order : orders) {
-        if (order.getType().equals(orderType)) {
-          filteredOrders.add(order);
-        }
-      }
-      Log.d(TAG, "Open orders: " + orders.size());
-      return filteredOrders;
-    }
   }
 }

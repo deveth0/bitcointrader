@@ -2,13 +2,8 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -26,14 +21,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -54,22 +47,6 @@ public final class PlaceOrderFragment extends SherlockFragment {
   private CurrencyTextView totalView;
   private Button viewGo;
   private Button viewCancel;
-  private ExchangeService exchangeService;
-  private final ServiceConnection serviceConnection = new ServiceConnection() {
-    public void onServiceConnected(final ComponentName name, final IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
-    }
-
-    public void onServiceDisconnected(final ComponentName name) {
-      exchangeService = null;
-    }
-  };
-
-  @Override
-  public void onDestroy() {
-    activity.bindService(new Intent(activity, ExchangeService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-    super.onDestroy();
-  }
 
   @Override
   public void onAttach(final Activity activity) {
@@ -82,7 +59,6 @@ public final class PlaceOrderFragment extends SherlockFragment {
   @Override
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    activity.bindService(new Intent(activity, ExchangeService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     setHasOptionsMenu(true);
 
 //    if (savedInstanceState != null) {
@@ -116,6 +92,13 @@ public final class PlaceOrderFragment extends SherlockFragment {
     orderTypeSpinner.setAdapter(adapter);
     amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
+    amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener()
+		{
+			public void onClick(final View v)
+			{
+              application.getAccountInfo();
+			}
+		});
     amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
@@ -170,16 +153,14 @@ public final class PlaceOrderFragment extends SherlockFragment {
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
 
       Double amountInt = new Double(amount.toString());
-      Double priceInt = new Double(price.toString());
-      //@TODO: fix multiply
-      totalView.setText(((Double) (amountInt * priceInt)).toString());
+      BigMoney priceInt = BigMoney.parse("USD " + price.toString());
+      totalView.setAmount(priceInt.multipliedBy(amountInt));
     }
   }
 
   private void handleGo() {
     PlaceOrderTask task = new PlaceOrderTask();
     task.execute(activity);
-    //@TODO: Give feedback..
   }
 
   private boolean everythingValid() {
@@ -224,10 +205,10 @@ public final class PlaceOrderFragment extends SherlockFragment {
       Double price = Double.parseDouble(priceViewText.getEditableText().toString());
       if (marketOrder) {
         MarketOrder order = new MarketOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD");
-        exchangeService.placeMarketOrder(order);
+        //application.getExchange().getPollingTradeService().placeMarketOrder(order);
       } else {
         LimitOrder order = new LimitOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
-        exchangeService.placeLimitOrder(order);
+        //application.getExchange().getPollingTradeService().placeLimitOrder(order);
       }
       activity.setResult(Activity.RESULT_OK);
       activity.finish();

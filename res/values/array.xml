@@ -2,6 +2,7 @@
 <resources>
   <string-array name="listUpdateWord">
     <item>Never</item>
+    <item>1 Min</item>
     <item>5 Min</item>
     <item>15 Min</item>
     <item>30 Min</item>
@@ -9,6 +10,7 @@
   </string-array>
   <string-array name="listUpdateValue">
     <item>0</item>
+    <item>1</item>
     <item>5</item>
     <item>15</item>
     <item>30</item>

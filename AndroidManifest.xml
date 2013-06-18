@@ -69,5 +69,9 @@
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_ACTION" />
       </intent-filter>
     </receiver>
+    
+    <service
+      android:name="de.dev.eth0.bitcointrader.service.ExchangeService"
+    />
   </application>
 </manifest> 

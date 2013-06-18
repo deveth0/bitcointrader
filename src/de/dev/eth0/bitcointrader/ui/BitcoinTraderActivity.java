@@ -23,6 +23,12 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   @Override
+  protected void onResume() {
+    super.onResume();
+    getBitcoinTraderApplication().startExchangeService();
+  }
+
+  @Override
   public boolean onCreateOptionsMenu(final Menu menu) {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);

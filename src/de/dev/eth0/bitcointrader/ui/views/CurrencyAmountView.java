@@ -1,6 +1,8 @@
 package de.dev.eth0.bitcointrader.ui.views;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.InputType;
@@ -15,14 +17,26 @@ public final class CurrencyAmountView extends FrameLayout {
 
   private TextView textView;
   private int precision;
+private Drawable deleteButtonDrawable, contextButtonDrawable;
+	private OnClickListener contextButtonClickListener;
+  
+	public CurrencyAmountView(final Context context)
+	{
+		super(context);
+		init(context);
+	}
 
-  public CurrencyAmountView(final Context context) {
-    super(context);
-  }
+	public CurrencyAmountView(final Context context, final AttributeSet attrs)
+	{
+		super(context, attrs);
+		init(context);
+	}
 
-  public CurrencyAmountView(final Context context, final AttributeSet attrs) {
-    super(context, attrs);
-  }
+	private void init(final Context context)
+	{
+		final Resources resources = context.getResources();
+		deleteButtonDrawable = resources.getDrawable(R.drawable.ic_input_delete);
+	}
 
   @Override
   protected void onFinishInflate() {
@@ -71,6 +85,14 @@ public final class CurrencyAmountView extends FrameLayout {
 
     updateAppearance();
   }
+  
+  	public void setContextButton(final int contextButtonResId, final OnClickListener contextButtonClickListener)
+	{
+		this.contextButtonDrawable = getContext().getResources().getDrawable(contextButtonResId);
+		this.contextButtonClickListener = contextButtonClickListener;
+
+		updateAppearance();
+	}
 
   private boolean isValidAmount() {
     return true;

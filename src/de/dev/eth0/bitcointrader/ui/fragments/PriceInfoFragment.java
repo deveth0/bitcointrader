@@ -28,7 +28,6 @@ public final class PriceInfoFragment extends SherlockFragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     return inflater.inflate(R.layout.price_info_fragment, container, false);
-
   }
 
   @Override

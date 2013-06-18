@@ -2,38 +2,49 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
+import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
 
-public final class AccountInfoFragment extends SherlockFragment implements LoaderManager.LoaderCallbacks<AccountInfo> {
+public final class AccountInfoFragment extends SherlockFragment {
 
   private static final String TAG = AccountInfoFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
-  private LoaderManager loaderManager;
+  private TextView viewName;
   private CurrencyTextView viewDollar;
   private CurrencyTextView viewBtc;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
-  
+  private ExchangeService exchangeService;
+  private ServiceConnection mConnection = new ServiceConnection() {
+    public void onServiceConnected(ComponentName className, IBinder binder) {
+      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+    }
+
+    public void onServiceDisconnected(ComponentName className) {
+      exchangeService = null;
+    }
+  };
 
   @Override
   public void onActivityCreated(final Bundle savedInstanceState) {
@@ -50,7 +61,6 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
     super.onAttach(activity);
     this.application = (BitcoinTraderApplication) activity.getApplication();
     this.activity = (AbstractBitcoinTraderActivity) activity;
-    this.loaderManager = getLoaderManager();
   }
 
   @Override
@@ -61,7 +71,7 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
   @Override
   public void onResume() {
     super.onResume();
-    loaderManager.initLoader(0, null, this);
+    activity.bindService(new Intent(activity, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
     broadcastReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
@@ -76,66 +86,35 @@ public final class AccountInfoFragment extends SherlockFragment implements Loade
   @Override
   public void onPause() {
     super.onPause();
-    loaderManager.destroyLoader(0);
     if (broadcastReceiver != null) {
       broadcastManager.unregisterReceiver(broadcastReceiver);
       broadcastReceiver = null;
     }
+    activity.unbindService(mConnection);
   }
 
   @Override
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
     Resources resources = getResources();
     int textColor = resources.getColor(R.color.fg_significant);
+    viewName = (TextView) view.findViewById(R.id.your_wallet_name);
+    viewName.setTextColor(textColor);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
     viewDollar.setTextColor(textColor);
     viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
     viewBtc.setTextColor(textColor);
   }
 
-  protected void updateView() {
+  private void updateView() {
     Log.d(TAG, ".updateView");
-    loaderManager.restartLoader(0, null, this);
-  }
-
-  public Loader<AccountInfo> onCreateLoader(int i, Bundle bundle) {
-    return new AccountInfoLoader(activity, application);
-  }
-
-  public void onLoadFinished(Loader<AccountInfo> loader, AccountInfo accountInfo) {
-    if (accountInfo != null) {
-      viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
-      viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
-    }
-  }
-
-  public void onLoaderReset(Loader<AccountInfo> loader) {
-  }
-
-  private static class AccountInfoLoader extends AsyncTaskLoader<AccountInfo> {
-
-    private BitcoinTraderApplication application;
-
-    private AccountInfoLoader(Context context, BitcoinTraderApplication application) {
-      super(context);
-      this.application = application;
-    }
-
-    @Override
-    protected void onStartLoading() {
-      super.onStartLoading();
-      forceLoad();
-    }
-
-    @Override
-    public AccountInfo loadInBackground() {
-      Log.d(TAG, ".loadInBackground");
-      if (application != null) {
-        return application.getExchange().getPollingAccountService().getAccountInfo();
+    if (exchangeService != null) {
+      AccountInfo accountInfo = exchangeService.getAccountInfo();
+      if (accountInfo != null) {
+        viewName.setText(accountInfo.getUsername());
+        viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
+        viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
       }
-      return null;
     }
   }
 }
