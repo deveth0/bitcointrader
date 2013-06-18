@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -14,21 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.xeiam.xchange.dto.account.AccountInfo;
+import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
+import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
-import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
 
 public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = AccountInfoFragment.class.getSimpleName();
-  private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
   private TextView viewName;
-  private TextView viewLastUpdate;
   private CurrencyTextView viewDollar;
   private CurrencyTextView viewBtc;
+  private AmountTextView viewTradeFee;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
 
@@ -46,7 +46,6 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.application = (BitcoinTraderApplication) activity.getApplication();
-    this.activity = (AbstractBitcoinTraderActivity) activity;
   }
 
   @Override
@@ -80,25 +79,22 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    Resources resources = getResources();
-    int textColor = resources.getColor(R.color.fg_significant);
     viewName = (TextView) view.findViewById(R.id.your_wallet_name);
-    viewLastUpdate = (TextView) view.findViewById(R.id.your_wallet_lastupdate);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
-    viewDollar.setTextColor(textColor);
     viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
-    viewBtc.setTextColor(textColor);
+    viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);
   }
 
   private void updateView() {
     Log.d(TAG, ".updateView");
     if (getExchangeService() != null) {
-      AccountInfo accountInfo = getExchangeService().getAccountInfo();
-      if (accountInfo != null) {
+      MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
+      if (mtgoxaccountInfo != null) {
+        AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
         viewName.setText(accountInfo.getUsername());
         viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.USD));
         viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
-        viewLastUpdate.setText(getExchangeService().getLastUpdate().toString());
+        viewTradeFee.setAmount(mtgoxaccountInfo.getTradeFee());
       }
     }
   }

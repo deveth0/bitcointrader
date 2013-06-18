@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -25,8 +24,10 @@ import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.ExchangeException;
 import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
+import com.xeiam.xchange.currency.Currencies;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.account.AccountInfo;
+import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
@@ -55,12 +56,11 @@ import com.xeiam.xchange.service.streaming.StreamingExchangeService;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import org.joda.money.BigMoney;
-import org.joda.money.CurrencyUnit;
+import si.mazi.rescu.HttpException;
 
 /**
  * Service to cache all data from exchange to prevent multiple calls
@@ -76,7 +76,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), null);
+        executeTask(new UpdateTask(), (Void) null);
       }
     }
   };
@@ -88,10 +88,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       return ExchangeService.this;
     }
   }
-  private Exchange exchange;
+  private MtGoxExchange exchange;
   private final Binder binder = new LocalBinder();
-  private AccountInfo accountInfo;
+  private MtGoxAccountInfo accountInfo;
   private List<LimitOrder> openOrders;
+  private Ticker ticker;
   private Date lastUpdate;
 
   @Override
@@ -127,7 +128,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
     }
   }
@@ -152,12 +153,16 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     return binder;
   }
 
-  public AccountInfo getAccountInfo() {
+  public MtGoxAccountInfo getAccountInfo() {
     return accountInfo;
   }
 
   public List<LimitOrder> getOpenOrders() {
     return openOrders;
+  }
+
+  public Ticker getTicker() {
+    return ticker;
   }
 
   public Date getLastUpdate() {
@@ -174,13 +179,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     executeTask(new PlaceOrderTask(activity), order);
   }
 
-  private <S, T, U> void executeTask(AsyncTask<S, T, U> task, S... params) {
-    if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.GINGERBREAD_MR1) {
-      task.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, params);
-    } else {
-      //@TODO: this does not work on android < 2.3 therefore, a fix is needed
-      task.execute(params);
-    }
+  private <S, T, U> void executeTask(ICSAsyncTask<S, T, U> task, S... params) {
+      task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
   }
 
   class TradeDataRunnable implements Runnable {
@@ -212,7 +212,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
             case ACCOUNT_INFO:
               MtGoxAccountInfo mtGoxAccountInfo = (MtGoxAccountInfo) exchangeEvent.getPayload();
-              accountInfo = MtGoxAdapters.adaptAccountInfo(mtGoxAccountInfo);
+              accountInfo = mtGoxAccountInfo;
               lastUpdate = new Date();
               break;
             case USER_ORDERS_LIST:
@@ -284,18 +284,22 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   }
 
-  private class UpdateTask extends AsyncTask<Void, Void, Boolean> {
+  private class UpdateTask extends ICSAsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
       Log.d(TAG, "performing update...");
       try {
-        accountInfo = exchange.getPollingAccountService().getAccountInfo();
+        accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
         openOrders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
+        ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
         lastUpdate = new Date();
         broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_ACTION));
       } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
+        return false;
+      } catch (HttpException uhe) {
+        Log.e(TAG, "HttpException", uhe);
         return false;
       }
       return true;
@@ -307,7 +311,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   };
 
-  private class DeleteOrderTask extends AsyncTask<Order, Void, Boolean> {
+  private class DeleteOrderTask extends ICSAsyncTask<Order, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Order... params) {
@@ -331,7 +335,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   };
 
-  private class PlaceOrderTask extends AsyncTask<Order, Void, String> {
+  private class PlaceOrderTask extends ICSAsyncTask<Order, Void, String> {
 
     private ProgressDialog mDialog;
     private Activity activity;

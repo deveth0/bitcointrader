@@ -18,6 +18,7 @@ public class AboutActivity extends SherlockPreferenceActivity {
   private static final String KEY_ABOUT_AUTHOR = "about_author";
   private static final String KEY_ABOUT_AUTHOR_TWITTER = "about_author_twitter";
   private static final String KEY_ABOUT_CREDITS_BITCOINWALLET = "about_credits_bitcoinwallet";
+  private static final String KEY_ABOUT_CREDITS_XCHANGE = "about_credits_xchange";
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class AboutActivity extends SherlockPreferenceActivity {
 
     findPreference(KEY_ABOUT_VERSION).setSummary(((BitcoinTraderApplication) getApplication()).applicationVersionName());
     findPreference(KEY_ABOUT_CREDITS_BITCOINWALLET).setSummary(Constants.CREDITS_BITCOINWALLET_URL);
+    findPreference(KEY_ABOUT_CREDITS_XCHANGE).setSummary(Constants.CREDITS_XCHANGE_URL);
 
   }
 
@@ -52,6 +54,9 @@ public class AboutActivity extends SherlockPreferenceActivity {
       finish();
     } else if (KEY_ABOUT_CREDITS_BITCOINWALLET.equals(key)) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.CREDITS_BITCOINWALLET_URL)));
+      finish();
+    } else if (KEY_ABOUT_CREDITS_XCHANGE.equals(key)) {
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.CREDITS_XCHANGE_URL)));
       finish();
     } else if (KEY_ABOUT_AUTHOR.equals(key)) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.AUTHOR_URL)));

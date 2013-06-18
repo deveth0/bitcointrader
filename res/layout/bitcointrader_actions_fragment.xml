@@ -18,6 +18,7 @@
 
     <Button
       android:id="@+id/bitcointrader_actions_buy"
+      style="@style/My.Widget.Button.Borderless"
       android:layout_width="0px"
       android:layout_height="wrap_content"
       android:layout_weight="1"
@@ -26,11 +27,12 @@
       android:text="@string/bitcoin_action_buy"
       android:textAllCaps="true"
       android:textColor="@android:color/white"
-      android:textSize="@dimen/font_size_tiny"
+      android:textSize="@dimen/font_size_small"
       android:textStyle="bold" />
 
       <Button
         android:id="@+id/bitcointrader_actions_sell"
+        style="@style/My.Widget.Button.Borderless"
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -39,7 +41,7 @@
         android:text="@string/bitcoin_action_sell"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/font_size_tiny"
+        android:textSize="@dimen/font_size_small"
         android:textStyle="bold" />
   </LinearLayout>
 </LinearLayout>

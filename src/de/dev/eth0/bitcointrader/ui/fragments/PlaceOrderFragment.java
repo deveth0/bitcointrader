@@ -19,8 +19,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.account.AccountInfo;
+import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
+import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
+import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
@@ -85,13 +89,19 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
     orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
     ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
-            android.R.layout.simple_spinner_item, Order.OrderType.values());
+            R.layout.spinner_item, Order.OrderType.values());
     orderTypeSpinner.setAdapter(adapter);
     amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
     amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
       public void onClick(final View v) {
-        application.getAccountInfo();
+        MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
+        if (mtgoxaccountInfo != null) {
+          AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
+          if (accountInfo != null) {
+            amountView.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount());
+          }
+        }
       }
     });
     amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
@@ -106,10 +116,15 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     marketOrderCheckbox = (CheckBox) view.findViewById(R.id.place_order_marketorder);
     marketOrderCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        priceView.setEnabled(!isChecked);
-        //@TODO: set value
-        priceViewText.setText("current value");
-        updateView();
+        Ticker ticker = getExchangeService().getTicker();
+        if (ticker != null) {
+          priceView.setEnabled(!isChecked);
+          Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+          priceViewText.setText(type.equals(Order.OrderType.ASK)
+                  ? ticker.getAsk().getAmount().toString()
+                  : ticker.getBid().getAmount().toString());
+          updateView();
+        }
       }
     });
 
@@ -147,7 +162,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Editable price = priceViewText.getEditableText();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
 
-      Double amountInt = new Double(amount.toString());
+      Double amountInt = Double.valueOf(amount.toString());
       BigMoney priceInt = BigMoney.parse("USD " + price.toString());
       totalView.setAmount(priceInt.multipliedBy(amountInt));
     }
@@ -155,19 +170,20 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private void handleGo() {
     Order order;
+    Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
     boolean marketOrder = marketOrderCheckbox.isChecked();
     Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
     Double price = Double.parseDouble(priceViewText.getEditableText().toString());
 
     if (marketOrder) {
-      order = new MarketOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD");
+      order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", "USD");
       //application.getExchange().getPollingTradeService().placeMarketOrder(order);
     } else {
-      order = new LimitOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
+      order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
       //application.getExchange().getPollingTradeService().placeLimitOrder(order);
     }
-    getExchangeService().placeOrder(order,activity);
-    
+    getExchangeService().placeOrder(order, activity);
+
   }
 
   private boolean everythingValid() {

@@ -5,7 +5,9 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -14,14 +16,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
-import de.schildbach.wallet.util.GenericUtils;
+import java.math.BigDecimal;
 
 public final class CurrencyAmountView extends FrameLayout {
 
   private TextView textView;
   private View contextButton;
-  private int precision;
+  private int significantColor, lessSignificantColor, errorColor;
   private Drawable deleteButtonDrawable, contextButtonDrawable;
+  private CurrencyCodeDrawable currencyCodeDrawable;
   private OnClickListener contextButtonClickListener;
 
   public CurrencyAmountView(final Context context) {
@@ -36,18 +39,30 @@ public final class CurrencyAmountView extends FrameLayout {
 
   private void init(final Context context) {
     final Resources resources = context.getResources();
+    significantColor = resources.getColor(R.color.fg_significant);
+    lessSignificantColor = resources.getColor(R.color.fg_less_significant);
+    errorColor = resources.getColor(R.color.fg_error);
     deleteButtonDrawable = resources.getDrawable(R.drawable.ic_input_delete);
   }
 
   @Override
   protected void onFinishInflate() {
     super.onFinishInflate();
-
     final Context context = getContext();
-
     textView = (TextView) getChildAt(0);
     textView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     textView.setHorizontalFadingEdgeEnabled(true);
+    textView.addTextChangedListener(new TextWatcher() {
+      public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+        updateAppearance();
+      }
+
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      }
+
+      public void afterTextChanged(Editable s) {
+      }
+    });
     contextButton = new View(context) {
       @Override
       protected void onMeasure(final int wMeasureSpec, final int hMeasureSpec) {
@@ -65,22 +80,21 @@ public final class CurrencyAmountView extends FrameLayout {
 
   public void setCurrencyCode(final String currencyCode) {
     if (currencyCode != null) {
+      final float textSize = textView.getTextSize();
+      currencyCodeDrawable = new CurrencyCodeDrawable(currencyCode, textSize, lessSignificantColor, textSize * 0.37f);
+    } else {
+      currencyCodeDrawable = null;
     }
-
     updateAppearance();
   }
 
-  public void setPrecision(final int precision) {
-    this.precision = precision;
+  public BigDecimal getAmount() {
+    return new BigDecimal(textView.getText().toString());
   }
 
-  public Long getAmount() {
-    return Long.valueOf(textView.getText().toString());
-  }
-
-  public void setAmount(final Long amount) {
+  public void setAmount(BigDecimal amount) {
     if (amount != null) {
-      textView.setText(GenericUtils.formatValue(amount, precision));
+      textView.setText(amount.toString());
     } else {
       textView.setText(null);
     }
@@ -89,9 +103,7 @@ public final class CurrencyAmountView extends FrameLayout {
   @Override
   public void setEnabled(final boolean enabled) {
     super.setEnabled(enabled);
-
     textView.setEnabled(enabled);
-
     updateAppearance();
   }
 
@@ -103,7 +115,15 @@ public final class CurrencyAmountView extends FrameLayout {
   }
 
   private boolean isValidAmount() {
-    return true;
+    String amount = textView.getText().toString().trim();
+    try {
+      if (!amount.isEmpty()) {
+        new BigDecimal(amount);
+        return true;
+      }
+    } catch (NumberFormatException x) {
+    }
+    return false;
   }
   private final OnClickListener deleteClickListener = new OnClickListener() {
     public void onClick(final View v) {
@@ -120,16 +140,17 @@ public final class CurrencyAmountView extends FrameLayout {
     final String amount = textView.getText().toString().trim();
 
     if (enabled && !amount.isEmpty()) {
+      textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, deleteButtonDrawable, null);
       contextButton.setOnClickListener(deleteClickListener);
     } else if (enabled && contextButtonDrawable != null) {
+      textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, contextButtonDrawable, null);
       contextButton.setOnClickListener(contextButtonClickListener);
     } else {
+      textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, null, null);
       contextButton.setOnClickListener(null);
     }
-
     contextButton.requestLayout();
-
-    textView.setTextColor(R.color.fg_insignificant);
+    textView.setTextColor(isValidAmount() ? significantColor : errorColor);
   }
 
   @Override
@@ -147,7 +168,7 @@ public final class CurrencyAmountView extends FrameLayout {
       final Bundle bundle = (Bundle) state;
       super.onRestoreInstanceState(bundle.getParcelable("super_state"));
       textView.onRestoreInstanceState(bundle.getParcelable("child_textview"));
-      setAmount((Long) bundle.getSerializable("amount"));
+      setAmount((BigDecimal) bundle.getSerializable("amount"));
     } else {
       super.onRestoreInstanceState(state);
     }

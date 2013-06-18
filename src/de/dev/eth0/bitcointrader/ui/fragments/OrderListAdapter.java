@@ -93,18 +93,15 @@ public class OrderListAdapter extends BaseAdapter {
 
   public View getView(final int position, View row, final ViewGroup parent) {
     final int type = getItemViewType(position);
-
     if (type == VIEW_TYPE_TRANSACTION) {
       if (row == null) {
         row = inflater.inflate(R.layout.order_row_extended, null);
       }
-
       final Order tx = getItem(position);
       bindView(row, tx);
     } else {
       throw new IllegalStateException("unknown type: " + type);
     }
-
     return row;
   }
 

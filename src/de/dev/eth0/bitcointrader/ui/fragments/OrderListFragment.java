@@ -120,8 +120,6 @@ public class OrderListFragment extends SherlockListFragment {
     } else if (orderType == Order.OrderType.ASK) {
       text = R.string.bitcoin_order_fragment_empty_text_ask;
     }
-
-
     SpannableStringBuilder emptyText = new SpannableStringBuilder(
             getString(text));
     emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);

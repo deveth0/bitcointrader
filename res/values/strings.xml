@@ -13,8 +13,13 @@
     <string name="button_delete_order">Delete Order.</string>
     <string name="button_delete">Delete foo </string>
 
-    <string name="your_wallet_label">Your Wallet:</string>
-
+    <string name="account_info">Your Account</string>
+    <string name="account_info_trade_fee_label">Trade Fee:</string>
+    <string name="price_info">Ticker</string>
+    <string name="price_info_min_label">Min: </string>
+    <string name="price_info_max_label">Max: </string>
+    <string name="price_info_ask_label">Ask: </string>
+    <string name="price_info_bid_label">Bid: </string>
     <string name="refresh_title">Refresh</string>
 
     <string name="placeorder_title">Place Order</string>
@@ -30,6 +35,7 @@
     <string name="about_title">About</string>
     <string name="about_author_twitter_title">Author at Twitter</string>
 	<string name="about_credits_bitcoinwallet_title">"This app is using 'bitcoin-wallet'"</string>
+	<string name="about_credits_xchange_title">"This app is using 'xchange'"</string>
     
     <string name="preferences_title">Preferences</string>
     <string name="preferences_category_mtgox">MtGox</string>

@@ -3,9 +3,18 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:paddingLeft="8dp"
+              android:paddingRight="8dp"
               android:gravity="center"
               android:orientation="vertical">
 
+  <TextView
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:textSize="@dimen/font_size_normal"
+    android:textColor="@color/fg_significant"
+    android:text="@string/price_info"
+  />
   <LinearLayout
     android:id="@+id/price_info"
     android:layout_width="match_parent"

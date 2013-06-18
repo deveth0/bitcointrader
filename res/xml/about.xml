@@ -16,6 +16,9 @@
         <Preference
 			android:key="about_credits_bitcoinwallet"
 			android:title="@string/about_credits_bitcoinwallet_title" />
+        <Preference
+			android:key="about_credits_xchange"
+			android:title="@string/about_credits_xchange_title" />
 		</PreferenceCategory>
 
 </PreferenceScreen>

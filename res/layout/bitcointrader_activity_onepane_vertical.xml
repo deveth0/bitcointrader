@@ -20,9 +20,12 @@
     <fragment
       android:id="@+id/bitcointrader_price_info_fragment"
       android:name="de.dev.eth0.bitcointrader.ui.fragments.PriceInfoFragment"
+      android:layout_marginTop="8dp"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center" />
+    
+    
     <FrameLayout
       android:layout_width="match_parent"
       android:layout_height="0px"
