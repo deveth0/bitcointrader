@@ -1,8 +1,6 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -20,7 +18,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
@@ -34,7 +31,7 @@ import java.math.BigDecimal;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
-public final class PlaceOrderFragment extends SherlockFragment {
+public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
@@ -47,7 +44,6 @@ public final class PlaceOrderFragment extends SherlockFragment {
   private CurrencyTextView totalView;
   private Button viewGo;
   private Button viewCancel;
-  
 
   @Override
   public void onAttach(final Activity activity) {
@@ -93,13 +89,11 @@ public final class PlaceOrderFragment extends SherlockFragment {
     orderTypeSpinner.setAdapter(adapter);
     amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
-    amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener()
-		{
-			public void onClick(final View v)
-			{
-              application.getAccountInfo();
-			}
-		});
+    amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
+      public void onClick(final View v) {
+        application.getAccountInfo();
+      }
+    });
     amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
@@ -160,8 +154,20 @@ public final class PlaceOrderFragment extends SherlockFragment {
   }
 
   private void handleGo() {
-    PlaceOrderTask task = new PlaceOrderTask();
-    task.execute(activity);
+    Order order;
+    boolean marketOrder = marketOrderCheckbox.isChecked();
+    Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
+    Double price = Double.parseDouble(priceViewText.getEditableText().toString());
+
+    if (marketOrder) {
+      order = new MarketOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD");
+      //application.getExchange().getPollingTradeService().placeMarketOrder(order);
+    } else {
+      order = new LimitOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
+      //application.getExchange().getPollingTradeService().placeLimitOrder(order);
+    }
+    getExchangeService().placeOrder(order,activity);
+    
   }
 
   private boolean everythingValid() {
@@ -182,40 +188,6 @@ public final class PlaceOrderFragment extends SherlockFragment {
       }
     }
   }
-
-  private class PlaceOrderTask extends AsyncTask<Activity, Void, Void> {
-
-    private ProgressDialog mDialog;
-
-    @Override
-    protected void onPreExecute() {
-      mDialog = new ProgressDialog(activity);
-      mDialog.setMessage(getString(R.string.place_order_submitting));
-      mDialog.show();
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-      mDialog.dismiss();
-    }
-
-    @Override
-    protected Void doInBackground(Activity... params) {
-      boolean marketOrder = marketOrderCheckbox.isChecked();
-      Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
-      Double price = Double.parseDouble(priceViewText.getEditableText().toString());
-      if (marketOrder) {
-        MarketOrder order = new MarketOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD");
-        //application.getExchange().getPollingTradeService().placeMarketOrder(order);
-      } else {
-        LimitOrder order = new LimitOrder(Order.OrderType.BID, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
-        //application.getExchange().getPollingTradeService().placeLimitOrder(order);
-      }
-      activity.setResult(Activity.RESULT_OK);
-      activity.finish();
-      return null;
-    }
-  };
 
   private final class ValueChangedListener implements TextWatcher {
 

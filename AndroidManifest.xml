@@ -3,7 +3,7 @@
           package="de.dev.eth0"
           android:installLocation="internalOnly"
           android:versionCode="1"
-          android:versionName="0.1-snapshot" >
+          android:versionName="0.2-snapshot" >
 
   <uses-sdk
     android:minSdkVersion="10"
@@ -67,6 +67,7 @@
     <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver" >
       <intent-filter>
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_ACTION" />
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_SERVICE_ACTION" />
       </intent-filter>
     </receiver>
     

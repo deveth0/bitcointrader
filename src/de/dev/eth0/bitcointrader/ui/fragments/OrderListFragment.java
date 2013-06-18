@@ -12,7 +12,6 @@ import android.content.ServiceConnection;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -40,7 +39,6 @@ public class OrderListFragment extends SherlockListFragment {
   private static final String TAG = OrderListFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
-  private LoaderManager loaderManager;
   private OrderListAdapter adapter;
   private Order.OrderType orderType;
   private static final String KEY_ORDERTYPE = "ordertype";
@@ -84,7 +82,6 @@ public class OrderListFragment extends SherlockListFragment {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity) activity;
     this.application = (BitcoinTraderApplication) activity.getApplication();
-    this.loaderManager = getLoaderManager();
   }
 
   @Override
@@ -134,7 +131,6 @@ public class OrderListFragment extends SherlockListFragment {
   @Override
   public void onPause() {
     super.onPause();
-    loaderManager.destroyLoader(0);
     if (broadcastReceiver != null) {
       broadcastManager.unregisterReceiver(broadcastReceiver);
       broadcastReceiver = null;
@@ -184,6 +180,7 @@ public class OrderListFragment extends SherlockListFragment {
         switch (item.getItemId()) {
           case R.id.order_context_delete:
             handleDeleteOrder(order);
+            exchangeService.deleteOrder(order);
             mode.finish();
             return true;
         }
