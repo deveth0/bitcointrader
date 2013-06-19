@@ -195,7 +195,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     private void notifyOrderExecuted(List<LimitOrder> executedOrders) {
       NotificationCompat.Builder mBuilder =
               new NotificationCompat.Builder(ExchangeService.this)
-              .setSmallIcon(R.drawable.ic_action_send)
+              .setSmallIcon(R.drawable.ic_bitcoin)
               .setContentTitle(ExchangeService.this.getString(R.string.notify_order_executed_title))
               .setContentText(ExchangeService.this.getString(R.string.notify_order_executed_text));
       NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
