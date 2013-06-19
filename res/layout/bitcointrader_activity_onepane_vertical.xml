@@ -35,7 +35,7 @@
       android:foregroundGravity="top|fill_horizontal" >
 
       <fragment
-        android:id="@+id/bitcointrader_transactions_fragment"
+        android:id="@+id/bitcointrader_orders_fragment"
         android:name="de.dev.eth0.bitcointrader.ui.fragments.OrderFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

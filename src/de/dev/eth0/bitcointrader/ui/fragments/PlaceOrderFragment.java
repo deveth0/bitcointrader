@@ -123,6 +123,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
           priceViewText.setText(type.equals(Order.OrderType.ASK)
                   ? ticker.getAsk().getAmount().toString()
                   : ticker.getBid().getAmount().toString());
+          priceViewText.clearFocus();
           updateView();
         }
       }

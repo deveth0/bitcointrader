@@ -17,14 +17,8 @@ import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.Order;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
@@ -150,47 +144,5 @@ public class OrderListFragment extends SherlockListFragment {
     }
     Log.d(TAG, "Open orders: " + orders.size());
     adapter.replace(filteredOrders);
-  }
-
-  @Override
-  public void onListItemClick(final ListView l, final View v, final int position, final long id) {
-    Order order = adapter.getItem(position);
-
-    if (order != null) {
-      handleOrderClick(order);
-    }
-  }
-
-  private void handleOrderClick(final Order order) {
-    activity.startActionMode(new ActionMode.Callback() {
-      public boolean onCreateActionMode(final ActionMode mode, final Menu menu) {
-        final MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.order_context, menu);
-        return true;
-      }
-
-      public boolean onPrepareActionMode(final ActionMode mode, final Menu menu) {
-        mode.setTitle(order.toString());
-        return true;
-      }
-
-      public boolean onActionItemClicked(final ActionMode mode, final MenuItem item) {
-        switch (item.getItemId()) {
-          case R.id.order_context_delete:
-            handleDeleteOrder(order);
-            exchangeService.deleteOrder(order);
-            mode.finish();
-            return true;
-        }
-        return false;
-      }
-
-      public void onDestroyActionMode(final ActionMode mode) {
-      }
-
-      private void handleDeleteOrder(final Order order) {
-        Toast.makeText(activity, "delete: " + order.toString(), Toast.LENGTH_SHORT).show();
-      }
-    });
   }
 }

@@ -13,4 +13,6 @@
 	<color name="bg_panel">#ffd8d8e0</color>
 	<color name="bg_form">#ffe8e8f0</color>
 
+    <!-- orange -->
+    <color name="orange">#ff7711</color>
 </resources>

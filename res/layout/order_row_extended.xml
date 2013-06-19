@@ -1,61 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:paddingBottom="8dp"
-              android:paddingLeft="@dimen/list_entry_padding_horizontal"
-              android:paddingRight="@dimen/list_entry_padding_horizontal"
-              android:paddingTop="8dp" >
 
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="true"
-    android:orientation="horizontal" >
-
-    <TextView
-      android:id="@+id/order_row_fromto"
-      android:layout_width="@dimen/symbol_size_normal"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="8dp"
-      android:textSize="@dimen/font_size_small" />
-
-    <TextView
-      android:id="@+id/order_row_date"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="8dp"
-      android:gravity="center_horizontal"
-      android:textSize="@dimen/font_size_small" />
-  </LinearLayout>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/list_entry_padding_horizontal"
+                android:paddingRight="@dimen/list_entry_padding_horizontal"
+                android:paddingTop="8dp"
+>
+  <TextView
+    android:id="@+id/order_row_askbid"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_marginRight="40dp"
+    android:layout_centerVertical="true"
+    android:textColor="@+color/orange"
+    android:textSize="@dimen/font_size_xlarge" />
   
-  <LinearLayout
-    android:layout_width="match_parent"
+  <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+    android:id="@+id/order_row_total"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:baselineAligned="true"
-    android:orientation="horizontal" >
+    android:layout_toRightOf="@+id/order_row_askbid" 
+    android:textSize="@dimen/font_size_xlarge"/>
 
-    <de.dev.eth0.bitcointrader.ui.views.AmountTextView
-      android:id="@+id/order_row_amount"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="8dp"
-      android:textSize="@dimen/font_size_small"/>
-
-    <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
-      android:id="@+id/order_row_value"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginRight="8dp"
-      android:layout_gravity="center_vertical"
-      android:textSize="@dimen/font_size_small" />
-
-    <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
-      android:id="@+id/order_row_total"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="right"
-      android:textSize="@dimen/font_size_small"/>
-  </LinearLayout>
-</LinearLayout>
+  <de.dev.eth0.bitcointrader.ui.views.AmountTextView
+    android:id="@+id/order_row_amount"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/order_row_total"
+    android:layout_alignLeft="@+id/order_row_total"
+    android:layout_marginRight="8dp"
+    android:textSize="@dimen/font_size_small"/>
+    
+  <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+    android:id="@+id/order_row_value"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/order_row_total"
+    android:layout_toRightOf="@+id/order_row_amount" 
+    android:textSize="@dimen/font_size_small" />
+  
+  <TextView
+    android:id="@+id/order_row_date"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/order_row_amount"
+    android:layout_alignLeft="@+id/order_row_total"
+    android:textSize="@dimen/font_size_small" />
+    
+  <ImageButton
+    android:id="@+id/order_row_delete"
+    style="@style/My.Widget.Button.Borderless"
+    android:layout_width="wrap_content"
+    android:layout_height="32dp"
+    android:layout_marginLeft="8dp"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:background="#abc"
+    android:layout_toRightOf="@+id/order_row_total"
+    android:src="@drawable/ic_action_delete_dark" />
+</RelativeLayout>

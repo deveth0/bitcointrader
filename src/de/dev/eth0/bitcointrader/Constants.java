@@ -5,7 +5,7 @@ public class Constants {
   public static final char CHAR_HAIR_SPACE = '\u200a';
   public static final char CHAR_THIN_SPACE = '\u2009';
   public static final String CURRENCY_CODE_BITCOIN = "BTC";
-  public static final String CURRENCY_CODE_DOLLAR = "$";
+  public static final String CURRENCY_CODE_DOLLAR = "USD";
   public static final int PRECISION_BITCOIN = 8;
   public static final int PRECISION_DOLLAR = 4;
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
