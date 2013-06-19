@@ -14,6 +14,7 @@
     android:layout_marginRight="@dimen/order_row_padding_type"
     android:layout_centerVertical="true"
     android:textColor="@+color/orange"
+    android:textStyle="bold"
     android:textSize="@dimen/font_size_xlarge" />
   
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView

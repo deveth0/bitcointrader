@@ -52,6 +52,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
         android:textSize="@dimen/font_size_normal"
+        android:textStyle="bold"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"    />
     </LinearLayout>
