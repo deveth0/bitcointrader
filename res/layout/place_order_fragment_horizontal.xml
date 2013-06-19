@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="horizontal"
+              tools:ignore="RequiredSize" >
+
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="8dp"
+    android:textColor="@color/fg_significant"
+    android:text="@string/place_order_fragment_type_label"
+    android:textSize="@dimen/font_size_small"
+    android:textStyle="bold" />
+  <Spinner
+    android:id="@+id/place_order_type"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:layout_marginLeft="@dimen/list_entry_padding_horizontal"
+    android:layout_marginRight="@dimen/list_entry_padding_horizontal"
+  />
+
+  <CheckBox
+    android:id="@+id/place_order_marketorder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/list_entry_padding_horizontal"
+    android:layout_marginRight="@dimen/list_entry_padding_horizontal"
+    android:textColor="@color/fg_significant"
+    android:textSize="@dimen/font_size_small"
+    android:text="@string/place_order_fragment_market_order" />
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="8dp"
+    android:text="@string/place_order_fragment_amount_label"
+    android:textColor="@color/fg_significant"
+    android:textSize="@dimen/font_size_small"
+    android:textStyle="bold" />
+
+  <de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView
+    android:id="@+id/place_order_amount"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/list_entry_padding_horizontal"
+    android:layout_marginRight="@dimen/list_entry_padding_horizontal" >
+
+    <EditText
+      android:id="@+id/place_order_amount_text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:imeOptions="flagNoExtractUi"
+      android:inputType="number"
+      android:textColor="@color/fg_significant"
+      android:textSize="@dimen/font_size_normal"
+      tools:ignore="TextFields" />
+  </de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView>
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="8dp"
+    android:text="@string/place_order_fragment_price_label"
+    android:textColor="@color/fg_significant"
+    android:textSize="@dimen/font_size_small"
+    android:textStyle="bold" />
+
+  <de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView
+    android:id="@+id/place_order_price"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/list_entry_padding_horizontal"
+    android:layout_marginRight="@dimen/list_entry_padding_horizontal" >
+
+    <EditText
+      android:id="@+id/place_order_price_text"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:imeOptions="flagNoExtractUi"
+      android:inputType="number"
+      android:textColor="@color/fg_significant"
+      android:textSize="@dimen/font_size_normal"
+      tools:ignore="TextFields" />
+  </de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView>
+
+  <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="8dp"
+    android:text="@string/place_order_fragment_total_label"
+    android:textColor="@color/fg_significant"
+    android:textSize="@dimen/font_size_small"
+    android:textStyle="bold" />
+
+  <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+    android:id="@+id/place_order_total"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginTop="8dp"
+    android:textColor="@color/fg_significant"
+    android:textSize="@dimen/font_size_normal"/>
+
+
+  <!-- stretch dummy -->
+
+  <ImageView
+    android:layout_width="0px"
+    android:layout_height="0px"
+    android:layout_weight="1" />
+
+  <ListView
+    android:id="@+id/place_order_foo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone" />
+
+  <include layout="@layout/place_order_buttons_include" />
+
+</LinearLayout>

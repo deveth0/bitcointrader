@@ -28,13 +28,13 @@
       android:gravity="left"
       android:orientation="vertical" >
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
-        android:id="@+id/price_info_min"
+        android:id="@+id/price_info_low"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"
         android:textSize="@dimen/font_size_small" />
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
-        android:id="@+id/price_info_max"
+        android:id="@+id/price_info_high"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/fg_significant"

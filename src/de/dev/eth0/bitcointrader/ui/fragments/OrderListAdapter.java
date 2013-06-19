@@ -1,6 +1,5 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,8 +20,8 @@ import android.widget.TextView;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
-import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class OrderListAdapter extends BaseAdapter {
     colorSignificant = resources.getColor(R.color.fg_significant);
     context.bindService(new Intent(context, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
   }
-  
+
   public void clear() {
     orders.clear();
     notifyDataSetChanged();
@@ -139,17 +138,19 @@ public class OrderListAdapter extends BaseAdapter {
     AmountTextView rowAmount = (AmountTextView) row.findViewById(R.id.order_row_amount);
     rowAmount.setAmount(order.getTradableAmount());
     rowAmount.setTextColor(textColor);
-
+    rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
     // value
     CurrencyTextView rowValue = (CurrencyTextView) row.findViewById(R.id.order_row_value);
     if (order instanceof LimitOrder) {
       LimitOrder lo = (LimitOrder) order;
       rowValue.setTextColor(textColor);
       rowValue.setAmount(lo.getLimitPrice());
+      rowValue.setPrecision(Constants.PRECISION_DOLLAR);
+
       // total
       CurrencyTextView rowTotal = (CurrencyTextView) row.findViewById(R.id.order_row_total);
+      rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
       rowTotal.setTextColor(textColor);
-      //@TODO: multiply limitprice with amount
       rowTotal.setAmount(lo.getLimitPrice().multipliedBy(order.getTradableAmount()));
     }
     ImageButton deleteButton = (ImageButton) row.findViewById(R.id.order_row_delete);

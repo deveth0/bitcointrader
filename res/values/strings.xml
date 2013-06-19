@@ -16,10 +16,11 @@
     <string name="account_info">Your Account</string>
     <string name="account_info_trade_fee_label">Trade Fee:</string>
     <string name="price_info">Ticker</string>
-    <string name="price_info_min_label">Min: </string>
-    <string name="price_info_max_label">Max: </string>
+    <string name="price_info_low_label">Low: </string>
+    <string name="price_info_high_label">High: </string>
     <string name="price_info_ask_label">Ask: </string>
     <string name="price_info_bid_label">Bid: </string>
+    <string name="price_info_volume_label">Volume: </string>
     <string name="refresh_title">Refresh</string>
 
     <string name="placeorder_title">Place Order</string>

@@ -6,8 +6,8 @@ public class Constants {
   public static final char CHAR_THIN_SPACE = '\u2009';
   public static final String CURRENCY_CODE_BITCOIN = "BTC";
   public static final String CURRENCY_CODE_DOLLAR = "USD";
-  public static final int PRECISION_BITCOIN = 8;
-  public static final int PRECISION_DOLLAR = 4;
+  public static final int PRECISION_BITCOIN = 5;
+  public static final int PRECISION_DOLLAR = 5;
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
   public static final String REPORT_EMAIL = "bitcointrader@dev-eth0.de";
   public static final String REPORT_SUBJECT_ISSUE = "Reported issue";

@@ -11,6 +11,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
+import java.util.ArrayList;
+import org.joda.money.CurrencyUnit;
 
 public class BitcoinTraderApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 

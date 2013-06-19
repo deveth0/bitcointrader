@@ -25,9 +25,9 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   private static final String TAG = PriceInfoFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
-  private CurrencyTextView viewPriceInfoMin;
+  private CurrencyTextView viewPriceInfoLow;
   private CurrencyTextView viewPriceInfoCurrent;
-  private CurrencyTextView viewPriceInfoMax;
+  private CurrencyTextView viewPriceInfoHigh;
   private CurrencyTextView viewPriceInfoAsk;
   private CurrencyTextView viewPriceInfoBid;
   private AmountTextView viewPriceInfoVolume;
@@ -76,9 +76,9 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewPriceInfoMin = (CurrencyTextView) view.findViewById(R.id.price_info_min);
+    viewPriceInfoLow = (CurrencyTextView) view.findViewById(R.id.price_info_low);
     viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);
-    viewPriceInfoMax = (CurrencyTextView) view.findViewById(R.id.price_info_max);
+    viewPriceInfoHigh = (CurrencyTextView) view.findViewById(R.id.price_info_high);
     viewPriceInfoAsk = (CurrencyTextView) view.findViewById(R.id.price_info_ask);
     viewPriceInfoBid = (CurrencyTextView) view.findViewById(R.id.price_info_bid);
     viewPriceInfoVolume = (AmountTextView) view.findViewById(R.id.price_info_volume);
@@ -92,21 +92,23 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
     if (getExchangeService() != null) {
       Ticker ticker = getExchangeService().getTicker();
       if (ticker != null) {
-        viewPriceInfoMin.setAmount(ticker.getLow());
-        viewPriceInfoMin.setShowCurrencyCode(false);
-        viewPriceInfoMin.setPrefix(activity.getString(R.string.price_info_min_label));
+        viewPriceInfoLow.setAmount(ticker.getLow());
+        viewPriceInfoLow.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoLow.setPrefix(activity.getString(R.string.price_info_low_label));
         viewPriceInfoCurrent.setAmount(ticker.getLast());
-        viewPriceInfoCurrent.setShowCurrencyCode(false);
-        viewPriceInfoMax.setAmount(ticker.getHigh());
-        viewPriceInfoMax.setShowCurrencyCode(false);
-        viewPriceInfoMax.setPrefix(activity.getString(R.string.price_info_max_label));
+        viewPriceInfoCurrent.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoHigh.setAmount(ticker.getHigh());
+        viewPriceInfoHigh.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoHigh.setPrefix(activity.getString(R.string.price_info_high_label));
         viewPriceInfoAsk.setAmount(ticker.getAsk());
-        viewPriceInfoAsk.setShowCurrencyCode(false);
+        viewPriceInfoAsk.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoAsk.setPrefix(activity.getString(R.string.price_info_ask_label));
         viewPriceInfoBid.setAmount(ticker.getBid());
-        viewPriceInfoBid.setShowCurrencyCode(false);
+        viewPriceInfoBid.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoBid.setPrefix(activity.getString(R.string.price_info_bid_label));
         viewPriceInfoVolume.setAmount(ticker.getVolume());
+        viewPriceInfoVolume.setPrecision(0);
+        viewPriceInfoVolume.setPrefix(activity.getString(R.string.price_info_volume_label));
         viewPriceInfoLastUpdate.setText(dateFormat.format(ticker.getTimestamp()) + ", " + timeFormat.format(ticker.getTimestamp()));
       }
     }

@@ -6,5 +6,5 @@
 	<dimen name="font_size_xlarge">18sp</dimen>
 	<dimen name="list_entry_padding_horizontal">12dp</dimen>
 	<dimen name="list_entry_padding_vertical">6dp</dimen>
-
+	<dimen name="order_row_padding_type">24dp</dimen>
 </resources>

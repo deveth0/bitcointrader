@@ -17,6 +17,7 @@ import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
@@ -81,8 +82,12 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     super.onViewCreated(view, savedInstanceState);
     viewName = (TextView) view.findViewById(R.id.your_wallet_name);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
+    viewDollar.setPrecision(Constants.PRECISION_DOLLAR);
     viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
+    viewBtc.setPrecision(Constants.PRECISION_BITCOIN);
     viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);
+    viewTradeFee.setPostfix("%");
+    viewTradeFee.setPrefix(getActivity().getString(R.string.account_info_trade_fee_label));
   }
 
   private void updateView() {
