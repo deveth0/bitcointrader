@@ -5,6 +5,8 @@
 package de.dev.eth0.bitcointrader.service;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -15,49 +17,28 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.ExchangeException;
 import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.currency.Currencies;
 import com.xeiam.xchange.dto.Order;
-import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
-import com.xeiam.xchange.mtgox.v2.dto.account.streaming.MtGoxWalletUpdate;
-import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOpenOrder;
-import com.xeiam.xchange.mtgox.v2.dto.trade.streaming.MtGoxOrderCanceled;
-import com.xeiam.xchange.mtgox.v2.dto.trade.streaming.MtGoxTradeLag;
-import com.xeiam.xchange.mtgox.v2.service.streaming.SocketMessageFactory;
-import com.xeiam.xchange.service.streaming.ExchangeEvent;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.ACCOUNT_INFO;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.CONNECT;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.DEPTH;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.MESSAGE;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.PRIVATE_ID_KEY;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.TICKER;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.TRADE;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.TRADE_LAG;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.USER_ORDER;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.USER_ORDERS_LIST;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.USER_ORDER_ADDED;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.USER_ORDER_CANCELED;
-import static com.xeiam.xchange.service.streaming.ExchangeEventType.USER_WALLET_UPDATE;
-import com.xeiam.xchange.service.streaming.StreamingExchangeService;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
-import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import si.mazi.rescu.HttpException;
@@ -91,7 +72,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private MtGoxExchange exchange;
   private final Binder binder = new LocalBinder();
   private MtGoxAccountInfo accountInfo;
-  private List<LimitOrder> openOrders;
+  private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
   private Ticker ticker;
   private Date lastUpdate;
 
@@ -180,108 +161,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   private <S, T, U> void executeTask(ICSAsyncTask<S, T, U> task, S... params) {
-      task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
-  }
-
-  class TradeDataRunnable implements Runnable {
-
-    private final StreamingExchangeService streamingExchangeService;
-    private final Exchange exchange;
-
-    public TradeDataRunnable(StreamingExchangeService streamingExchangeService, Exchange exchange) {
-
-      this.streamingExchangeService = streamingExchangeService;
-      this.exchange = exchange;
-    }
-
-    @Override
-    public void run() {
-
-      SocketMessageFactory socketMsgFactory = new SocketMessageFactory(exchange.getExchangeSpecification().getApiKey(), exchange.getExchangeSpecification().getSecretKey());
-
-      try {
-        while (true) {
-
-          ExchangeEvent exchangeEvent = streamingExchangeService.getNextEvent();
-          switch (exchangeEvent.getEventType()) {
-            case CONNECT:
-              //streamingExchangeService.send(socketMsgFactory.idKey());
-              streamingExchangeService.send(socketMsgFactory.privateOrders());
-              streamingExchangeService.send(socketMsgFactory.privateInfo());
-              break;
-
-            case ACCOUNT_INFO:
-              MtGoxAccountInfo mtGoxAccountInfo = (MtGoxAccountInfo) exchangeEvent.getPayload();
-              accountInfo = mtGoxAccountInfo;
-              lastUpdate = new Date();
-              break;
-            case USER_ORDERS_LIST:
-              MtGoxOpenOrder[] mtGoxOrders = (MtGoxOpenOrder[]) exchangeEvent.getPayload();
-              openOrders = MtGoxAdapters.adaptOrders(mtGoxOrders);
-              lastUpdate = new Date();
-              break;
-            case PRIVATE_ID_KEY:
-              String keyId = (String) exchangeEvent.getPayload();
-              String msgToSend = socketMsgFactory.subscribeWithKey(keyId);
-              streamingExchangeService.send(msgToSend);
-              Log.d(TAG, "ID KEY: " + keyId);
-              break;
-
-            case TRADE_LAG:
-              MtGoxTradeLag lag = (MtGoxTradeLag) exchangeEvent.getPayload();
-              Log.d(TAG, "TRADE LAG: " + lag.toStringShort());
-              break;
-
-            case TRADE:
-              Log.d(TAG, "TRADE! " + exchangeEvent.getData().toString());
-              break;
-
-            case TICKER:
-              Log.d(TAG, "TICKER! " + exchangeEvent.getData().toString());
-              break;
-
-            case DEPTH:
-              Log.d(TAG, "DEPTH! " + exchangeEvent.getData().toString());
-              break;
-
-            // only occurs when order placed via streaming API
-            case USER_ORDER_ADDED:
-              String orderAdded = (String) exchangeEvent.getPayload();
-              Log.d(TAG, "ADDED USER ORDER: " + orderAdded);
-              break;
-
-            // only occurs when order placed via streaming API
-            case USER_ORDER_CANCELED:
-              MtGoxOrderCanceled orderCanceled = (MtGoxOrderCanceled) exchangeEvent.getPayload();
-              Log.d(TAG, "CANCELED USER ORDER: " + orderCanceled + "\nfrom: " + exchangeEvent.getData());
-              break;
-
-            case USER_WALLET_UPDATE:
-              MtGoxWalletUpdate walletUpdate = (MtGoxWalletUpdate) exchangeEvent.getPayload();
-              Log.d(TAG, "USER WALLET UPDATE: " + walletUpdate + "\nfrom: " + exchangeEvent.getData());
-              break;
-
-            case USER_ORDER:
-              MtGoxOpenOrder order = (MtGoxOpenOrder) exchangeEvent.getPayload();
-              Log.d(TAG, "USER ORDER: " + order + "\nfrom: " + exchangeEvent.getData());
-              break;
-            case MESSAGE:
-              Log.d(TAG, "MSG not parsed :(");
-              break;
-
-            default:
-              break;
-
-          }
-        }
-      } catch (InterruptedException e) {
-        Log.d(TAG, "ERROR in Runnable!!!", e);
-      } catch (JsonProcessingException e) {
-        Log.d(TAG, "Error", e);
-      } catch (UnsupportedEncodingException e) {
-        Log.d(TAG, "Error", e);
-      }
-    }
+    task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
   }
 
   private class UpdateTask extends ICSAsyncTask<Void, Void, Boolean> {
@@ -291,7 +171,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, "performing update...");
       try {
         accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
-        openOrders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
+        List<LimitOrder> orders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
+        //@TODO: fix filtering (removeAll does not remove the actual orders
+        openOrders.removeAll(orders);
+        // Order executed
+        if (!openOrders.isEmpty()) {
+          notifyOrderExecuted(openOrders);
+        }
+        openOrders = orders;
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
         lastUpdate = new Date();
         broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_ACTION));
@@ -303,6 +190,32 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         return false;
       }
       return true;
+    }
+
+    private void notifyOrderExecuted(List<LimitOrder> executedOrders) {
+      NotificationCompat.Builder mBuilder =
+              new NotificationCompat.Builder(ExchangeService.this)
+              .setSmallIcon(R.drawable.ic_action_send)
+              .setContentTitle(ExchangeService.this.getString(R.string.notify_order_executed_title))
+              .setContentText(ExchangeService.this.getString(R.string.notify_order_executed_text));
+      NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
+      notificationStyle.setBigContentTitle(ExchangeService.this.getString(R.string.notify_order_executed_text));
+      for(LimitOrder lo : executedOrders){
+       notificationStyle.bigText(lo.toString());
+      }
+      mBuilder.setStyle(notificationStyle);
+      Intent resultIntent = new Intent(ExchangeService.this, BitcoinTraderActivity.class);
+      TaskStackBuilder stackBuilder = TaskStackBuilder.create(ExchangeService.this);
+      stackBuilder.addParentStack(BitcoinTraderActivity.class);
+      stackBuilder.addNextIntent(resultIntent);
+      PendingIntent resultPendingIntent =
+              stackBuilder.getPendingIntent(
+              0,
+              PendingIntent.FLAG_UPDATE_CURRENT);
+      mBuilder.setContentIntent(resultPendingIntent);
+      NotificationManager mNotificationManager =
+              (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+      mNotificationManager.notify(123, mBuilder.build());
     }
 
     @Override

@@ -23,6 +23,9 @@
     <string name="price_info_volume_label">Volume: </string>
     <string name="refresh_title">Refresh</string>
 
+    <string name="notify_order_executed_title">Orders executed</string>
+    <string name="notify_order_executed_text">One or more orders have been executed</string>
+
     <string name="placeorder_title">Place Order</string>
     <string name="place_order_fragment_type_label">Ordertype</string>
     <string name="place_order_fragment_amount_label">Amount</string>
