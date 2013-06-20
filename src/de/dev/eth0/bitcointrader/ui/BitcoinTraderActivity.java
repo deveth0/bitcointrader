@@ -39,7 +39,7 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   public boolean onOptionsItemSelected(final MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_refresh:
-        broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
+        broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
         break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));

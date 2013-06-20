@@ -80,7 +80,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   public void onCreate() {
     super.onCreate();
     broadcastManager = LocalBroadcastManager.getInstance(this);
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SERVICE_ACTION));
   }
 
   @Override
@@ -109,9 +109,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
-      broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
+      exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      broadcastUpdateSuccess();
     }
+    broadcastUpdateFailure();
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -164,6 +165,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
   }
 
+  private void broadcastUpdateSuccess() {
+    broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SUCCEDED));
+  }
+
+  private void broadcastUpdateFailure() {
+    broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_FAILED));
+  }
+
   private class UpdateTask extends ICSAsyncTask<Void, Void, Boolean> {
 
     @Override
@@ -181,12 +190,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         openOrders = orders;
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
         lastUpdate = new Date();
-        broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_ACTION));
+        broadcastUpdateSuccess();
       } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
+        broadcastUpdateFailure();
         return false;
       } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
+        broadcastUpdateFailure();
         return false;
       }
       return true;
@@ -233,11 +244,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (params.length == 1) {
           boolean ret = exchange.getPollingTradeService().cancelOrder(params[0].getId());
           lastUpdate = new Date();
-          broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
+          broadcastUpdateSuccess();
           return ret;
         }
       } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
+        broadcastUpdateFailure();
       }
       return false;
     }
@@ -285,10 +297,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
             ret = exchange.getPollingTradeService().placeLimitOrder(lo);
           }
           lastUpdate = new Date();
-          broadcastManager.sendBroadcast(new Intent(BitcoinTraderApplication.UPDATE_SERVICE_ACTION));
+          broadcastUpdateSuccess();
         }
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
+        broadcastUpdateFailure();
       }
       activity.setResult(TextUtils.isEmpty(ret) ? Activity.RESULT_CANCELED : Activity.RESULT_OK);
       activity.finish();

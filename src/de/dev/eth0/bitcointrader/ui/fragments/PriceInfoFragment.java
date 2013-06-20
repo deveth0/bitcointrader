@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -60,7 +61,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
       }
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_ACTION));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
     updateView();
   }
 

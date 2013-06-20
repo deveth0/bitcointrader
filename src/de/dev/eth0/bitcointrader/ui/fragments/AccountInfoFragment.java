@@ -65,7 +65,7 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
       }
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_ACTION));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
   }
 
   @Override

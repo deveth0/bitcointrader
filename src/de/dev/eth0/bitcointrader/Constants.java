@@ -19,8 +19,10 @@ public class Constants {
   public static final String PREFS_KEY_MTGOX_APIKEY = "mtgox_apikey";
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";
-  
   public static final String MTGOX_SSL_URI = "https://data.mtgox.com";
   public static final String MTGOX_PLAIN_WEBSOCKET_URI = "ws://websocket.mtgox.com";
   public static final String MTGOX_SSL_WEBSOCKET_URI = "ws://websocket.mtgox.com";
+  public static final String UPDATE_SUCCEDED = "de.dev.eth0.bitcointrader.UPDATE_SUCCEDED";
+  public static final String UPDATE_SERVICE_ACTION = "de.dev.eth0.bitcointrader.UPDATE_SERVICE_ACTION";
+  public static final String UPDATE_FAILED = "de.dev.eth0.bitcointrader.UPDATE_FAILED";
 }

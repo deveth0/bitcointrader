@@ -22,6 +22,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.xeiam.xchange.dto.Order;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public class OrderListFragment extends SherlockListFragment {
       }
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(BitcoinTraderApplication.UPDATE_ACTION));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
   }
 
   @Override

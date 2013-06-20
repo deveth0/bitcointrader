@@ -67,7 +67,8 @@
     
     <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver" >
       <intent-filter>
-        <action android:name="de.dev.eth0.bitcointrader.UPDATE_ACTION" />
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_SUCCEDED" />
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_FAILED" />
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_SERVICE_ACTION" />
       </intent-filter>
     </receiver>

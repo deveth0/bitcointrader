@@ -16,8 +16,6 @@ import org.joda.money.CurrencyUnit;
 
 public class BitcoinTraderApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-  public static final String UPDATE_ACTION = "de.dev.eth0.bitcointrader.UPDATE_ACTION";
-  public static final String UPDATE_SERVICE_ACTION = "de.dev.eth0.bitcointrader.UPDATE_SERVICE_ACTION";
   private PendingIntent updateServiceActionIntent;
   private Intent exchangeServiceIntent;
   private AccountInfo accountInfo;
@@ -28,7 +26,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     Log.d(TAG, ".onCreate()");
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
-    updateServiceActionIntent = PendingIntent.getBroadcast(this, 0, new Intent(UPDATE_SERVICE_ACTION), 0);
+    updateServiceActionIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.UPDATE_SERVICE_ACTION), 0);
     exchangeServiceIntent = new Intent(this, ExchangeService.class);
     createDataFromPreferences(prefs);
     super.onCreate();
