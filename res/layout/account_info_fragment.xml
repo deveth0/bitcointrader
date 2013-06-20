@@ -10,7 +10,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/font_size_normal"
-    android:textColor="@color/fg_significant"
     android:text="@string/account_info"
   />
   <LinearLayout
@@ -26,15 +25,11 @@
       <TextView
         android:id="@+id/your_wallet_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+        android:layout_height="wrap_content" />
         <de.dev.eth0.bitcointrader.ui.views.AmountTextView
           android:id="@+id/your_wallet_tradefee"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="@color/fg_significant"
-          android:textSize="@dimen/font_size_small" />
+          android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
       android:layout_width="0dp"
@@ -46,15 +41,11 @@
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/your_wallet_btc"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+        android:layout_height="wrap_content"/>
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/your_wallet_dollar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+        android:layout_height="wrap_content"/>
     </LinearLayout>
   </LinearLayout>
 </LinearLayout>

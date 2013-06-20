@@ -2,13 +2,10 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.content.ComponentName;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Resources;
 import android.os.IBinder;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -33,9 +30,7 @@ public class OrderListAdapter extends BaseAdapter {
   private final LayoutInflater inflater;
   private final List<Order> orders = new ArrayList<Order>();
   private boolean showEmptyText = false;
-  private final int colorSignificant;
-  private final Map<String, String> labelCache = new HashMap<String, String>();
-  private static final int VIEW_TYPE_TRANSACTION = 0;
+  private static final int VIEW_TYPE_ORDER = 0;
   private ExchangeService exchangeService;
   private ServiceConnection mConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName className, IBinder binder) {
@@ -50,8 +45,6 @@ public class OrderListAdapter extends BaseAdapter {
   public OrderListAdapter(final Context context) {
     this.context = context;
     inflater = LayoutInflater.from(context);
-    final Resources resources = context.getResources();
-    colorSignificant = resources.getColor(R.color.fg_significant);
     context.bindService(new Intent(context, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
   }
 
@@ -70,9 +63,7 @@ public class OrderListAdapter extends BaseAdapter {
   public void replace(final Collection<Order> orders) {
     this.orders.clear();
     this.orders.addAll(orders);
-
     showEmptyText = true;
-
     notifyDataSetChanged();
   }
 
@@ -100,7 +91,7 @@ public class OrderListAdapter extends BaseAdapter {
 
   @Override
   public int getItemViewType(final int position) {
-    return VIEW_TYPE_TRANSACTION;
+    return VIEW_TYPE_ORDER;
   }
 
   @Override
@@ -110,7 +101,7 @@ public class OrderListAdapter extends BaseAdapter {
 
   public View getView(final int position, View row, final ViewGroup parent) {
     final int type = getItemViewType(position);
-    if (type == VIEW_TYPE_TRANSACTION) {
+    if (type == VIEW_TYPE_ORDER) {
       if (row == null) {
         row = inflater.inflate(R.layout.order_row_extended, null);
       }
@@ -123,8 +114,6 @@ public class OrderListAdapter extends BaseAdapter {
   }
 
   public void bindView(View row, final Order order) {
-
-    int textColor = colorSignificant;
     // ask or bid
     TextView rowAskBid = (TextView) row.findViewById(R.id.order_row_askbid);
     rowAskBid.setText(order.getType().name());
@@ -132,25 +121,21 @@ public class OrderListAdapter extends BaseAdapter {
     // date
     TextView rowDate = (TextView) row.findViewById(R.id.order_row_date);
     rowDate.setText(DateUtils.getRelativeDateTimeString(context, order.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
-    rowDate.setTextColor(textColor);
 
     // amount
     AmountTextView rowAmount = (AmountTextView) row.findViewById(R.id.order_row_amount);
     rowAmount.setAmount(order.getTradableAmount());
-    rowAmount.setTextColor(textColor);
     rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
     // value
     CurrencyTextView rowValue = (CurrencyTextView) row.findViewById(R.id.order_row_value);
     if (order instanceof LimitOrder) {
       LimitOrder lo = (LimitOrder) order;
-      rowValue.setTextColor(textColor);
       rowValue.setAmount(lo.getLimitPrice());
       rowValue.setPrecision(Constants.PRECISION_DOLLAR);
 
       // total
       CurrencyTextView rowTotal = (CurrencyTextView) row.findViewById(R.id.order_row_total);
       rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
-      rowTotal.setTextColor(textColor);
       rowTotal.setAmount(lo.getLimitPrice().multipliedBy(order.getTradableAmount()));
     }
     ImageButton deleteButton = (ImageButton) row.findViewById(R.id.order_row_delete);
@@ -159,11 +144,5 @@ public class OrderListAdapter extends BaseAdapter {
         exchangeService.deleteOrder(order);
       }
     });
-  }
-
-  public void clearLabelCache() {
-    labelCache.clear();
-
-    notifyDataSetChanged();
   }
 }

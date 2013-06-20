@@ -18,18 +18,15 @@
       android:paddingLeft="12dp"
       android:paddingRight="12dp"
       android:text="@string/place_order_perform"
-      android:textColor="@color/fg_significant"
-      android:textSize="@dimen/font_size_small"
       android:textStyle="bold" />
 
-      <Button
-        android:id="@+id/place_order_cancel"
-        android:background="@drawable/btn_default"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:text="@string/place_order_cancel"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+    <Button
+      android:id="@+id/place_order_cancel"
+      android:background="@drawable/btn_default"
+      android:paddingLeft="12dp"
+      android:paddingRight="12dp"
+      android:text="@string/place_order_cancel"
+    />
   </TableRow>
 
 </TableLayout>

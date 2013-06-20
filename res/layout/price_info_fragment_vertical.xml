@@ -11,14 +11,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:textSize="@dimen/font_size_normal"
-    android:textColor="@color/fg_significant"
     android:text="@string/price_info"
   />
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
     android:id="@+id/price_info_current"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/fg_significant"
     android:textSize="@dimen/font_size_normal"/>
   <LinearLayout
     android:layout_width="match_parent"
@@ -34,14 +32,12 @@
         android:id="@+id/price_info_low"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+        />
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/price_info_high"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+      />
     </LinearLayout>
     <LinearLayout
       android:layout_width="0dp"
@@ -54,28 +50,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+      />
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/price_info_bid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="right"
-        android:textColor="@color/fg_significant"
-        android:textSize="@dimen/font_size_small" />
+      />
     </LinearLayout>
   </LinearLayout>
   <de.dev.eth0.bitcointrader.ui.views.AmountTextView
     android:id="@+id/price_info_volume"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/fg_significant"
-    android:textSize="@dimen/font_size_small" />
+  />
   
   <TextView
     android:id="@+id/price_info_lastupdate"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:textColor="@color/fg_significant"
-    android:textSize="@dimen/font_size_small" />
+  />
 </LinearLayout>

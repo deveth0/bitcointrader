@@ -31,7 +31,7 @@
     android:layout_below="@+id/order_row_total"
     android:layout_alignLeft="@+id/order_row_total"
     android:layout_marginRight="8dp"
-    android:textSize="@dimen/font_size_small"/>
+  />
     
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
     android:id="@+id/order_row_value"
@@ -39,7 +39,7 @@
     android:layout_height="wrap_content"
     android:layout_below="@+id/order_row_total"
     android:layout_toRightOf="@+id/order_row_amount" 
-    android:textSize="@dimen/font_size_small" />
+  />
   
   <TextView
     android:id="@+id/order_row_date"
@@ -47,7 +47,7 @@
     android:layout_height="wrap_content"
     android:layout_below="@+id/order_row_amount"
     android:layout_alignLeft="@+id/order_row_total"
-    android:textSize="@dimen/font_size_small" />
+  />
     
   <ImageButton
     android:id="@+id/order_row_delete"

@@ -27,7 +27,6 @@
       android:text="@string/bitcoin_action_buy"
       android:textAllCaps="true"
       android:textColor="@android:color/white"
-      android:textSize="@dimen/font_size_small"
       android:textStyle="bold" />
 
       <Button
@@ -41,7 +40,6 @@
         android:text="@string/bitcoin_action_sell"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/font_size_small"
         android:textStyle="bold" />
   </LinearLayout>
 </LinearLayout>

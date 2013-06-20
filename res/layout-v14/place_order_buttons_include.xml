@@ -22,7 +22,7 @@
       android:layout_weight="1"
       android:maxLines="2"
       android:text="@string/place_order_perform"
-      android:textSize="@dimen/font_size_small" />
+    />
 
     <Button
       android:id="@+id/place_order_cancel"
@@ -32,7 +32,6 @@
       android:layout_weight="1"
       android:maxLines="2"
       android:text="@string/place_order_cancel"
-      android:textSize="@dimen/font_size_small"
       android:textStyle="bold" />
   </LinearLayout>
 

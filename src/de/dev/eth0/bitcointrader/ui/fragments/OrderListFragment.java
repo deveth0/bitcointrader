@@ -103,6 +103,7 @@ public class OrderListFragment extends SherlockListFragment {
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+    updateView();
   }
 
   @Override
@@ -123,11 +124,11 @@ public class OrderListFragment extends SherlockListFragment {
 
   @Override
   public void onPause() {
-    super.onPause();
     if (broadcastReceiver != null) {
       broadcastManager.unregisterReceiver(broadcastReceiver);
       broadcastReceiver = null;
     }
+    super.onPause();
   }
 
   protected void updateView() {
