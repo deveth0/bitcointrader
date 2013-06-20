@@ -5,8 +5,6 @@
 package de.dev.eth0.bitcointrader.service;
 
 import android.app.Activity;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -17,8 +15,6 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,9 +30,7 @@ import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,13 +82,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
     createExchange(prefs);
-//      ExchangeStreamingConfiguration exchangeStreamingConfiguration = new MtGoxStreamingConfiguration(10, 10000, 60000, true, null);
-//      StreamingExchangeService streamingExchangeService = exchange.getStreamingExchangeService(exchangeStreamingConfiguration);
-//
-//      // Open the connections to the exchange
-//      streamingExchangeService.connect();
-//      ExecutorService executorService = Executors.newSingleThreadExecutor();
-//      executorService.submit(new TradeDataRunnable(streamingExchangeService, exchange));
     return Service.START_NOT_STICKY;
   }
 
@@ -109,10 +96,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
-      broadcastUpdateSuccess();
+      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      broadcastUpdate();
     }
-    broadcastUpdateFailure();
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -165,12 +151,16 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
   }
 
+  private void broadcastUpdate(){
+    broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+  }
+  
   private void broadcastUpdateSuccess() {
     broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SUCCEDED));
   }
 
   private void broadcastUpdateFailure() {
-    broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_FAILED));
+    sendBroadcast(new Intent(Constants.UPDATE_FAILED));
   }
 
   private class UpdateTask extends ICSAsyncTask<Void, Void, Boolean> {
@@ -185,7 +175,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         openOrders.removeAll(orders);
         // Order executed
         if (!openOrders.isEmpty()) {
-          notifyOrderExecuted(openOrders);
+          Intent intent = new Intent(Constants.ORDER_EXECUTED);
+          String[] orderIDs = new String[openOrders.size()];
+          for (int i = 0; i < orderIDs.length; i++) {
+            orderIDs[i] = openOrders.get(i).getId();
+          }
+          intent.putExtra(Constants.EXTRA_ORDERS, orderIDs);
+          sendBroadcast(intent);
         }
         openOrders = orders;
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
@@ -201,32 +197,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         return false;
       }
       return true;
-    }
-
-    private void notifyOrderExecuted(List<LimitOrder> executedOrders) {
-      NotificationCompat.Builder mBuilder =
-              new NotificationCompat.Builder(ExchangeService.this)
-              .setSmallIcon(R.drawable.ic_bitcoin)
-              .setContentTitle(ExchangeService.this.getString(R.string.notify_order_executed_title))
-              .setContentText(ExchangeService.this.getString(R.string.notify_order_executed_text));
-      NotificationCompat.BigTextStyle notificationStyle = new NotificationCompat.BigTextStyle();
-      notificationStyle.setBigContentTitle(ExchangeService.this.getString(R.string.notify_order_executed_text));
-      for(LimitOrder lo : executedOrders){
-       notificationStyle.bigText(lo.toString());
-      }
-      mBuilder.setStyle(notificationStyle);
-      Intent resultIntent = new Intent(ExchangeService.this, BitcoinTraderActivity.class);
-      TaskStackBuilder stackBuilder = TaskStackBuilder.create(ExchangeService.this);
-      stackBuilder.addParentStack(BitcoinTraderActivity.class);
-      stackBuilder.addNextIntent(resultIntent);
-      PendingIntent resultPendingIntent =
-              stackBuilder.getPendingIntent(
-              0,
-              PendingIntent.FLAG_UPDATE_CURRENT);
-      mBuilder.setContentIntent(resultPendingIntent);
-      NotificationManager mNotificationManager =
-              (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-      mNotificationManager.notify(123, mBuilder.build());
     }
 
     @Override
@@ -299,8 +269,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           lastUpdate = new Date();
           broadcastUpdateSuccess();
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
       }

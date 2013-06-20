@@ -73,6 +73,14 @@
       </intent-filter>
     </receiver>
     
+    <receiver android:name="de.dev.eth0.bitcointrader.service.NotificationBroadcastReceiver" >
+      <intent-filter>
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_FAILED" />
+        <action android:name="de.dev.eth0.bitcointrader.UPDATE_SUCCEDED" />
+        <action android:name="de.dev.eth0.bitcointrader.ORDER_EXECUTED" />
+      </intent-filter>
+    </receiver>
+    
     <service
       android:name="de.dev.eth0.bitcointrader.service.ExchangeService"
     />
