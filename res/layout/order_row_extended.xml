@@ -3,9 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="8dp"
+                android:paddingBottom="@dimen/default_padding"
                 android:paddingLeft="@dimen/list_entry_padding_horizontal"
-                android:paddingTop="8dp"
+                android:paddingTop="@dimen/default_padding"
 >
   <TextView
     android:id="@+id/order_row_askbid"
@@ -30,7 +30,7 @@
     android:layout_height="wrap_content"
     android:layout_below="@+id/order_row_total"
     android:layout_alignLeft="@+id/order_row_total"
-    android:layout_marginRight="8dp"
+    android:layout_marginRight="@dimen/default_padding"
   />
     
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
@@ -54,7 +54,7 @@
     style="@style/My.Widget.Button.Borderless"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
+    android:layout_marginLeft="@dimen/default_padding"
     android:layout_alignParentRight="true"
     android:layout_centerVertical="true"
     android:src="@drawable/ic_action_delete_dark" />

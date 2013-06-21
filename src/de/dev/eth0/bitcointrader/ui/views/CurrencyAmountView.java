@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,11 @@ import android.widget.TextView;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public final class CurrencyAmountView extends FrameLayout {
 
+  private static final String TAG = CurrencyAmountView.class.getSimpleName();
   private TextView textView;
   private View contextButton;
   private int significantColor, lessSignificantColor, errorColor;
@@ -89,7 +92,13 @@ public final class CurrencyAmountView extends FrameLayout {
   }
 
   public BigDecimal getAmount() {
-    return new BigDecimal(textView.getText().toString());
+    try {
+      return new BigDecimal(textView.getText().toString());
+    }
+    catch (NumberFormatException nfe) {
+      Log.w(TAG, "getAmount", nfe);
+      return new BigDecimal(BigInteger.ZERO);
+    }
   }
 
   public void setAmount(BigDecimal amount) {

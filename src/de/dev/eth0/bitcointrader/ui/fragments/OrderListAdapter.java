@@ -1,12 +1,15 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import java.util.Collection;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.preference.DialogPreference;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -141,7 +144,18 @@ public class OrderListAdapter extends BaseAdapter {
     ImageButton deleteButton = (ImageButton) row.findViewById(R.id.order_row_delete);
     deleteButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        exchangeService.deleteOrder(order);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setPositiveButton(R.string.button_delete_order_confirm, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            exchangeService.deleteOrder(order);
+          }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.button_delete_order_cancel, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        });
+        alertDialogBuilder.setMessage(context.getString(R.string.button_delete_order_text, order.toString()));
+        alertDialogBuilder.create().show();
       }
     });
   }

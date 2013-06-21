@@ -11,7 +11,9 @@
   <string name="bitcoin_action_buy">Buy</string>
   <string name="bitcoin_action_sell">Sell</string>
   <string name="button_delete_order">Delete Order.</string>
-  <string name="button_delete">Delete foo </string>
+  <string name="button_delete_order_text">Do you really want to delete the following order:\n%s</string>
+  <string name="button_delete_order_confirm">Confirm</string>
+  <string name="button_delete_order_cancel">Cancel</string>
 
   <string name="account_info">Your Account</string>
   <string name="account_info_trade_fee_label">Trade Fee:</string>
@@ -25,6 +27,7 @@
 
   <string name="notify_order_executed_title">Orders executed</string>
   <string name="notify_order_executed_text">One or more orders have been executed</string>
+  <string name="notify_update_success_text">Update successful!</string>
   <string name="notify_update_failed_title">Update failed!</string>
   <string name="notify_update_failed_text">There has been an error</string>
 
@@ -37,6 +40,9 @@
   <string name="place_order_perform">Place Order</string>
   <string name="place_order_cancel">Cancel</string>
   <string name="place_order_submitting">Submitting Order</string>
+  <string name="place_order_invalid">Please validate your input</string>
+  <string name="place_order_success">Order created (%s)</string>
+  <string name="place_order_failed">Could not create order</string>
     
   <string name="about_title">About</string>
   <string name="about_author_twitter_title">Author at Twitter</string>

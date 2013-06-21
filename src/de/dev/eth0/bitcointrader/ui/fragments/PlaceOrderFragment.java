@@ -53,8 +53,8 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
 
-    this.activity = (AbstractBitcoinTraderActivity) activity;
-    application = (BitcoinTraderApplication) activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity)activity;
+    application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -87,11 +87,11 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
-    orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
+    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
     ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
             R.layout.spinner_item, Order.OrderType.values());
     orderTypeSpinner.setAdapter(adapter);
-    amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
+    amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
     amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
       public void onClick(final View v) {
@@ -104,22 +104,31 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
         }
       }
     });
-    amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
+    amountViewText = (EditText)view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
-
-    priceView = (CurrencyAmountView) view.findViewById(R.id.place_order_price);
+    priceView = (CurrencyAmountView)view.findViewById(R.id.place_order_price);
     priceView.setCurrencyCode(Constants.CURRENCY_CODE_DOLLAR);
-    priceViewText = (EditText) view.findViewById(R.id.place_order_price_text);
+    priceView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
+      public void onClick(final View v) {
+        Ticker ticker = getExchangeService().getTicker();
+        if (ticker != null && ticker.getLast().getAmount() != BigDecimal.ZERO) {
+          priceView.setAmount(ticker.getLast().getAmount());
+        }
+      }
+    });
+
+
+    priceViewText = (EditText)view.findViewById(R.id.place_order_price_text);
     priceViewText.addTextChangedListener(valueChangedListener);
 
-    marketOrderCheckbox = (CheckBox) view.findViewById(R.id.place_order_marketorder);
+    marketOrderCheckbox = (CheckBox)view.findViewById(R.id.place_order_marketorder);
     marketOrderCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         Ticker ticker = getExchangeService().getTicker();
         if (ticker != null) {
           priceView.setEnabled(!isChecked);
-          Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+          Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
           priceViewText.setText(type.equals(Order.OrderType.ASK)
                   ? ticker.getAsk().getAmount().toString()
                   : ticker.getBid().getAmount().toString());
@@ -129,21 +138,22 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       }
     });
 
-    totalView = (CurrencyTextView) view.findViewById(R.id.place_order_total);
+    totalView = (CurrencyTextView)view.findViewById(R.id.place_order_total);
 
-    viewGo = (Button) view.findViewById(R.id.place_order_perform);
+    viewGo = (Button)view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
 
         if (everythingValid()) {
           handleGo();
-        } else {
-          Toast.makeText(activity, "something wrong..", Toast.LENGTH_SHORT).show();
+        }
+        else {
+          Toast.makeText(activity, R.string.place_order_invalid, Toast.LENGTH_LONG).show();
         }
       }
     });
 
-    viewCancel = (Button) view.findViewById(R.id.place_order_cancel);
+    viewCancel = (Button)view.findViewById(R.id.place_order_cancel);
     viewCancel.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
         activity.setResult(Activity.RESULT_CANCELED);
@@ -162,7 +172,6 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
-
       Double amountInt = Double.valueOf(amount.toString());
       BigMoney priceInt = BigMoney.parse("USD " + price.toString());
       totalView.setAmount(priceInt.multipliedBy(amountInt));
@@ -171,7 +180,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private void handleGo() {
     Order order;
-    Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+    Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
     boolean marketOrder = marketOrderCheckbox.isChecked();
     Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
     Double price = Double.parseDouble(priceViewText.getEditableText().toString());
@@ -179,7 +188,8 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     if (marketOrder) {
       order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", "USD");
       //application.getExchange().getPollingTradeService().placeMarketOrder(order);
-    } else {
+    }
+    else {
       order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
       //application.getExchange().getPollingTradeService().placeLimitOrder(order);
     }

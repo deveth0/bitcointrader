@@ -29,11 +29,11 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     if (intent.getAction().equals(Constants.UPDATE_FAILED)) {
       notifyUpdateFailed(context);
     }
-    if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
-      NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    else if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
+      NotificationManager notificationmanager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
       notificationmanager.cancel(UPDATE_FAILED_NOTIFICATION_ID);
     }
-    if (intent.getAction().equals(Constants.ORDER_EXECUTED)) {
+    else if (intent.getAction().equals(Constants.ORDER_EXECUTED)) {
       // get orders
       //intent.get
       notifyOrderExecuted(context, intent.getStringArrayExtra(Constants.EXTRA_ORDERS));
@@ -53,7 +53,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(resultPendingIntent);
     mBuilder.setAutoCancel(true);
-    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     mNotificationManager.notify(UPDATE_FAILED_NOTIFICATION_ID, mBuilder.build());
   }
 
@@ -76,7 +76,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(resultPendingIntent);
     mBuilder.setAutoCancel(true);
-    NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     mNotificationManager.notify(ORDER_EXECUTED_NOTIFICATION_ID, mBuilder.build());
   }
 }

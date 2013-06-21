@@ -66,6 +66,7 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+    updateView();
   }
 
   @Override
@@ -88,6 +89,7 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);
     viewTradeFee.setPostfix("%");
     viewTradeFee.setPrefix(getActivity().getString(R.string.account_info_trade_fee_label));
+    updateView();
   }
 
   private void updateView() {

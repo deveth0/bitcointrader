@@ -47,7 +47,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.application = (BitcoinTraderApplication) activity.getApplication();
-    this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.activity = (AbstractBitcoinTraderActivity)activity;
   }
 
   @Override
@@ -86,6 +86,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
     viewPriceInfoLastUpdate = (TextView) view.findViewById(R.id.price_info_lastupdate);
     dateFormat = android.text.format.DateFormat.getDateFormat(activity);
     timeFormat = android.text.format.DateFormat.getTimeFormat(activity);
+    updateView();
   }
 
   private void updateView() {

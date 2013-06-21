@@ -3,8 +3,8 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:paddingLeft="8dp"
-              android:paddingRight="8dp"
+              android:paddingLeft="@dimen/default_padding"
+              android:paddingRight="@dimen/default_padding"
               android:orientation="vertical">
   <TextView
     android:layout_width="match_parent"
@@ -20,23 +20,21 @@
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_weight="1"
-      android:background="#abc"
       android:orientation="vertical">
       <TextView
         android:id="@+id/your_wallet_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-        <de.dev.eth0.bitcointrader.ui.views.AmountTextView
-          android:id="@+id/your_wallet_tradefee"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"/>
+      <de.dev.eth0.bitcointrader.ui.views.AmountTextView
+        android:id="@+id/your_wallet_tradefee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:orientation="vertical"
       android:gravity="right"
-      android:background="#def"
       android:layout_weight="1">
       <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
         android:id="@+id/your_wallet_btc"

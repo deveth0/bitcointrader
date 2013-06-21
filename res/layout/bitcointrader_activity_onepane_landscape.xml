@@ -24,7 +24,7 @@
       <fragment
         android:id="@+id/bitcointrader_price_info_fragment"
         android:name="de.dev.eth0.bitcointrader.ui.fragments.PriceInfoFragment"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/default_padding"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     </LinearLayout>

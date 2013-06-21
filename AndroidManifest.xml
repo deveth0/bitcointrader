@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="de.dev.eth0"
           android:installLocation="internalOnly"
-          android:versionCode="1"
-          android:versionName="0.2-snapshot" >
+          android:versionCode="2"
+          android:versionName="0.5-snapshot" >
 
   <uses-sdk
     android:minSdkVersion="10"

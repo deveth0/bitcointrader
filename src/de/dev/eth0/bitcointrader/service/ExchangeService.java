@@ -51,7 +51,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void) null);
+        executeTask(new UpdateTask(), (Void)null);
       }
     }
   };
@@ -96,7 +96,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
   }
@@ -151,12 +151,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
   }
 
-  private void broadcastUpdate(){
+  private void broadcastUpdate() {
     broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
   }
-  
+
   private void broadcastUpdateSuccess() {
-    broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SUCCEDED));
+    sendBroadcast(new Intent(Constants.UPDATE_SUCCEDED));
   }
 
   private void broadcastUpdateFailure() {
@@ -187,11 +187,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
         lastUpdate = new Date();
         broadcastUpdateSuccess();
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
         return false;
-      } catch (HttpException uhe) {
+      }
+      catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
@@ -201,7 +203,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected void onPostExecute(Boolean success) {
-      Toast.makeText(ExchangeService.this, "Update performed " + (success ? "successfully" : "unsuccessfully"), Toast.LENGTH_LONG).show();
+
+      Toast.makeText(ExchangeService.this,
+              (success
+              ? R.string.notify_update_success_text
+              : R.string.notify_update_failed_title), Toast.LENGTH_LONG).show();
     }
   };
 
@@ -209,7 +215,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected Boolean doInBackground(Order... params) {
-      Log.d(TAG, "performing update...");
+      Log.d(TAG, "Deleting order");
       try {
         if (params.length == 1) {
           boolean ret = exchange.getPollingTradeService().cancelOrder(params[0].getId());
@@ -217,7 +223,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           broadcastUpdateSuccess();
           return ret;
         }
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
       }
@@ -249,8 +256,16 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected void onPostExecute(String orderId) {
-      Toast.makeText(ExchangeService.this, "Order created:" + orderId, Toast.LENGTH_LONG).show();
+      if (!TextUtils.isEmpty(orderId)) {
+        Toast.makeText(ExchangeService.this,
+                ExchangeService.this.getString(R.string.place_order_success, orderId), Toast.LENGTH_LONG).show();
+      }
+      else {
+        Toast.makeText(ExchangeService.this,
+                ExchangeService.this.getString(R.string.place_order_failed, orderId), Toast.LENGTH_LONG).show();
+      }
       mDialog.dismiss();
+
     }
 
     @Override
@@ -260,20 +275,24 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (params.length == 1) {
           Order order = params[0];
           if (order instanceof MarketOrder) {
-            MarketOrder mo = (MarketOrder) order;
+            MarketOrder mo = (MarketOrder)order;
             ret = exchange.getPollingTradeService().placeMarketOrder(mo);
-          } else if (order instanceof LimitOrder) {
-            LimitOrder lo = (LimitOrder) order;
+          }
+          else if (order instanceof LimitOrder) {
+            LimitOrder lo = (LimitOrder)order;
             ret = exchange.getPollingTradeService().placeLimitOrder(lo);
           }
           lastUpdate = new Date();
           broadcastUpdateSuccess();
         }
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
       }
-      activity.setResult(TextUtils.isEmpty(ret) ? Activity.RESULT_CANCELED : Activity.RESULT_OK);
+      if (!TextUtils.isEmpty(ret)) {
+        activity.setResult(Activity.RESULT_OK);
+      }
       activity.finish();
       return ret;
     }
