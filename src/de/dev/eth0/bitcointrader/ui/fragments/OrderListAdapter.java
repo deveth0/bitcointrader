@@ -1,15 +1,10 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.AlertDialog;
-import android.content.ComponentName;
 import java.util.Collection;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
-import android.preference.DialogPreference;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +15,9 @@ import android.widget.TextView;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.service.ExchangeService;
+import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.util.ArrayList;
@@ -29,26 +25,17 @@ import java.util.List;
 
 public class OrderListAdapter extends BaseAdapter {
 
-  private final Context context;
+  private final AbstractBitcoinTraderActivity activity;
+  private final BitcoinTraderApplication application;
   private final LayoutInflater inflater;
   private final List<Order> orders = new ArrayList<Order>();
   private boolean showEmptyText = false;
   private static final int VIEW_TYPE_ORDER = 0;
-  private ExchangeService exchangeService;
-  private ServiceConnection mConnection = new ServiceConnection() {
-    public void onServiceConnected(ComponentName className, IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
-    }
 
-    public void onServiceDisconnected(ComponentName className) {
-      exchangeService = null;
-    }
-  };
-
-  public OrderListAdapter(final Context context) {
-    this.context = context;
-    inflater = LayoutInflater.from(context);
-    context.bindService(new Intent(context, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
+  public OrderListAdapter(AbstractBitcoinTraderActivity activity) {
+    this.activity = activity;
+    this.application = activity.getBitcoinTraderApplication();
+    inflater = LayoutInflater.from(activity);
   }
 
   public void clear() {
@@ -124,7 +111,7 @@ public class OrderListAdapter extends BaseAdapter {
 
     // date
     TextView rowDate = (TextView)row.findViewById(R.id.order_row_date);
-    rowDate.setText(DateUtils.getRelativeDateTimeString(context, order.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+    rowDate.setText(DateUtils.getRelativeDateTimeString(activity, order.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
 
     // amount
     AmountTextView rowAmount = (AmountTextView)row.findViewById(R.id.order_row_amount);
@@ -143,17 +130,17 @@ public class OrderListAdapter extends BaseAdapter {
     ImageButton deleteButton = (ImageButton)row.findViewById(R.id.order_row_delete);
     deleteButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
         alertDialogBuilder.setPositiveButton(R.string.button_delete_order_confirm, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
-            exchangeService.deleteOrder(order);
+            application.getExchangeService().deleteOrder(order);
           }
         });
         alertDialogBuilder.setNegativeButton(R.string.button_delete_order_cancel, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
           }
         });
-        alertDialogBuilder.setMessage(context.getString(R.string.button_delete_order_text, order.getType().toString(), order.getTradableAmount()));
+        alertDialogBuilder.setMessage(activity.getString(R.string.button_delete_order_text, order.getType().toString(), order.getTradableAmount()));
         alertDialogBuilder.create().show();
       }
     });

@@ -36,19 +36,18 @@
     android:theme="@style/My.Theme" > >
       
     <activity
-      android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
-      android:configChanges="orientation|keyboard|keyboardHidden"
-      android:launchMode="singleInstance" />
-
-    <activity-alias
-      android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
-      android:targetActivity="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity" >
+      android:name="de.dev.eth0.bitcointrader.ui.StartScreenActivity"
+      android:configChanges="orientation|keyboard|keyboardHidden">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-    </activity-alias>
+    </activity>
+
+    <activity
+      android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
+      android:configChanges="orientation|keyboard|keyboardHidden"
+      android:launchMode="singleTask" />
         
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.AboutActivity"

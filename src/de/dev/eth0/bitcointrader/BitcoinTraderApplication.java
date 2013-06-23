@@ -3,13 +3,15 @@ package de.dev.eth0.bitcointrader;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 
@@ -17,8 +19,18 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
 
   private PendingIntent updateServiceActionIntent;
   private Intent exchangeServiceIntent;
-  private AccountInfo accountInfo;
   private static final String TAG = BitcoinTraderApplication.class.getSimpleName();
+  private ExchangeService exchangeService;
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
+    public void onServiceConnected(final ComponentName name, final IBinder binder) {
+      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
+      BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+    }
+
+    public void onServiceDisconnected(final ComponentName name) {
+      exchangeService = null;
+    }
+  };
 
   @Override
   public void onCreate() {
@@ -27,9 +39,9 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     prefs.registerOnSharedPreferenceChangeListener(this);
     updateServiceActionIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.UPDATE_SERVICE_ACTION), 0);
     exchangeServiceIntent = new Intent(this, ExchangeService.class);
+    this.bindService(exchangeServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     createDataFromPreferences(prefs);
     super.onCreate();
-
     CrashReporter.init(getCacheDir());
   }
 
@@ -74,15 +86,15 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     }
   }
 
-  public AccountInfo getAccountInfo() {
-    return accountInfo;
-  }
-
   public void startExchangeService() {
     startService(exchangeServiceIntent);
   }
 
   public void stopExchangeService() {
     stopService(exchangeServiceIntent);
+  }
+
+  public ExchangeService getExchangeService() {
+    return exchangeService;
   }
 }

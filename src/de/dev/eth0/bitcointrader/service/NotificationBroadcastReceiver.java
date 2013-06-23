@@ -14,6 +14,7 @@ import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 /**
  *
  * @author deveth0
+ * @TODO: Notify on withdraw and received money
  */
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 

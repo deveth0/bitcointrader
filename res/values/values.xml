@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-  <string name="symbol_bid">→</string>
-  <string name="symbol_ask">←</string>
-
-</resources>

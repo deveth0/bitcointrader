@@ -2,12 +2,8 @@
 <resources>
   <string name="app_name">Bitcoin Trader</string>
 
-  <string name="bitcoin_order_tab_ask">Ask</string>
-  <string name="bitcoin_order_tab_bid">Bid</string>
-  <string name="bitcoin_order_tab_both">Both</string>
-  <string name="bitcoin_order_fragment_empty_text_ask">No Ask Orders.</string>
-  <string name="bitcoin_order_fragment_empty_text_both">No Open Orders.</string>
-  <string name="bitcoin_order_fragment_empty_text_bid">No Bid Orders.</string>
+  <string name="connecting_info">Connecting...</string>
+  <string name="bitcoin_order_fragment_empty_text">No Open Orders.</string>
   <string name="bitcoin_action_buy">Buy</string>
   <string name="bitcoin_action_sell">Sell</string>
   <string name="button_delete_order">Delete Order.</string>

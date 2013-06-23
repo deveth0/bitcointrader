@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import com.actionbarsherlock.app.SherlockFragment;
+import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 
@@ -20,44 +21,18 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
  */
 public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
 
-  private ExchangeService exchangeService;
   private AbstractBitcoinTraderActivity activity;
-  private ServiceConnection mConnection = new ServiceConnection() {
-    public void onServiceConnected(ComponentName className, IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
-      // notify fragments that service has become available
-      updateView();
-    }
-
-    public void onServiceDisconnected(ComponentName className) {
-      exchangeService = null;
-    }
-  };
+  private BitcoinTraderApplication application;
 
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity)activity;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
-    activity.bindService(new Intent(activity, ExchangeService.class), mConnection, Context.BIND_AUTO_CREATE);
-  }
-
-  @Override
-  public void onPause() {
-    activity.unbindService(mConnection);
-    super.onPause();
+    this.application = this.activity.getBitcoinTraderApplication();
   }
 
   protected ExchangeService getExchangeService() {
-    return exchangeService;
+    return application.getExchangeService();
   }
 
-  /**
-   * Triggered when service is connected
-   */
-  public abstract void updateView();
 }
