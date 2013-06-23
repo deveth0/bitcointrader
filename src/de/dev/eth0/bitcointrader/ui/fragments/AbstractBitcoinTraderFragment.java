@@ -24,7 +24,9 @@ public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
   private AbstractBitcoinTraderActivity activity;
   private ServiceConnection mConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName className, IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
+      // notify fragments that service has become available
+      updateView();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -35,7 +37,7 @@ public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.activity = (AbstractBitcoinTraderActivity)activity;
   }
 
   @Override
@@ -46,11 +48,16 @@ public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
 
   @Override
   public void onPause() {
-    super.onPause();
     activity.unbindService(mConnection);
+    super.onPause();
   }
 
   protected ExchangeService getExchangeService() {
     return exchangeService;
   }
+
+  /**
+   * Triggered when service is connected
+   */
+  public abstract void updateView();
 }

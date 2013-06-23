@@ -20,6 +20,11 @@
       android:key="general_update"
       android:entries="@array/listUpdateWord"
       android:entryValues="@array/listUpdateValue" />
+    <CheckBoxPreference
+      android:title="@string/preferences_general_notify_on_update_title"
+      android:defaultValue="false"
+      android:summary="@string/preferences_general_notify_on_update_summary"
+      android:key="general_notify_on_update" />
   </PreferenceCategory>
   
   <PreferenceCategory android:title="@string/preferences_category_labs" >

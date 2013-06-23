@@ -119,7 +119,12 @@ public final class CurrencyAmountView extends FrameLayout {
   public void setContextButton(final int contextButtonResId, final OnClickListener contextButtonClickListener) {
     this.contextButtonDrawable = getContext().getResources().getDrawable(contextButtonResId);
     this.contextButtonClickListener = contextButtonClickListener;
+    updateAppearance();
+  }
 
+  public void removeContextButton() {
+    this.contextButtonDrawable = null;
+    this.contextButtonClickListener = null;
     updateAppearance();
   }
 

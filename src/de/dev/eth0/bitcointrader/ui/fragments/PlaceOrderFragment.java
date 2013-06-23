@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -87,37 +88,34 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
-    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
-    ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
-            R.layout.spinner_item, Order.OrderType.values());
-    orderTypeSpinner.setAdapter(adapter);
     amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
-    amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
-      public void onClick(final View v) {
-        MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
-        if (mtgoxaccountInfo != null) {
-          AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
-          if (accountInfo != null) {
-            amountView.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount());
-          }
-        }
-      }
-    });
     amountViewText = (EditText)view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
     priceView = (CurrencyAmountView)view.findViewById(R.id.place_order_price);
     priceView.setCurrencyCode(Constants.CURRENCY_CODE_DOLLAR);
-    priceView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
-      public void onClick(final View v) {
-        Ticker ticker = getExchangeService().getTicker();
-        if (ticker != null && ticker.getLast().getAmount() != BigDecimal.ZERO) {
-          priceView.setAmount(ticker.getLast().getAmount());
+    enablePriceViewContextButton();
+
+    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
+    ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
+            R.layout.spinner_item, Order.OrderType.values());
+    orderTypeSpinner.setAdapter(adapter);
+    orderTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // if ask has been selected, we need a context button on amount to select all
+        if (parent.getItemAtPosition(position).equals(Order.OrderType.ASK)) {
+          enableAmountViewContextButton();
+        }
+        // remove context button from amount if buying bitcoins
+        else if (parent.getItemAtPosition(position).equals(Order.OrderType.BID)) {
+          amountView.removeContextButton();
         }
       }
-    });
 
+      public void onNothingSelected(AdapterView<?> parent) {
+      }
+    });
 
     priceViewText = (EditText)view.findViewById(R.id.place_order_price_text);
     priceViewText.addTextChangedListener(valueChangedListener);
@@ -168,7 +166,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     super.onResume();
   }
 
-  protected void updateView() {
+  public void updateView() {
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
@@ -176,6 +174,31 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       BigMoney priceInt = BigMoney.parse("USD " + price.toString());
       totalView.setAmount(priceInt.multipliedBy(amountInt));
     }
+  }
+
+  private void enableAmountViewContextButton() {
+    amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
+      public void onClick(final View v) {
+        MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
+        if (mtgoxaccountInfo != null) {
+          AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
+          if (accountInfo != null) {
+            amountView.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount());
+          }
+        }
+      }
+    });
+  }
+
+  private void enablePriceViewContextButton() {
+    priceView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
+      public void onClick(final View v) {
+        Ticker ticker = getExchangeService().getTicker();
+        if (ticker != null && ticker.getLast().getAmount() != BigDecimal.ZERO) {
+          priceView.setAmount(ticker.getLast().getAmount());
+        }
+      }
+    });
   }
 
   private void handleGo() {
@@ -187,11 +210,9 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
     if (marketOrder) {
       order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", "USD");
-      //application.getExchange().getPollingTradeService().placeMarketOrder(order);
     }
     else {
       order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
-      //application.getExchange().getPollingTradeService().placeLimitOrder(order);
     }
     getExchangeService().placeOrder(order, activity);
 
@@ -211,6 +232,14 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     for (int i = 0; i < orderTypeSpinner.getCount(); i++) {
       if (orderTypeSpinner.getItemAtPosition(i).equals(ordertype)) {
         orderTypeSpinner.setSelection(i);
+        switch (ordertype) {
+          case ASK:
+            enablePriceViewContextButton();
+            return;
+          case BID:
+            amountView.removeContextButton();
+            return;
+        }
         return;
       }
     }

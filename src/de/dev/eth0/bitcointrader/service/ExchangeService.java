@@ -44,6 +44,7 @@ import si.mazi.rescu.HttpException;
  */
 public class ExchangeService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+  private boolean notifyOnUpdate;
   private static final String TAG = ExchangeService.class.getSimpleName();
   private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
@@ -81,6 +82,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   public int onStartCommand(Intent intent, int flags, int startId) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
+    notifyOnUpdate = prefs.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
     createExchange(prefs);
     return Service.START_NOT_STICKY;
   }
@@ -104,6 +106,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (key.equals(Constants.PREFS_KEY_MTGOX_APIKEY) || key.equals(Constants.PREFS_KEY_MTGOX_SECRETKEY)) {
       createExchange(sharedPreferences);
+    }
+    if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
+      notifyOnUpdate = sharedPreferences.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
     }
   }
 
@@ -170,8 +175,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, "performing update...");
       try {
         accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
+        //@TODO: don't trigger order executed notification on order delete
         List<LimitOrder> orders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
-        //@TODO: fix filtering (removeAll does not remove the actual orders
         openOrders.removeAll(orders);
         // Order executed
         if (!openOrders.isEmpty()) {
@@ -203,11 +208,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected void onPostExecute(Boolean success) {
-
-      Toast.makeText(ExchangeService.this,
-              (success
-              ? R.string.notify_update_success_text
-              : R.string.notify_update_failed_title), Toast.LENGTH_LONG).show();
+      if (success && notifyOnUpdate) {
+        Toast.makeText(ExchangeService.this,
+                R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
+      }
+      else if (!success) {
+        Toast.makeText(ExchangeService.this,
+                R.string.notify_update_failed_title, Toast.LENGTH_LONG).show();
+      }
     }
   };
 
@@ -220,7 +228,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (params.length == 1) {
           boolean ret = exchange.getPollingTradeService().cancelOrder(params[0].getId());
           lastUpdate = new Date();
-          broadcastUpdateSuccess();
+          broadcastUpdate();
           return ret;
         }
       }

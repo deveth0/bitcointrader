@@ -31,6 +31,7 @@ public class AmountTextView extends TextView {
 
   public void setPrecision(int precision) {
     this.precision = precision;
+    updateView();
   }
 
   public void setPrefix(String prefix) {

@@ -89,7 +89,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
     updateView();
   }
 
-  private void updateView() {
+  public void updateView() {
     Log.d(TAG, ".updateView");
     if (getExchangeService() != null) {
       Ticker ticker = getExchangeService().getTicker();

@@ -20,11 +20,4 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
     return application;
   }
 
-  protected final void toast(final String text, final Object... formatArgs) {
-    toast(text, 0, Toast.LENGTH_SHORT, formatArgs);
-  }
-
-  protected final void longToast(final String text, final Object... formatArgs) {
-    toast(text, 0, Toast.LENGTH_LONG, formatArgs);
-  }
 }

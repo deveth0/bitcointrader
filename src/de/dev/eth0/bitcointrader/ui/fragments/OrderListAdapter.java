@@ -37,7 +37,7 @@ public class OrderListAdapter extends BaseAdapter {
   private ExchangeService exchangeService;
   private ServiceConnection mConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName className, IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
     }
 
     public void onServiceDisconnected(ComponentName className) {
@@ -110,7 +110,8 @@ public class OrderListAdapter extends BaseAdapter {
       }
       final Order tx = getItem(position);
       bindView(row, tx);
-    } else {
+    }
+    else {
       throw new IllegalStateException("unknown type: " + type);
     }
     return row;
@@ -118,30 +119,28 @@ public class OrderListAdapter extends BaseAdapter {
 
   public void bindView(View row, final Order order) {
     // ask or bid
-    TextView rowAskBid = (TextView) row.findViewById(R.id.order_row_askbid);
+    TextView rowAskBid = (TextView)row.findViewById(R.id.order_row_askbid);
     rowAskBid.setText(order.getType().name());
 
     // date
-    TextView rowDate = (TextView) row.findViewById(R.id.order_row_date);
+    TextView rowDate = (TextView)row.findViewById(R.id.order_row_date);
     rowDate.setText(DateUtils.getRelativeDateTimeString(context, order.getTimestamp().getTime(), DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
 
     // amount
-    AmountTextView rowAmount = (AmountTextView) row.findViewById(R.id.order_row_amount);
+    AmountTextView rowAmount = (AmountTextView)row.findViewById(R.id.order_row_amount);
     rowAmount.setAmount(order.getTradableAmount());
     rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
     // value
-    CurrencyTextView rowValue = (CurrencyTextView) row.findViewById(R.id.order_row_value);
+    CurrencyTextView rowValue = (CurrencyTextView)row.findViewById(R.id.order_row_value);
+    CurrencyTextView rowTotal = (CurrencyTextView)row.findViewById(R.id.order_row_total);
+    rowValue.setPrecision(Constants.PRECISION_DOLLAR);
+    rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
     if (order instanceof LimitOrder) {
-      LimitOrder lo = (LimitOrder) order;
+      LimitOrder lo = (LimitOrder)order;
       rowValue.setAmount(lo.getLimitPrice());
-      rowValue.setPrecision(Constants.PRECISION_DOLLAR);
-
-      // total
-      CurrencyTextView rowTotal = (CurrencyTextView) row.findViewById(R.id.order_row_total);
-      rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
       rowTotal.setAmount(lo.getLimitPrice().multipliedBy(order.getTradableAmount()));
     }
-    ImageButton deleteButton = (ImageButton) row.findViewById(R.id.order_row_delete);
+    ImageButton deleteButton = (ImageButton)row.findViewById(R.id.order_row_delete);
     deleteButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -154,7 +153,7 @@ public class OrderListAdapter extends BaseAdapter {
           public void onClick(DialogInterface dialog, int which) {
           }
         });
-        alertDialogBuilder.setMessage(context.getString(R.string.button_delete_order_text, order.toString()));
+        alertDialogBuilder.setMessage(context.getString(R.string.button_delete_order_text, order.getType().toString(), order.getTradableAmount()));
         alertDialogBuilder.create().show();
       }
     });

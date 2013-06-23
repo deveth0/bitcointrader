@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dev.eth0.bitcointrader.service;
 
 import android.app.NotificationManager;

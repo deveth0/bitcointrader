@@ -34,13 +34,9 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   private LocalBroadcastManager broadcastManager;
 
   @Override
-  public void onActivityCreated(final Bundle savedInstanceState) {
-    super.onActivityCreated(savedInstanceState);
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
+  public void onStart() {
+    super.onStart();
+    updateView();
   }
 
   @Override
@@ -89,10 +85,9 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);
     viewTradeFee.setPostfix("%");
     viewTradeFee.setPrefix(getActivity().getString(R.string.account_info_trade_fee_label));
-    updateView();
   }
 
-  private void updateView() {
+  public void updateView() {
     Log.d(TAG, ".updateView");
     if (getExchangeService() != null) {
       MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();

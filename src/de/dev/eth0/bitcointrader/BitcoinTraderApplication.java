@@ -11,8 +11,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
-import java.util.ArrayList;
-import org.joda.money.CurrencyUnit;
+import de.dev.eth0.bitcointrader.util.CrashReporter;
 
 public class BitcoinTraderApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -30,12 +29,14 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     exchangeServiceIntent = new Intent(this, ExchangeService.class);
     createDataFromPreferences(prefs);
     super.onCreate();
+
+    CrashReporter.init(getCacheDir());
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     Log.d(TAG, ".onSharedPreferenceChanged(" + key + ")");
     if (Constants.PREFS_KEY_GENERAL_UPDATE.equals(key)) {
-      AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       alarmManager.cancel(updateServiceActionIntent);
       createAutoUpdater(sharedPreferences);
     }
@@ -44,8 +45,18 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   public final String applicationVersionName() {
     try {
       return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-    } catch (NameNotFoundException x) {
+    }
+    catch (NameNotFoundException x) {
       return "unknown";
+    }
+  }
+
+  public final int applicationVersionCode() {
+    try {
+      return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+    }
+    catch (NameNotFoundException x) {
+      return 0;
     }
   }
 
@@ -58,7 +69,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     String autoUpdateInt = prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0");
     int autoUpdateInterval = Integer.parseInt(autoUpdateInt);
     if (autoUpdateInterval > 0) {
-      AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
       alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, autoUpdateInterval * 60 * 1000, updateServiceActionIntent);
     }
   }
