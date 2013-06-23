@@ -236,6 +236,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
       }
+      catch (HttpException uhe) {
+        Log.e(TAG, "HttpException", uhe);
+        broadcastUpdateFailure();
+        return false;
+      }
       return false;
     }
 
@@ -296,6 +301,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
       catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
+        broadcastUpdateFailure();
+      }
+      catch (HttpException uhe) {
+        Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
       }
       if (!TextUtils.isEmpty(ret)) {
