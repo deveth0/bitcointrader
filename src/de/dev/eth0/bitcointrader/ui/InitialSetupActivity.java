@@ -100,6 +100,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     protected void onPreExecute() {
       dialog = new ProgressDialog(InitialSetupActivity.this);
       dialog.setMessage(getString(R.string.initial_setup_testing));
+      dialog.setCancelable(false);
       dialog.show();
     }
 

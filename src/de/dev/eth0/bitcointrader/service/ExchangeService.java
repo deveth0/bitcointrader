@@ -275,6 +275,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     protected void onPreExecute() {
       mDialog = new ProgressDialog(activity);
       mDialog.setMessage(getString(R.string.place_order_submitting));
+      mDialog.setCancelable(false);
       mDialog.show();
     }
 

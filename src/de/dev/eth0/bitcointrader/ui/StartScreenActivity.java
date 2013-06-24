@@ -106,6 +106,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
   private void connect() {
     mDialog = new ProgressDialog(this);
     mDialog.setMessage(getString(R.string.connecting_info));
+    mDialog.setCancelable(false);
     mDialog.show();
     getBitcoinTraderApplication().startExchangeService();
   }
