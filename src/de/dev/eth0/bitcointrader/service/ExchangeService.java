@@ -32,6 +32,7 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
 import java.util.Date;
@@ -281,6 +282,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected void onPostExecute(String orderId) {
+      Log.d(TAG, "Created order: " + orderId);
       if (!TextUtils.isEmpty(orderId)) {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success, orderId), Toast.LENGTH_LONG).show();
@@ -315,10 +317,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
       }
-      if (!TextUtils.isEmpty(ret)) {
-        activity.setResult(Activity.RESULT_OK);
+      // only finish activity if the order has been created in a PlaceOrderActivity
+      if (activity instanceof PlaceOrderActivity) {
+        if (!TextUtils.isEmpty(ret)) {
+          activity.setResult(Activity.RESULT_OK);
+        }
+        activity.finish();
       }
-      activity.finish();
       return ret;
     }
   };

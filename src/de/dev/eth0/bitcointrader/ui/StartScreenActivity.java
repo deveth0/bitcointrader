@@ -65,6 +65,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
             }
             if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
               startActivity(new Intent(StartScreenActivity.this, BitcoinTraderActivity.class));
+              StartScreenActivity.this.finish();
             } else if (intent.getAction().equals(Constants.UPDATE_FAILED)) {
               getBitcoinTraderApplication().stopExchangeService();
               // dont create dialog multiple times

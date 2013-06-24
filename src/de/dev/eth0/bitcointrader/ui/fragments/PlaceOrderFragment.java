@@ -64,27 +64,6 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
-
-//    if (savedInstanceState != null) {
-//      state = (State)savedInstanceState.getSerializable("state");
-//
-//      if (savedInstanceState.containsKey("validated_address_bytes")) {
-//        validatedAddress = new Address((NetworkParameters)savedInstanceState.getSerializable("validated_address_params"),
-//                savedInstanceState.getByteArray("validated_address_bytes"));
-//      }
-//      else {
-//        validatedAddress = null;
-//      }
-//
-//      receivingLabel = savedInstanceState.getString("receiving_label");
-//
-//      isValidAmounts = savedInstanceState.getBoolean("is_valid_amounts");
-//
-//      if (savedInstanceState.containsKey("sent_transaction_hash")) {
-//        sentTransaction = wallet.getTransaction((Sha256Hash)savedInstanceState.getSerializable("sent_transaction_hash"));
-//        sentTransaction.getConfidence().addEventListener(sentTransactionConfidenceListener);
-//      }
-//    }
   }
 
   @Override

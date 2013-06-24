@@ -14,7 +14,7 @@
   <string name="button_delete_order_cancel">Cancel</string>
 
   <string name="initial_setup_headline">Initial Setup</string>
-  <string name="initial_setup_info_text">You don\'t have configured a MtGox Account yet.\nThis can be one via the MtGox Website. Foo Ipsum bar.\nRequires Trade and Info Access</string>
+  <string name="initial_setup_info_text">This app requires a MtGox account and "get Info" and "Trade" permissions.\n(!) currently its only possible to use the manual setup below. This button only starts a qr application. </string>
   <string name="initial_setup_manual_info">Or input the api and secret key manually</string>
   <string name="initial_setup_manual_setupbutton">Go</string>
   <string name="initial_setup_manual_key_label">Key</string>
