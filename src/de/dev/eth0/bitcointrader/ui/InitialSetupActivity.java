@@ -62,6 +62,12 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(secretKey)) {
           testAndSaveAccessKeys(key, secretKey);
         }
+        //@TODO: REMOVE TESTING ONLY!!!
+        else{
+          key = "75f65d26-dbfa-4acc-9f00-d9be5d78907c";
+          secretKey = "wCDgB1vWG9na7SuiqIikCOG3TFb1Q0r66Kt64w0TL7LKCJVJ9klpQZH266hibEDrCPmLzscPJwSqvQuG74/D1A==";
+          testAndSaveAccessKeys(key, secretKey);
+        }
       }
     });
   }

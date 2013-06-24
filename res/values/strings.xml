@@ -34,7 +34,7 @@
   <string name="refresh_title">Refresh</string>
 
   <string name="notify_order_executed_title">Orders executed</string>
-  <string name="notify_order_executed_text">One or more orders have been executed</string>
+  <string name="notify_order_executed_text">One or more orders have been executed. %1$s %2$s %3$s %4$s</string>
   <string name="notify_update_success_text">Update successful!</string>
   <string name="notify_update_failed_title">Update failed!</string>
   <string name="notify_update_failed_text">There has been an error</string>

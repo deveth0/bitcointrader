@@ -11,7 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -27,6 +29,7 @@ import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
+import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
@@ -50,7 +53,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void)null);
+        executeTask(new UpdateTask(), (Void) null);
       }
     }
   };
@@ -95,7 +98,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
   }
@@ -178,30 +181,39 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         // Order executed
         if (!openOrders.isEmpty()) {
           Intent intent = new Intent(Constants.ORDER_EXECUTED);
-          String[] orderIDs = new String[openOrders.size()];
-          for (int i = 0; i < orderIDs.length; i++) {
-            orderIDs[i] = openOrders.get(i).getId();
+          List<Parcelable> extras = new ArrayList<Parcelable>();
+          for (LimitOrder lo : orders) {
+            try {
+              MtGoxOrderResult result = exchange.getPollingTradeService().getOrderResult(lo);
+              Bundle bundle = new Bundle();
+              bundle.putString(Constants.EXTRA_ORDERRESULT_ID, result.getOrderId());
+              bundle.putString(Constants.EXTRA_ORDERRESULT_AVGCOST, result.getAvgCost().getValue().toString());
+              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT, result.getTotalAmount().getValue().toString());
+              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALSPENT, result.getTotalSpent().getValue().toString());
+              extras.add(bundle);
+            } catch (Exception ee) {
+              Log.d(TAG, "getting OrderResult failed", ee);
+            }
           }
-          intent.putExtra(Constants.EXTRA_ORDERS, orderIDs);
-          sendBroadcast(intent);
+          if (!extras.isEmpty()) {
+            intent.putExtra(Constants.EXTRA_ORDERRESULT, extras.toArray(new Parcelable[0]));
+            sendBroadcast(intent);
+          }
         }
         openOrders = orders;
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
         lastUpdate = new Date();
         broadcastUpdateSuccess();
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (IllegalArgumentException iae) {
-        Log.e(TAG, "IllegalArgumentException", iae);
+      } catch (RuntimeException iae) {
+        Log.e(TAG, "RuntimeException", iae);
         broadcastUpdateFailure();
         return false;
       }
@@ -213,8 +225,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (success && notifyOnUpdate) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
-      }
-      else if (!success) {
+      } else if (!success) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_failed_title, Toast.LENGTH_LONG).show();
       }
@@ -233,12 +244,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           broadcastUpdate();
           return ret;
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
@@ -274,8 +283,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (!TextUtils.isEmpty(orderId)) {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success, orderId), Toast.LENGTH_LONG).show();
-      }
-      else {
+      } else {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_failed, orderId), Toast.LENGTH_LONG).show();
       }
@@ -290,22 +298,19 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (params.length == 1) {
           Order order = params[0];
           if (order instanceof MarketOrder) {
-            MarketOrder mo = (MarketOrder)order;
+            MarketOrder mo = (MarketOrder) order;
             ret = exchange.getPollingTradeService().placeMarketOrder(mo);
-          }
-          else if (order instanceof LimitOrder) {
-            LimitOrder lo = (LimitOrder)order;
+          } else if (order instanceof LimitOrder) {
+            LimitOrder lo = (LimitOrder) order;
             ret = exchange.getPollingTradeService().placeLimitOrder(lo);
           }
           lastUpdate = new Date();
           broadcastUpdateSuccess();
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
       }

@@ -53,42 +53,42 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
       if (TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null))
               || TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null))) {
         startActivity(new Intent(this, InitialSetupActivity.class));
-      }
-      else {
-      // otherwise we can connect the exchangeservice and start
-      connect();
-      broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-          Log.d(TAG, ".onReceive (" + intent.getAction() + ")");
-          if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
-            mDialog.dismiss();
-            startActivity(new Intent(StartScreenActivity.this, BitcoinTraderActivity.class));
-          }
-          else if (intent.getAction().equals(Constants.UPDATE_FAILED)) {
-            getBitcoinTraderApplication().stopExchangeService();
-            // dont create dialog multiple times
-            if (alertDialog == null || !alertDialog.isShowing()) {
-              AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(StartScreenActivity.this);
-              alertDialogBuilder.setMessage(R.string.connection_failed);
-              alertDialogBuilder.setPositiveButton(R.string.button_retry, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                  connect();
-                }
-              });
-              alertDialogBuilder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                  StartScreenActivity.this.finish();
-                }
-              });
-              alertDialog = alertDialogBuilder.create();
-              alertDialog.show();
+      } else {
+        // otherwise we can connect the exchangeservice and start
+        connect();
+        broadcastReceiver = new BroadcastReceiver() {
+          @Override
+          public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, ".onReceive (" + intent.getAction() + ")");
+            if (mDialog.isShowing()) {
+              mDialog.dismiss();
+            }
+            if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
+              startActivity(new Intent(StartScreenActivity.this, BitcoinTraderActivity.class));
+            } else if (intent.getAction().equals(Constants.UPDATE_FAILED)) {
+              getBitcoinTraderApplication().stopExchangeService();
+              // dont create dialog multiple times
+              if (alertDialog == null || !alertDialog.isShowing()) {
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(StartScreenActivity.this);
+                alertDialogBuilder.setMessage(R.string.connection_failed);
+                alertDialogBuilder.setPositiveButton(R.string.button_retry, new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int which) {
+                    connect();
+                  }
+                });
+                alertDialogBuilder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+                  public void onClick(DialogInterface dialog, int which) {
+                    StartScreenActivity.this.finish();
+                  }
+                });
+                alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+              }
             }
           }
-        }
-      };
-      broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
-      broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+        };
+        broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
+        broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
         broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_FAILED));
       }
     }
@@ -119,8 +119,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
         hadErrors = true;
         CrashReporter.appendSavedCrashTrace(stackTrace);
         CrashReporter.appendSavedCrashApplicationLog(applicationLog);
-      }
-      catch (final IOException x) {
+      } catch (final IOException x) {
         x.printStackTrace();
       }
 
@@ -147,8 +146,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
         protected CharSequence collectStackTrace() throws IOException {
           if (stackTrace.length() > 0) {
             return stackTrace;
-          }
-          else {
+          } else {
             return null;
           }
         }
@@ -164,8 +162,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
         protected CharSequence collectApplicationLog() throws IOException {
           if (applicationLog.length() > 0) {
             return applicationLog;
-          }
-          else {
+          } else {
             return null;
           }
         }
