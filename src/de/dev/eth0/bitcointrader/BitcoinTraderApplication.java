@@ -1,3 +1,5 @@
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader;
 
 import android.app.AlarmManager;
@@ -24,6 +26,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(final ComponentName name, final IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder)binder).getService();
+      createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));
       BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
     }
 
@@ -34,15 +37,13 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
 
   @Override
   public void onCreate() {
+    CrashReporter.init(getCacheDir());
     Log.d(TAG, ".onCreate()");
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
     updateServiceActionIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.UPDATE_SERVICE_ACTION), 0);
     exchangeServiceIntent = new Intent(this, ExchangeService.class);
-    this.bindService(exchangeServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    createDataFromPreferences(prefs);
     super.onCreate();
-    CrashReporter.init(getCacheDir());
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -87,11 +88,18 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   }
 
   public void startExchangeService() {
+    this.bindService(exchangeServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     startService(exchangeServiceIntent);
   }
 
   public void stopExchangeService() {
+    if (exchangeService != null) {
+      this.unbindService(serviceConnection);
+      exchangeService = null;
+    }
     stopService(exchangeServiceIntent);
+    AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+    alarmManager.cancel(updateServiceActionIntent);
   }
 
   public ExchangeService getExchangeService() {

@@ -1,12 +1,19 @@
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceScreen;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -15,6 +22,7 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
 
 public final class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+  private static final String KEY_DELETE_ACCOUNT = "labs_delete_account";
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -71,5 +79,17 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       ListPreference lp = (ListPreference)pref;
       pref.setSummary(lp.getEntry());
     }
+  }
+
+  @Override
+  public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen, final Preference preference) {
+    final String key = preference.getKey();
+    if (KEY_DELETE_ACCOUNT.equals(key)) {
+      Editor editor = preference.getEditor();
+      editor.putString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
+      editor.putString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
+      Toast.makeText(this, R.string.preferences_labs_delete_account, Toast.LENGTH_LONG).show();
+    }
+    return false;
   }
 }

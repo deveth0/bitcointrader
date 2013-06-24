@@ -1,3 +1,5 @@
+//$URL$
+//$Id$
 /*
  * Copyright 2011-2013 the original author or authors.
  *
@@ -14,7 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.dev.eth0.bitcointrader.util;
 
 import java.io.BufferedReader;
@@ -25,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Formatter;
-import java.util.List;
-import java.util.Set;
 
 import android.app.ActivityManager;
 import android.content.Context;

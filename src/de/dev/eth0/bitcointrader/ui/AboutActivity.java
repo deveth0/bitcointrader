@@ -1,3 +1,5 @@
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
@@ -19,6 +21,7 @@ public class AboutActivity extends SherlockPreferenceActivity {
   private static final String KEY_ABOUT_AUTHOR_TWITTER = "about_author_twitter";
   private static final String KEY_ABOUT_CREDITS_BITCOINWALLET = "about_credits_bitcoinwallet";
   private static final String KEY_ABOUT_CREDITS_XCHANGE = "about_credits_xchange";
+  private static final String KEY_ABOUT_CREDITS_ZXING = "about_credits_zxing";
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -32,6 +35,7 @@ public class AboutActivity extends SherlockPreferenceActivity {
     findPreference(KEY_ABOUT_VERSION).setSummary(((BitcoinTraderApplication) getApplication()).applicationVersionName());
     findPreference(KEY_ABOUT_CREDITS_BITCOINWALLET).setSummary(Constants.CREDITS_BITCOINWALLET_URL);
     findPreference(KEY_ABOUT_CREDITS_XCHANGE).setSummary(Constants.CREDITS_XCHANGE_URL);
+    findPreference(KEY_ABOUT_CREDITS_ZXING).setSummary(Constants.CREDITS_ZXING_URL);
 
   }
 

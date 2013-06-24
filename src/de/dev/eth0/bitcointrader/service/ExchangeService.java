@@ -1,7 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader.service;
 
 import android.app.Activity;
@@ -88,9 +86,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   private void createExchange(SharedPreferences prefs) {
-    //@TODO: remove default strings
-    String mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, "75f65d26-dbfa-4acc-9f00-d9be5d78907c");
-    String mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, "wCDgB1vWG9na7SuiqIikCOG3TFb1Q0r66Kt64w0TL7LKCJVJ9klpQZH266hibEDrCPmLzscPJwSqvQuG74/D1A==");
+    String mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
+    String mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
     if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
       ExchangeSpecification exchangeSpec = new ExchangeSpecification(MtGoxExchange.class);
       exchangeSpec.setApiKey(mtGoxAPIKey);
@@ -200,6 +197,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
       catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
+        broadcastUpdateFailure();
+        return false;
+      }
+      catch (IllegalArgumentException iae) {
+        Log.e(TAG, "IllegalArgumentException", iae);
         broadcastUpdateFailure();
         return false;
       }

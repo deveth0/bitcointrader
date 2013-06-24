@@ -1,3 +1,5 @@
+//$URL$
+//$Id$
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 

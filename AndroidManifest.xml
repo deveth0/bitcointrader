@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="de.dev.eth0"
           android:installLocation="internalOnly"
-          android:versionCode="2"
-          android:versionName="0.5-snapshot" >
+          android:versionCode="3"
+          android:versionName="0.6-snapshot" >
 
   <uses-sdk
     android:minSdkVersion="10"
@@ -43,7 +43,9 @@
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-
+    <activity
+      android:name="de.dev.eth0.bitcointrader.ui.InitialSetupActivity"/>
+    
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
       android:configChanges="orientation|keyboard|keyboardHidden"

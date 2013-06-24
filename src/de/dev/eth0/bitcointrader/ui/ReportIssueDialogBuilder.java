@@ -1,3 +1,5 @@
+//$URL$
+//$Id$
 /*
  * Copyright 2013 the original author or authors.
  *
@@ -176,6 +178,7 @@ public abstract class ReportIssueDialogBuilder extends AlertDialog.Builder imple
     intent.putExtra(Intent.EXTRA_TEXT, text);
 
     context.startActivity(Intent.createChooser(intent, context.getString(R.string.report_issue_dialog_mail_intent_chooser)));
+    onReportFinished();
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -199,5 +202,8 @@ public abstract class ReportIssueDialogBuilder extends AlertDialog.Builder imple
   protected abstract CharSequence collectDeviceInfo() throws IOException;
 
   protected abstract CharSequence collectApplicationLog() throws IOException;
+
+  protected abstract void onReportFinished();
+
 
 }

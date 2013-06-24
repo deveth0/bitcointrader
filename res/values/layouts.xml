@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <item name="start_activity" type="layout">@layout/start_activity_portrait</item>
+  <item name="initial_setup_activity" type="layout">@layout/initial_setup_activity_portrait</item>
+</resources>

@@ -1,9 +1,10 @@
+//$URL$
+//$Id$
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.AlertDialog;
 import java.util.Collection;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;

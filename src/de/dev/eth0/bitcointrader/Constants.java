@@ -1,3 +1,5 @@
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader;
 
 public class Constants {
@@ -18,6 +20,7 @@ public class Constants {
   public static final String AUTHOR_TWITTER_URL = "https://twitter.com/#!/deveth0";
   public static final String CREDITS_BITCOINWALLET_URL = "http://code.google.com/p/bitcoin-wallet/";
   public static final String CREDITS_XCHANGE_URL = "https://github.com/timmolter/XChange";
+  public static final String CREDITS_ZXING_URL = "http://zxing.googlecode.com";
   public static final String PREFS_KEY_MTGOX_APIKEY = "mtgox_apikey";
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";

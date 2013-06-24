@@ -1,3 +1,5 @@
+//$URL: $
+//$Id: $
 package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
@@ -8,9 +10,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.R;
-import de.dev.eth0.bitcointrader.util.CrashReporter;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
-import java.io.IOException;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
@@ -21,9 +21,6 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
     broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
-    if (savedInstanceState == null) {
-      checkAlerts();
-    }
   }
 
   @Override
@@ -58,63 +55,4 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private void checkAlerts() {
-
-    if (CrashReporter.hasSavedCrashTrace()) {
-      final StringBuilder stackTrace = new StringBuilder();
-      final StringBuilder applicationLog = new StringBuilder();
-
-      try {
-        CrashReporter.appendSavedCrashTrace(stackTrace);
-        CrashReporter.appendSavedCrashApplicationLog(applicationLog);
-      }
-      catch (final IOException x) {
-        x.printStackTrace();
-      }
-
-      final ReportIssueDialogBuilder dialog = new ReportIssueDialogBuilder(this, R.string.report_issue_dialog_title_crash,
-              R.string.report_issue_dialog_message_crash) {
-        @Override
-        protected CharSequence subject() {
-          return Constants.REPORT_SUBJECT_CRASH + " " + getBitcoinTraderApplication().applicationVersionName();
-        }
-
-        @Override
-        protected CharSequence collectApplicationInfo() throws IOException {
-          final StringBuilder applicationInfo = new StringBuilder();
-          CrashReporter.appendApplicationInfo(applicationInfo, getBitcoinTraderApplication());
-          return applicationInfo;
-        }
-
-        @Override
-        protected CharSequence collectStackTrace() throws IOException {
-          if (stackTrace.length() > 0) {
-            return stackTrace;
-          }
-          else {
-            return null;
-          }
-        }
-
-        @Override
-        protected CharSequence collectDeviceInfo() throws IOException {
-          final StringBuilder deviceInfo = new StringBuilder();
-          CrashReporter.appendDeviceInfo(deviceInfo, BitcoinTraderActivity.this);
-          return deviceInfo;
-        }
-
-        @Override
-        protected CharSequence collectApplicationLog() throws IOException {
-          if (applicationLog.length() > 0) {
-            return applicationLog;
-          }
-          else {
-            return null;
-          }
-        }
-      };
-
-      dialog.show();
-    }
-  }
 }

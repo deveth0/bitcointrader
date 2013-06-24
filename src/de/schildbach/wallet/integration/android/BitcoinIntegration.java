@@ -1,3 +1,5 @@
+//$URL: $
+//$Id: $
 /**
  * Copyright 2012-2013 the original author or authors.
  *
@@ -13,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.schildbach.wallet.integration.android;
 
 import android.app.Activity;
