@@ -32,7 +32,7 @@ import android.os.Parcelable;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.AttributeSet;
 import android.view.View;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 
 /**
  * @author Andreas Schildbach

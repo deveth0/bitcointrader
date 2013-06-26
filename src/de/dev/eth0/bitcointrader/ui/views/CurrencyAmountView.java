@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import java.math.BigDecimal;
 import java.math.BigInteger;

@@ -19,7 +19,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 
 public final class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
   private static final String KEY_DELETE_ACCOUNT = "labs_delete_account";

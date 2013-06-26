@@ -18,7 +18,7 @@ import android.view.View;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.xeiam.xchange.dto.Order;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;

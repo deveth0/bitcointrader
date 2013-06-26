@@ -9,7 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {

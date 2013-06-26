@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;

@@ -15,7 +15,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.trade.LimitOrder;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;

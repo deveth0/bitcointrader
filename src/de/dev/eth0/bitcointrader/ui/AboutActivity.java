@@ -12,7 +12,7 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 
 public class AboutActivity extends SherlockPreferenceActivity {
 

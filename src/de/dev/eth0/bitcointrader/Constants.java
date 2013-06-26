@@ -11,7 +11,9 @@ public class Constants {
   public static final String CURRENCY_CODE_DOLLAR = "USD";
   public static final int PRECISION_BITCOIN = 5;
   public static final int PRECISION_DOLLAR = 5;
-  // Prefs
+  public static final String APP_ACTIVATION_URL = "https://mtgox.com/api/1/generic/api/activate";
+  public static final String APP_ACTIVATION_ID = "cdc0a1ff-2cfd-4756-817f-68aafe9999e0";
+  // About
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
   public static final String REPORT_EMAIL = "bitcointrader@dev-eth0.de";
   public static final String REPORT_SUBJECT_ISSUE = "Reported issue";
@@ -21,6 +23,7 @@ public class Constants {
   public static final String CREDITS_BITCOINWALLET_URL = "http://code.google.com/p/bitcoin-wallet/";
   public static final String CREDITS_XCHANGE_URL = "https://github.com/timmolter/XChange";
   public static final String CREDITS_ZXING_URL = "http://zxing.googlecode.com";
+  // Prefs
   public static final String PREFS_KEY_MTGOX_APIKEY = "mtgox_apikey";
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";
@@ -39,6 +42,5 @@ public class Constants {
   public static final String EXTRA_ORDERRESULT_AVGCOST = "avgcost";
   public static final String EXTRA_ORDERRESULT_TOTALAMOUNT = "totalamount";
   public static final String EXTRA_ORDERRESULT_TOTALSPENT = "totalspent";
-  
   public static final int SDK_JELLY_BEAN = 16;
 }

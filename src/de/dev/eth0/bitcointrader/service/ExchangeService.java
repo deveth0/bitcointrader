@@ -30,7 +30,7 @@ import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;

@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 import java.io.IOException;

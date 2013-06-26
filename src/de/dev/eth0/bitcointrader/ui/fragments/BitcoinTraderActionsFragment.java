@@ -12,7 +12,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import com.xeiam.xchange.dto.Order;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 
 public final class BitcoinTraderActionsFragment extends Fragment {

@@ -35,7 +35,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import de.dev.eth0.R;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 import java.lang.reflect.Method;
