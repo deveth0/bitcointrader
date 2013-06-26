@@ -130,6 +130,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
         @Override
         protected void onReportFinished() {
           hadErrors = false;
+          onResume();
         }
 
         @Override
@@ -171,7 +172,6 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
       };
 
       dialog.show();
-      hadErrors = false;
     }
   }
 }
