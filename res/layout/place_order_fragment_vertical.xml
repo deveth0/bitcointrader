@@ -87,26 +87,55 @@
       tools:ignore="TextFields" />
   </de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView>
 
-  <TextView
+  <TableLayout
+    android:id="@+id/tableLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="20dp"
     android:layout_marginRight="20dp"
-    android:layout_marginTop="@dimen/default_padding"
-    android:text="@string/place_order_fragment_total_label"
-    android:textStyle="bold" />
+  >
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/default_padding"
+    >
+      <TextView
+        android:id="@+id/place_order_total_label"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/place_order_fragment_total_label"
+        android:textStyle="bold"
+      />
+      <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+        android:id="@+id/place_order_total"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+      />
 
-  <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
-    android:id="@+id/place_order_total"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp"
-    android:layout_marginBottom="@dimen/default_padding"
-    android:layout_marginTop="@dimen/default_padding"
-    android:textSize="@dimen/font_size_normal"/>
-
-
+    </TableRow>
+    <TableRow
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/default_padding"
+      android:layout_marginBottom="@dimen/default_padding"
+    >
+      <TextView
+        android:id="@+id/place_order_estimatedfee_label"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="@string/place_order_fragment_estimatedfee_label"
+        android:textStyle="bold" />
+      <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
+        android:id="@+id/place_order_estimatedfee"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+      />
+    </TableRow>
+  </TableLayout>
   <!-- stretch dummy -->
 
   <ImageView
