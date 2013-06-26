@@ -142,7 +142,7 @@
     android:layout_width="0px"
     android:layout_height="0px"
     android:layout_weight="1" />
-
+ 
   <ListView
     android:id="@+id/place_order_foo"
     android:layout_width="match_parent"
