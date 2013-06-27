@@ -60,6 +60,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     startScanButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         IntentIntegrator integrator = new IntentIntegrator(InitialSetupActivity.this);
+        integrator.setTargetApplications(IntentIntegrator.TARGET_BARCODE_SCANNER_ONLY);
         integrator.initiateScan();
       }
     });
