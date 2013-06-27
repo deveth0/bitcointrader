@@ -1,12 +1,11 @@
-//$URL: $
-//$Id: $
+//$URL:$
+//$Id:$
 package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -88,7 +87,10 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       Editor editor = preference.getEditor();
       editor.putString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
       editor.putString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
+      editor.commit();
       Toast.makeText(this, R.string.preferences_labs_delete_account, Toast.LENGTH_LONG).show();
+      startActivity(new Intent(this, InitialSetupActivity.class));
+      finish();
     }
     return false;
   }
