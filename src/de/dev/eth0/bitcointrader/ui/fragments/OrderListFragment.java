@@ -34,11 +34,6 @@ public class OrderListFragment extends SherlockListFragment {
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
   
-  public static OrderListFragment instance() {
-    final OrderListFragment fragment = new OrderListFragment();
-    return fragment;
-  }
-
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);

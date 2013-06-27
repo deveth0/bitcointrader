@@ -2,6 +2,7 @@
 <resources>
   <string name="app_name">Bitcoin Trader</string>
 
+  <string name="loading_info">Loading...</string>
   <string name="connecting_info">Connecting...</string>
   <string name="connection_failed">Could not connect. Please check your internet connection and try again.</string>
   <string name="bitcoin_order_fragment_empty_text">No Open Orders.</string>
@@ -25,6 +26,16 @@
   <string name="initial_setup_failed_key_expired">Key expired</string>
   <string name="initial_setup_failed_key_invalid">Key invalid</string>
   <string name="initial_setup_failed_not_enough_permissions">Not enough permissions</string>
+  
+  <string name="wallet_history_title">Wallet History</string>
+  <string name="wallet_history_currency_spinner_label">Select Currency:</string>
+  <string name="wallet_history_out">Out</string>
+  <string name="wallet_history_in">In</string>
+  <string name="wallet_history_fee">Fee</string>
+  <string name="wallet_history_earned">Earned</string>
+  <string name="wallet_history_spent">Spent</string>
+  <string name="wallet_history_amount">Amount:</string>
+  <string name="wallet_history_balance">Balance:</string>
   
   <string name="account_info">Your Account</string>
   <string name="account_info_trade_fee_label">Trade Fee:</string>

@@ -27,7 +27,6 @@ import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.bitcointrader.R;
@@ -66,12 +65,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       return ExchangeService.this;
     }
   }
-  private MtGoxExchange exchange;
+  private MtGoxExchangeWrapper exchange;
   private final Binder binder = new LocalBinder();
   private MtGoxAccountInfo accountInfo;
   private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
   private Ticker ticker;
   private Date lastUpdate;
+  
 
   @Override
   public void onCreate() {
@@ -93,13 +93,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     String mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
     String mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
     if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
-      ExchangeSpecification exchangeSpec = new ExchangeSpecification(MtGoxExchange.class);
+      ExchangeSpecification exchangeSpec = new ExchangeSpecification(MtGoxExchangeWrapper.class);
       exchangeSpec.setApiKey(mtGoxAPIKey);
       exchangeSpec.setSecretKey(mtGoxSecretKey);
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchangeWrapper) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
   }
@@ -125,6 +125,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   @Override
   public IBinder onBind(Intent arg0) {
     return binder;
+  }
+
+  public MtGoxExchangeWrapper getExchange() {
+    return exchange;
   }
 
   public MtGoxAccountInfo getAccountInfo() {

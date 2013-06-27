@@ -84,6 +84,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
     ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
             R.layout.spinner_item, Order.OrderType.values());
+    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     orderTypeSpinner.setAdapter(adapter);
     orderTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -119,9 +120,6 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
         }
       }
     });
-
-
-
     viewGo = (Button) view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
@@ -142,11 +140,6 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       }
     });
     return view;
-  }
-
-  @Override
-  public void onResume() {
-    super.onResume();
   }
 
   public void updateView() {

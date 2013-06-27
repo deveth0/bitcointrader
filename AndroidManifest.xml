@@ -39,17 +39,20 @@
       </intent-filter>
     </activity>
     <activity
-      android:name="de.dev.eth0.bitcointrader.ui.InitialSetupActivity"/>
-    
+      android:name="de.dev.eth0.bitcointrader.ui.InitialSetupActivity"
+    />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
       android:configChanges="orientation|keyboard|keyboardHidden"
       android:launchMode="singleTask" />
-        
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.AboutActivity"
       android:label="@string/about_title"
       android:screenOrientation="behind" />
+    <activity
+      android:name="de.dev.eth0.bitcointrader.ui.WalletHistoryActivity"
+      android:label="@string/wallet_history_title"
+    />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.PreferencesActivity"
       android:label="@string/preferences_title"
@@ -61,7 +64,9 @@
       android:screenOrientation="behind"
       android:windowSoftInputMode="adjustResize" />
     
-    <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver" >
+    <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver"
+              android:exported="false"    
+    >
       <intent-filter>
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_SUCCEDED" />
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_FAILED" />
@@ -69,7 +74,9 @@
       </intent-filter>
     </receiver>
     
-    <receiver android:name="de.dev.eth0.bitcointrader.service.NotificationBroadcastReceiver" >
+    <receiver android:name="de.dev.eth0.bitcointrader.service.NotificationBroadcastReceiver" 
+              android:exported="false"
+    >
       <intent-filter>
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_FAILED" />
         <action android:name="de.dev.eth0.bitcointrader.UPDATE_SUCCEDED" />

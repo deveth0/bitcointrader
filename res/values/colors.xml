@@ -15,4 +15,6 @@
 
     <!-- orange -->
     <color name="orange">#ff7711</color>
+    <color name="red">#ff0a12</color>
+    <color name="yellow">#ffef3f</color>
 </resources>
