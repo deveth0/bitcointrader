@@ -78,7 +78,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     amountViewText.addTextChangedListener(valueChangedListener);
 
     priceView = (CurrencyAmountView) view.findViewById(R.id.place_order_price);
-    priceView.setCurrencyCode(Constants.CURRENCY_CODE_DOLLAR);
+    priceView.setCurrencyCode(getExchangeService().getCurrency());
     enablePriceViewContextButton();
 
     orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
@@ -148,7 +148,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
       BigMoney amountBTC = BigMoney.parse("BTC " + amount.toString());
-      BigMoney amountUSD = BigMoney.parse("USD " + price.toString());
+      BigMoney amountUSD = BigMoney.parse(getExchangeService().getCurrency() + " " + price.toString());
       BigMoney totalSpend = amountUSD.multipliedBy(amountBTC.getAmount());
       totalView.setAmount(totalSpend);
       MtGoxAccountInfo accountInfo = getExchangeService().getAccountInfo();
@@ -198,9 +198,9 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Double price = Double.parseDouble(priceViewText.getEditableText().toString());
 
     if (marketOrder) {
-      order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", "USD");
+      order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", getExchangeService().getCurrency());
     } else {
-      order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", "USD", BigMoney.of(CurrencyUnit.USD, price));
+      order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", getExchangeService().getCurrency(), BigMoney.of(CurrencyUnit.of(getExchangeService().getCurrency()), price));
     }
     getExchangeService().placeOrder(order, activity);
 

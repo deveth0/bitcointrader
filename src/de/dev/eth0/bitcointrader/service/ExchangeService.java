@@ -62,6 +62,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   };
   private LocalBroadcastManager broadcastManager;
 
+
   public class LocalBinder extends Binder {
 
     public ExchangeService getService() {
@@ -138,6 +139,16 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     return binder;
   }
 
+  public void setCurrency(String currency) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit().putString(Constants.PREFS_KEY_CURRENCY, currency).apply();
+  }
+
+  public String getCurrency() {
+    return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, null);
+  }
+  
+  
   public MtGoxExchangeWrapper getExchange() {
     return exchange;
   }
@@ -215,6 +226,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, "performing update...");
       try {
         accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
+        if(TextUtils.isEmpty(getCurrency())){
+          setCurrency(accountInfo.getWallets().getMtGoxWallets().get(1).getBalance().getCurrency());
+        }
         //@TODO: don't trigger order executed notification on order delete
         List<LimitOrder> orders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
         openOrders.removeAll(orders);
@@ -241,7 +255,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           }
         }
         openOrders = orders;
-        ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, Currencies.USD);
+        ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, getCurrency());
         lastUpdate = new Date();
         broadcastUpdateSuccess();
       } catch (ExchangeException ee) {

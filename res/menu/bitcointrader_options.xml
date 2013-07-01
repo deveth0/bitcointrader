@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
   <item
+    android:id="@+id/bitcointrader_options_select_currency"
+    android:icon="@drawable/ic_action_select_currency"
+    android:showAsAction="ifRoom|withText"
+    android:title="@string/select_currency_title"/>
+  <item
     android:id="@+id/bitcointrader_options_refresh"
     android:icon="@drawable/ic_action_refresh"
     android:showAsAction="ifRoom|withText"

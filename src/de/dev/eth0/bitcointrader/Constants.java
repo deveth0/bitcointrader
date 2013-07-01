@@ -8,7 +8,6 @@ public class Constants {
   public static final char CHAR_HAIR_SPACE = '\u200a';
   public static final char CHAR_THIN_SPACE = '\u2009';
   public static final String CURRENCY_CODE_BITCOIN = "BTC";
-  public static final String CURRENCY_CODE_DOLLAR = "USD";
   public static final int PRECISION_BITCOIN = 5;
   public static final int PRECISION_DOLLAR = 5;
   public static final String APP_ACTIVATION_URL = "https://mtgox.com/api/1/generic/api/activate";
@@ -28,6 +27,7 @@ public class Constants {
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";
   public static final String PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE = "general_notify_on_update";
+  public static final String PREFS_KEY_CURRENCY ="selected_currency";
   public static final String MTGOX_SSL_URI = "https://data.mtgox.com";
   public static final String MTGOX_PLAIN_WEBSOCKET_URI = "ws://websocket.mtgox.com";
   public static final String MTGOX_SSL_WEBSOCKET_URI = "ws://websocket.mtgox.com";
