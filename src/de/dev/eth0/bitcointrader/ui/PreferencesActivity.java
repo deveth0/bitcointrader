@@ -89,7 +89,7 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       editor.putString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
       editor.commit();
       Toast.makeText(this, R.string.preferences_labs_delete_account, Toast.LENGTH_LONG).show();
-      startActivity(new Intent(this, InitialSetupActivity.class));
+      startActivity(new Intent(this, StartScreenActivity.class));
       finish();
     }
     return false;
