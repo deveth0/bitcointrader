@@ -4,6 +4,7 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
@@ -19,6 +20,9 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
@@ -33,6 +37,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class WalletHistoryFragment extends SherlockListFragment {
@@ -69,15 +74,15 @@ public class WalletHistoryFragment extends SherlockListFragment {
         }
       }
     }
-    ArrayAdapter<String> spinneradapter = new ArrayAdapter<String>(activity,
+    HistoryCurrencySpinnerAdapter spinneradapter = new HistoryCurrencySpinnerAdapter(activity,
             R.layout.spinner_item, currencies.toArray(new String[0]));
     spinneradapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    
+
     historyCurrencySpinner.setAdapter(spinneradapter);
     historyCurrencySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
       public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, ".onItemSelected");
-        updateView();
+        updateView(false);
       }
 
       public void onNothingSelected(AdapterView<?> parent) {
@@ -109,6 +114,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
     setRetainInstance(true);
     adapter = new WalletHistoryListAdapter(activity);
     setListAdapter(adapter);
+    setHasOptionsMenu(true);
   }
 
   @Override
@@ -122,14 +128,30 @@ public class WalletHistoryFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    updateView();
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.bitcointrader_options_refresh:
+        updateView(true);
+        break;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
-  protected void updateView() {
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    inflater.inflate(R.menu.wallethistory_options, menu);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    updateView(true);
+  }
+
+  protected void updateView(boolean forceUpdate) {
     GetMtGoxWalletHistoryTask walletTask = new GetMtGoxWalletHistoryTask();
-    walletTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR);
+    walletTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, forceUpdate);
   }
 
   protected void updateView(MtGoxWalletHistory history) {
@@ -140,16 +162,15 @@ public class WalletHistoryFragment extends SherlockListFragment {
       Log.d(TAG, "WalletHistory: " + history.getMtGoxWalletHistoryEntries().length);
     }
     Collections.sort(entries, new Comparator<MtGoxWalletHistoryEntry>() {
-
       public int compare(MtGoxWalletHistoryEntry lhs, MtGoxWalletHistoryEntry rhs) {
         return Long.valueOf(rhs.getDate()).compareTo(Long.valueOf(lhs.getDate()));
       }
     });
-    
+
     adapter.replace(entries);
   }
 
-  private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Void, Void, MtGoxWalletHistory> {
+  private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Boolean, Void, MtGoxWalletHistory> {
 
     @Override
     protected void onPreExecute() {
@@ -171,15 +192,31 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
 
     @Override
-    protected MtGoxWalletHistory doInBackground(Void... params) {
+    protected MtGoxWalletHistory doInBackground(Boolean... params) {
 
       ExchangeService exchangeService = application.getExchangeService();
       String currency = (String) historyCurrencySpinner.getSelectedItem();
 
       if (exchangeService != null) {
-        return exchangeService.getExchange().getPollingAccountService().getMtGoxWalletHistory(currency);
+        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter) historyCurrencySpinner.getAdapter();
+        Map<String, MtGoxWalletHistory> histories = exchangeService.getMtGoxWalletHistory(adapter.getEntries(), params[0]);
+        return histories.get(currency);
       }
       return null;
     }
   };
+
+  private class HistoryCurrencySpinnerAdapter extends ArrayAdapter<String> {
+
+    private String[] entries;
+
+    public HistoryCurrencySpinnerAdapter(Context context, int textViewResourceId, String[] objects) {
+      super(context, textViewResourceId, objects);
+      entries = objects;
+    }
+
+    public String[] getEntries() {
+      return entries;
+    }
+  }
 }

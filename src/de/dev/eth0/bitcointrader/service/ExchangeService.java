@@ -28,14 +28,18 @@ import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
+import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import si.mazi.rescu.HttpException;
 
 /**
@@ -45,7 +49,6 @@ import si.mazi.rescu.HttpException;
  */
 public class ExchangeService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-  private boolean notifyOnUpdate;
   private static final String TAG = ExchangeService.class.getSimpleName();
   private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
@@ -69,15 +72,19 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private final Binder binder = new LocalBinder();
   private MtGoxAccountInfo accountInfo;
   private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
+  private boolean notifyOnUpdate;
+  private int updateInterval;
   private Ticker ticker;
   private Date lastUpdate;
-  
+  private Date lastUpdateWalletHistory;
+  private Map<String, MtGoxWalletHistory> walletHistoryCache = new HashMap<String, MtGoxWalletHistory>();
 
   @Override
   public void onCreate() {
     super.onCreate();
     broadcastManager = LocalBroadcastManager.getInstance(this);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SERVICE_ACTION));
+
   }
 
   @Override
@@ -85,6 +92,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     prefs.registerOnSharedPreferenceChangeListener(this);
     notifyOnUpdate = prefs.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
+    updateInterval = Integer.parseInt(prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
     createExchange(prefs);
     return Service.START_NOT_STICKY;
   }
@@ -111,6 +119,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
       notifyOnUpdate = sharedPreferences.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
     }
+    if (key.equals(Constants.PREFS_KEY_GENERAL_UPDATE)) {
+      updateInterval = Integer.parseInt(sharedPreferences.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
+    }
   }
 
   @Override
@@ -129,6 +140,30 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
   public MtGoxExchangeWrapper getExchange() {
     return exchange;
+  }
+
+  public Map<String, MtGoxWalletHistory> getMtGoxWalletHistory(String[] currencies, boolean forceUpdate) {
+    boolean update = forceUpdate;
+    if (updateInterval > 0 && !forceUpdate) {
+      // one minute has 60*1000 miliseconds
+      Date now = new Date();
+      if(lastUpdateWalletHistory != null && (now.getTime() - lastUpdateWalletHistory.getTime()) >= updateInterval*60*1000){
+        update = true;
+      }
+    }
+    // no update is required and cache contains wallethistory
+    if (!update) {
+      return Collections.unmodifiableMap(walletHistoryCache);
+    }
+    walletHistoryCache.clear();
+    for (String currency : currencies) {
+      MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency);
+      if(walletHistory != null){
+      walletHistoryCache.put(currency, walletHistory);
+      }
+    }
+    lastUpdateWalletHistory = new Date();
+    return Collections.unmodifiableMap(walletHistoryCache);
   }
 
   public MtGoxAccountInfo getAccountInfo() {
