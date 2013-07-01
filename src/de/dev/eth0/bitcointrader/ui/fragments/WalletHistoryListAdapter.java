@@ -92,7 +92,8 @@ public class WalletHistoryListAdapter extends BaseAdapter {
       }
       final MtGoxWalletHistoryEntry tx = getItem(position);
       bindView(row, tx);
-    } else {
+    }
+    else {
       throw new IllegalStateException("unknown type: " + type);
     }
     return row;
@@ -100,36 +101,51 @@ public class WalletHistoryListAdapter extends BaseAdapter {
 
   public void bindView(View row, final MtGoxWalletHistoryEntry entry) {
     // type (out, fee, earned)
-    TextView rowType = (TextView) row.findViewById(R.id.wallet_history_row_type);
+    TextView rowType = (TextView)row.findViewById(R.id.wallet_history_row_type);
     if (entry.getType().equals("out")) {
       rowType.setText(R.string.wallet_history_out);
       rowType.setBackgroundColor(activity.getResources().getColor(R.color.red));
-    } else if (entry.getType().equals("fee")) {
+    }
+    else if (entry.getType().equals("fee")) {
       rowType.setText(R.string.wallet_history_fee);
       rowType.setBackgroundColor(activity.getResources().getColor(R.color.orange));
-    } else if (entry.getType().equals("in")) {
+    }
+    else if (entry.getType().equals("in")) {
       rowType.setText(R.string.wallet_history_in);
       rowType.setBackgroundColor(activity.getResources().getColor(R.color.yellow));
-    } else if (entry.getType().equals("spent")) {
+    }
+    else if (entry.getType().equals("spent")) {
       rowType.setText(R.string.wallet_history_spent);
       rowType.setBackgroundColor(activity.getResources().getColor(R.color.red));
-    } else if (entry.getType().equals("earned")) {
+    }
+    else if (entry.getType().equals("earned")) {
       rowType.setText(R.string.wallet_history_earned);
       rowType.setBackgroundColor(activity.getResources().getColor(R.color.yellow));
     }
+    else if (entry.getType().equals("withdraw")) {
+      rowType.setText(R.string.wallet_history_withdraw);
+      rowType.setBackgroundColor(activity.getResources().getColor(R.color.yellow));
+    }
+    else if (entry.getType().equals("deposit")) {
+      rowType.setText(R.string.wallet_history_deposit);
+      rowType.setBackgroundColor(activity.getResources().getColor(R.color.green));
+    }
+    else {
+      rowType.setText(entry.getType());
+    }
 
     // date
-    TextView rowDate = (TextView) row.findViewById(R.id.wallet_history_row_date);
+    TextView rowDate = (TextView)row.findViewById(R.id.wallet_history_row_date);
     rowDate.setText(DateUtils.getRelativeDateTimeString(activity, Long.parseLong(entry.getDate()) * 1000, DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
 
     // amount
-    CurrencyTextView rowAmount = (CurrencyTextView) row.findViewById(R.id.wallet_history_row_amount);
+    CurrencyTextView rowAmount = (CurrencyTextView)row.findViewById(R.id.wallet_history_row_amount);
     BigMoney amount = MoneyUtils.parse(entry.getValue().getCurrency() + " " + entry.getValue().getValue());
     rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
     rowAmount.setAmount(amount);
     // balance
 
-    CurrencyTextView rowBalance = (CurrencyTextView) row.findViewById(R.id.wallet_history_row_balance);
+    CurrencyTextView rowBalance = (CurrencyTextView)row.findViewById(R.id.wallet_history_row_balance);
     BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
     rowBalance.setPrecision(Constants.PRECISION_BITCOIN);
     rowBalance.setAmount(balance);

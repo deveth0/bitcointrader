@@ -34,6 +34,8 @@
   <string name="wallet_history_fee">Fee</string>
   <string name="wallet_history_earned">Earned</string>
   <string name="wallet_history_spent">Spent</string>
+  <string name="wallet_history_withdraw">Withdraw</string>
+  <string name="wallet_history_deposit">Deposit</string>
   <string name="wallet_history_amount">Amount:</string>
   <string name="wallet_history_balance">Balance:</string>
   
