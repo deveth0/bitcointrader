@@ -1,5 +1,5 @@
-//$URL: $
-//$Id: $
+//$URL$
+//$Id$
 package de.dev.eth0.bitcointrader.ui.views;
 
 import android.content.Context;

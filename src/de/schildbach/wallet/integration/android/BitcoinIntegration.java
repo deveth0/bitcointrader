@@ -1,5 +1,5 @@
-//$URL: $
-//$Id: $
+//$URL$
+//$Id$
 /**
  * Copyright 2012-2013 the original author or authors.
  *
