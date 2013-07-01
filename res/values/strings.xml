@@ -66,7 +66,7 @@
   <string name="place_order_cancel">Cancel</string>
   <string name="place_order_submitting">Submitting Order</string>
   <string name="place_order_invalid">Please validate your input</string>
-  <string name="place_order_success">Order created (%s)</string>
+  <string name="place_order_success">Order created</string>
   <string name="place_order_failed">Could not create order</string>
     
   <string name="about_title">About</string>

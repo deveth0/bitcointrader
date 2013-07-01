@@ -266,7 +266,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   };
 
-  private class PlaceOrderTask extends ICSAsyncTask<Order, Void, String> {
+  private class PlaceOrderTask extends ICSAsyncTask<Order, Void, Boolean> {
 
     private ProgressDialog mDialog;
     private Activity activity;
@@ -285,31 +285,30 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
 
     @Override
-    protected void onPostExecute(String orderId) {
-      Log.d(TAG, "Created order: " + orderId);
-      if (!TextUtils.isEmpty(orderId)) {
+    protected void onPostExecute(Boolean success) {
+      if (success) {
         Toast.makeText(ExchangeService.this,
-                ExchangeService.this.getString(R.string.place_order_success, orderId), Toast.LENGTH_LONG).show();
+                ExchangeService.this.getString(R.string.place_order_success), Toast.LENGTH_LONG).show();
       } else {
         Toast.makeText(ExchangeService.this,
-                ExchangeService.this.getString(R.string.place_order_failed, orderId), Toast.LENGTH_LONG).show();
+                ExchangeService.this.getString(R.string.place_order_failed), Toast.LENGTH_LONG).show();
       }
       mDialog.dismiss();
 
     }
 
     @Override
-    protected String doInBackground(Order... params) {
-      String ret = null;
+    protected Boolean doInBackground(Order... params) {
+      String orderId = null;
       try {
         if (params.length == 1) {
           Order order = params[0];
           if (order instanceof MarketOrder) {
             MarketOrder mo = (MarketOrder) order;
-            ret = exchange.getPollingTradeService().placeMarketOrder(mo);
+            orderId = exchange.getPollingTradeService().placeMarketOrder(mo);
           } else if (order instanceof LimitOrder) {
             LimitOrder lo = (LimitOrder) order;
-            ret = exchange.getPollingTradeService().placeLimitOrder(lo);
+            orderId = exchange.getPollingTradeService().placeLimitOrder(lo);
           }
           lastUpdate = new Date();
           broadcastUpdateSuccess();
@@ -323,12 +322,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
       // only finish activity if the order has been created in a PlaceOrderActivity
       if (activity instanceof PlaceOrderActivity) {
-        if (!TextUtils.isEmpty(ret)) {
+        if (!TextUtils.isEmpty(orderId)) {
           activity.setResult(Activity.RESULT_OK);
         }
         activity.finish();
       }
-      return ret;
+      return !TextUtils.isEmpty(orderId);
     }
   };
 }
