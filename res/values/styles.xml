@@ -9,7 +9,7 @@
     <item name="android:editTextStyle">@style/My.Widget.EditText</item>
     <item name="android:autoCompleteTextViewStyle">@style/My.Widget.AutoCompleteTextView</item>
     <item name="android:spinnerStyle">@style/My.Widget.Spinner</item>
-    <item name="android:textColor">@color/fg_significant</item>
+   <!--<item name="android:textColor">@color/fg_significant</item>-->
     <item name="android:textSize">@dimen/font_size_small</item>
   </style>
   

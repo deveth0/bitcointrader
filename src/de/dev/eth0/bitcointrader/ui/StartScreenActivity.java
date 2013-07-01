@@ -45,7 +45,6 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
   @Override
   public void onResume() {
     super.onResume();
-
     // Only do something, if there has been no error before. otherwise wait till crashreport has been finished
     if (!hadErrors) {
       // if there has been no initial setup (or no mtgox keys are set, we need to start the initalSetupActivity
@@ -122,7 +121,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
         CrashReporter.appendSavedCrashTrace(stackTrace);
         CrashReporter.appendSavedCrashApplicationLog(applicationLog);
       } catch (final IOException x) {
-        x.printStackTrace();
+        Log.w(TAG, "IO Exception", x);
       }
 
       final ReportIssueDialogBuilder dialog = new ReportIssueDialogBuilder(this, R.string.report_issue_dialog_title_crash,
