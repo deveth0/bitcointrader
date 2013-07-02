@@ -39,22 +39,24 @@
       android:id="@+id/wallet_history_balance_label"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_toRightOf="@id/wallet_history_amount_label"
+      android:layout_alignLeft="@id/wallet_history_amount_label"
+      android:layout_below="@id/wallet_history_amount_label"
       android:text="@string/wallet_history_balance"
     />
     <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
       android:id="@+id/wallet_history_row_balance"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_toRightOf="@id/wallet_history_balance_label"
+      android:layout_below="@id/wallet_history_row_amount"
+      android:layout_alignLeft="@id/wallet_history_row_amount"
     />
   
     <TextView
       android:id="@+id/wallet_history_row_date"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_below="@+id/wallet_history_row_balance"
-      android:layout_alignLeft="@id/wallet_history_row_balance"
+      android:paddingLeft="@dimen/list_entry_padding_horizontal"
+      android:layout_toRightOf="@id/wallet_history_row_amount"
     />
     
   </RelativeLayout>
