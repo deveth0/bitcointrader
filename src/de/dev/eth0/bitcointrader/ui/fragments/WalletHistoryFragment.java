@@ -178,6 +178,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
         mDialog = new ProgressDialog(activity);
         mDialog.setMessage(getString(R.string.loading_info));
         mDialog.setCancelable(false);
+        mDialog.setOwnerActivity(activity);
         mDialog.show();
       }
     }

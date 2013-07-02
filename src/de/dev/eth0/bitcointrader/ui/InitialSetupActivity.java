@@ -123,6 +123,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       dialog = new ProgressDialog(InitialSetupActivity.this);
       dialog.setMessage(getString(R.string.initial_setup_testing));
       dialog.setCancelable(false);
+      dialog.setOwnerActivity(InitialSetupActivity.this);
       dialog.show();
     }
 
@@ -244,6 +245,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       dialog = new ProgressDialog(InitialSetupActivity.this);
       dialog.setMessage(getString(R.string.initial_setup_testing));
       dialog.setCancelable(false);
+      dialog.setOwnerActivity(InitialSetupActivity.this);
       dialog.show();
     }
 
