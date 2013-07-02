@@ -120,7 +120,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
   @Override
   public void onViewCreated(final View view, final Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    int text = R.string.bitcoin_order_fragment_empty_text;
+    int text = R.string.wallet_history_empty_text;
     SpannableStringBuilder emptyText = new SpannableStringBuilder(
             getString(text));
     emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
