@@ -95,7 +95,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     notifyOnUpdate = prefs.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
     updateInterval = Integer.parseInt(prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
     createExchange(prefs);
-    return Service.START_NOT_STICKY;
+    return Service.START_STICKY;
   }
 
   private void createExchange(SharedPreferences prefs) {
