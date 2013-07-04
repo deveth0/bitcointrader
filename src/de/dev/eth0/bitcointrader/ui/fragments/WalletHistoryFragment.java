@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
@@ -54,8 +55,8 @@ public class WalletHistoryFragment extends SherlockListFragment {
           Bundle savedInstanceState) {
     View layout = super.onCreateView(inflater, container,
             savedInstanceState);
-    ListView lv = (ListView) layout.findViewById(android.R.id.list);
-    ViewGroup parent = (ViewGroup) lv.getParent();
+    ListView lv = (ListView)layout.findViewById(android.R.id.list);
+    ViewGroup parent = (ViewGroup)lv.getParent();
 
     // Remove ListView and add CustomView  in its place
     int lvIndex = parent.indexOfChild(lv);
@@ -64,7 +65,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
             R.layout.wallet_history_fragment, container, false);
     parent.addView(view, lvIndex, lv.getLayoutParams());
 
-    historyCurrencySpinner = (Spinner) view.findViewById(R.id.wallet_history_currency_spinner);
+    historyCurrencySpinner = (Spinner)view.findViewById(R.id.wallet_history_currency_spinner);
     ExchangeService exchangeService = application.getExchangeService();
     Set<String> currencies = new HashSet<String>();
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
@@ -95,8 +96,8 @@ public class WalletHistoryFragment extends SherlockListFragment {
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity) activity;
-    this.application = (BitcoinTraderApplication) activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity)activity;
+    this.application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -125,6 +126,15 @@ public class WalletHistoryFragment extends SherlockListFragment {
             getString(text));
     emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
     setEmptyText(emptyText);
+  }
+
+  @Override
+  public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+    MtGoxWalletHistoryEntry entry = adapter.getItem(position);
+
+    if (entry != null) {
+      Toast.makeText(activity, entry.getInfo(), Toast.LENGTH_LONG).show();
+    }
   }
 
   @Override
@@ -196,10 +206,10 @@ public class WalletHistoryFragment extends SherlockListFragment {
     protected MtGoxWalletHistory doInBackground(Boolean... params) {
 
       ExchangeService exchangeService = application.getExchangeService();
-      String currency = (String) historyCurrencySpinner.getSelectedItem();
+      String currency = (String)historyCurrencySpinner.getSelectedItem();
 
       if (exchangeService != null) {
-        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter) historyCurrencySpinner.getAdapter();
+        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter)historyCurrencySpinner.getAdapter();
         Map<String, MtGoxWalletHistory> histories = exchangeService.getMtGoxWalletHistory(adapter.getEntries(), params[0]);
         return histories.get(currency);
       }

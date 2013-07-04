@@ -99,6 +99,7 @@ public class WalletHistoryListAdapter extends BaseAdapter {
     return row;
   }
 
+
   public void bindView(View row, final MtGoxWalletHistoryEntry entry) {
     // type (out, fee, earned)
     TextView rowType = (TextView)row.findViewById(R.id.wallet_history_row_type);
