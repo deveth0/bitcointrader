@@ -25,6 +25,7 @@ import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.currency.Currencies;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.marketdata.Ticker;
+import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
@@ -61,7 +62,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   };
   private LocalBroadcastManager broadcastManager;
-
 
   public class LocalBinder extends Binder {
 
@@ -175,6 +175,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
     lastUpdateWalletHistory = new Date();
     return Collections.unmodifiableMap(walletHistoryCache);
+  }
+
+  public Trades getTrades() {
+    return exchange.getPollingMarketDataService().getTrades("BTC", getCurrency());
   }
 
   public MtGoxAccountInfo getAccountInfo() {
