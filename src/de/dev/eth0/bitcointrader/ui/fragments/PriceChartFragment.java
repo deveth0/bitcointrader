@@ -100,9 +100,10 @@ public class PriceChartFragment extends AbstractBitcoinTraderFragment {
       graphView = graphView = new LineGraphView(activity, "foo");
       // add data
       graphView.setScrollable(true);
+      graphView.setScalable(true);
       graphLayout.addView(graphView);
+      graphView.setBackgroundColor(R.color.fg_insignificant);
     }
-
 
     float[] values = new float[tradesList.size()];
     long[] dates = new long[tradesList.size()];
@@ -134,8 +135,6 @@ public class PriceChartFragment extends AbstractBitcoinTraderFragment {
     final double startValue = dates[dates.length - 1] - windowSize;
     graphView.addSeries(new GraphViewSeries(data));
     graphView.setViewPort(startValue, windowSize);
-    graphView.setScrollable(true);
-    graphView.setScalable(true);
 
   }
 
