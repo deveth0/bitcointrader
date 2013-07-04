@@ -19,7 +19,7 @@ public final class PlaceOrderActivity extends AbstractBitcoinTraderActivity {
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.place_order_content);
+    setContentView(R.layout.place_order_activity);
     final ActionBar actionBar = getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
 

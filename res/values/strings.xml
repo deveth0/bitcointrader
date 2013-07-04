@@ -39,7 +39,9 @@
   <string name="wallet_history_amount">Amount:</string>
   <string name="wallet_history_balance">Balance:</string>
   <string name="wallet_history_empty_text">No wallet history available</string>
-  
+
+  <string name="price_chart_title">Price Chart</string>
+
   <string name="account_info">Your Account</string>
   <string name="account_info_trade_fee_label">Trade Fee:</string>
   <string name="price_info">Ticker</string>

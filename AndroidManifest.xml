@@ -49,7 +49,11 @@
       android:name="de.dev.eth0.bitcointrader.ui.AboutActivity"
       android:label="@string/about_title"
       android:screenOrientation="behind" />
-    <activity
+      <activity
+        android:name="de.dev.eth0.bitcointrader.ui.PriceChartActivity"
+        android:label="@string/price_chart_title"
+      />
+      <activity
       android:name="de.dev.eth0.bitcointrader.ui.WalletHistoryActivity"
       android:label="@string/wallet_history_title"
     />

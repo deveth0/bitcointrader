@@ -48,6 +48,9 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       case R.id.bitcointrader_options_select_currency:
         showSelectCurrencyPopup();
         return true;
+      case R.id.bitcointrader_options_price_chart:
+        startActivity(new Intent(this, PriceChartActivity.class));
+        return true;
       case R.id.bitcointrader_options_wallet_history:
         startActivity(new Intent(this, WalletHistoryActivity.class));
         return true;
