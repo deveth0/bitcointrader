@@ -4,6 +4,7 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -201,8 +202,14 @@ public class PriceChartFragment extends SherlockListFragment {
 
     @Override
     protected BitcoinChartsTicker[] doInBackground(Void... params) {
-      BitcoinChartsTicker[] ticker = BitcoinChartsFactory.createInstance().getMarketData();
-      return ticker == null ? new BitcoinChartsTicker[0] : ticker;
+      try {
+        BitcoinChartsTicker[] ticker = BitcoinChartsFactory.createInstance().getMarketData();
+        return ticker == null ? new BitcoinChartsTicker[0] : ticker;
+      } catch (Exception e) {
+        activity.sendBroadcast(new Intent(Constants.UPDATE_FAILED));
+        Log.e(TAG, "Exception", e);
+      }
+      return null;
     }
   };
 }
