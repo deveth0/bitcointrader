@@ -41,7 +41,15 @@
   <string name="wallet_history_empty_text">No wallet history available</string>
 
   <string name="price_chart_title">Price Chart</string>
-
+  <string name="price_chart_symbol">Symbol</string>
+  <string name="price_chart_low">Low</string>
+  <string name="price_chart_high">High</string>
+  <string name="price_chart_last">Last</string>
+  <string name="price_chart_vol">Vol</string>
+  <string name="price_chart_avg">Avg</string>
+  <string name="price_chart_ask">Ask</string>
+  <string name="price_chart_bid">Bid</string>
+    
   <string name="account_info">Your Account</string>
   <string name="account_info_trade_fee_label">Trade Fee:</string>
   <string name="price_info">Ticker</string>

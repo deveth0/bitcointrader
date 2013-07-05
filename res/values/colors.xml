@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<!-- foreground -->
-	<color name="fg_significant">#ff000000</color>
-	<color name="fg_less_significant">#ff666666</color>
-	<color name="fg_insignificant">#ffcccccc</color>
-	<color name="fg_error">#ffff0000</color>
+  <!-- foreground -->
+  <color name="fg_significant">#ff000000</color>
+  <color name="fg_less_significant">#ff666666</color>
+  <color name="fg_insignificant">#ffcccccc</color>
+  <color name="fg_error">#ffff0000</color>
 
-	<!-- background -->
-	<color name="bg_bright">#ffffffff</color>
-	<color name="bg_less_bright">#ffe8e8f0</color>
-	<color name="bg_panel">#ffd8d8e0</color>
-	<color name="bg_form">#ffe8e8f0</color>
+  <!-- background -->
+  <color name="bg_bright">#ffffffff</color>
+  <color name="bg_less_bright">#ffe8e8f0</color>
+  <color name="bg_panel">#ffd8d8e0</color>
+  <color name="bg_form">#ffe8e8f0</color>
     
-    <color name="button_pressed">#33B5E5</color>
-
-    <color name="orange">#ff7711</color>
-    <color name="red">#ff0a12</color>
-    <color name="yellow">#ffef3f</color>
-    <color name="green">#8eff9a</color>
+  <color name="button_pressed">#33B5E5</color>
+  
+  <color name="orange">#ff7711</color>
+  
+  <color name="history_in">#F8EB09</color>
+  <color name="history_out">#D9660E</color>
+  <color name="history_deposit">#D1EED1</color>
+  <color name="history_withdraw">#FF7878</color>
+  <color name="history_fee">#FDDB38</color>
+  <color name="history_spend">#FDDFDE</color>
+  <color name="history_earned">#D0EBF4</color>
 </resources>

@@ -131,7 +131,6 @@ public class WalletHistoryFragment extends SherlockListFragment {
   @Override
   public void onListItemClick(final ListView l, final View v, final int position, final long id) {
     MtGoxWalletHistoryEntry entry = adapter.getItem(position);
-
     if (entry != null) {
       Toast.makeText(activity, entry.getInfo(), Toast.LENGTH_LONG).show();
     }

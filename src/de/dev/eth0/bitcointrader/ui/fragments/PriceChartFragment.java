@@ -6,55 +6,62 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphView.GraphViewData;
-import com.jjoe64.graphview.GraphViewSeries;
-import com.jjoe64.graphview.LineGraphView;
-import com.xeiam.xchange.dto.marketdata.Trade;
-import com.xeiam.xchange.dto.marketdata.Trades;
+import com.xeiam.xchange.bitcoincharts.BitcoinChartsFactory;
+import com.xeiam.xchange.bitcoincharts.dto.marketdata.BitcoinChartsTicker;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
-import de.dev.eth0.bitcointrader.service.ExchangeService;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
+import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import org.joda.money.BigMoney;
 
-public class PriceChartFragment extends AbstractBitcoinTraderFragment {
+public class PriceChartFragment extends SherlockListFragment {
 
   private static final String TAG = PriceChartFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
-  private LinearLayout graphLayout;
-  private GraphView graphView;
+  private PriceChartListAdapter adapter;
   private ProgressDialog mDialog;
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-          Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.price_chart_fragment, container);
-    graphLayout = (LinearLayout)view.findViewById(R.id.price_chart_graph);
-    return view;
-  }
+  private View infoToastLayout;
+  private TextView symbolView;
+  private CurrencyTextView lastView;
+  private CurrencyTextView avgView;
+  private AmountTextView volView;
+  private CurrencyTextView lowView;
+  private CurrencyTextView highView;
+  private CurrencyTextView bidView;
+  private CurrencyTextView askView;
 
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity)activity;
-    this.application = (BitcoinTraderApplication)activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.application = (BitcoinTraderApplication) activity.getApplication();
   }
 
   @Override
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
+    adapter = new PriceChartListAdapter(activity);
+    setListAdapter(adapter);
     setHasOptionsMenu(true);
   }
 
@@ -69,9 +76,65 @@ public class PriceChartFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+          Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.price_chart_fragment, container);
+    return view;
+  }
+
+  @Override
+  public void onViewCreated(View view, Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup) getView().findViewById(R.id.chart_row_info_toast));
+    symbolView = (TextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
+    lastView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
+    avgView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
+    volView = (AmountTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
+    lowView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_low);
+    highView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_high);
+    bidView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
+    askView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
+
+    lastView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lastView.setPrecision(Constants.PRECISION_DOLLAR);
+    avgView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    avgView.setPrecision(Constants.PRECISION_DOLLAR);
+    lowView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lowView.setPrecision(Constants.PRECISION_DOLLAR);
+    highView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    highView.setPrecision(Constants.PRECISION_DOLLAR);
+    bidView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    bidView.setPrecision(Constants.PRECISION_DOLLAR);
+    askView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    askView.setPrecision(Constants.PRECISION_DOLLAR);
+    volView.setPrecision(Constants.PRECISION_BITCOIN);
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.wallethistory_options, menu);
+  }
+
+  @Override
+  public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+    BitcoinChartsTicker entry = adapter.getItem(position);
+    if (entry != null) {
+      symbolView.setText(entry.getSymbol());
+      lastView.setAmount(BigMoney.parse("BTC " + entry.getClose()));
+      avgView.setAmount(BigMoney.parse("BTC " + entry.getAvg()));
+      lowView.setAmount(BigMoney.parse("BTC " + entry.getLow()));
+      highView.setAmount(BigMoney.parse("BTC " + entry.getHigh()));
+      bidView.setAmount(BigMoney.parse("BTC " + entry.getBid()));
+      askView.setAmount(BigMoney.parse("BTC " + entry.getAsk()));
+      volView.setAmount(entry.getVolume());
+
+      Toast toast = new Toast(getActivity());
+      toast.setDuration(Toast.LENGTH_SHORT);
+      toast.setView(infoToastLayout);
+      toast.show();
+
+    }
   }
 
   @Override
@@ -90,55 +153,30 @@ public class PriceChartFragment extends AbstractBitcoinTraderFragment {
   }
 
   protected void updateView() {
-    GetTradesTask tradesTask = new GetTradesTask();
+    GetTickerTask tradesTask = new GetTickerTask();
     tradesTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR);
   }
 
-  protected void updateView(List<Trade> tradesList) {
+  protected void updateView(BitcoinChartsTicker[] tradesList) {
     Log.d(TAG, ".updateView");
-    if (graphView == null) {
-      graphView = graphView = new LineGraphView(activity, "foo");
-      // add data
-      graphView.setScrollable(true);
-      graphView.setScalable(true);
-      graphLayout.addView(graphView);
-      graphView.setBackgroundColor(R.color.fg_insignificant);
-    }
-
-    float[] values = new float[tradesList.size()];
-    long[] dates = new long[tradesList.size()];
-    final GraphViewData[] data = new GraphViewData[values.length];
-
-    float largest = Integer.MIN_VALUE;
-    float smallest = Integer.MAX_VALUE;
-
-    final int tradesListSize = tradesList.size();
-    for (int i = 0; i < tradesListSize; i++) {
-      final Trade trade = tradesList.get(i);
-      values[i] = trade.getPrice().getAmount().floatValue();
-      dates[i] = trade.getTimestamp().getTime();
-      if (values[i] > largest) {
-        largest = values[i];
+    // Sort Tickers by volume
+    Arrays.sort(tradesList, new Comparator<BitcoinChartsTicker>() {
+      @Override
+      public int compare(BitcoinChartsTicker entry1,
+              BitcoinChartsTicker entry2) {
+        return entry2.getVolume().compareTo(entry1.getVolume());
       }
-      if (values[i] < smallest) {
-        smallest = values[i];
+    });
+    List<BitcoinChartsTicker> tickers = new ArrayList<BitcoinChartsTicker>();
+    for (BitcoinChartsTicker data : tradesList) {
+      if (data.getVolume().intValue() != 0) {
+        tickers.add(data);
       }
     }
-
-    for (int i = 0; i < tradesListSize; i++) {
-      data[i] = new GraphViewData(dates[i], values[i]);
-    }
-
-    double windowSize = (dates[dates.length - 1] - dates[0]) / 2;
-    // startValue enables graph window to be aligned with latest
-    // trades
-    final double startValue = dates[dates.length - 1] - windowSize;
-    graphView.addSeries(new GraphViewSeries(data));
-    graphView.setViewPort(startValue, windowSize);
-
+    adapter.replace(tickers);
   }
 
-  private class GetTradesTask extends ICSAsyncTask<Void, Void, List<Trade>> {
+  private class GetTickerTask extends ICSAsyncTask<Void, Void, BitcoinChartsTicker[]> {
 
     @Override
     protected void onPreExecute() {
@@ -152,19 +190,19 @@ public class PriceChartFragment extends AbstractBitcoinTraderFragment {
     }
 
     @Override
-    protected void onPostExecute(List<Trade> trades) {
+    protected void onPostExecute(BitcoinChartsTicker[] ticker) {
       if (mDialog != null && mDialog.isShowing()) {
         mDialog.dismiss();
         mDialog = null;
       }
-      updateView(trades);
+      Log.d(TAG, "Found " + ticker.length + " ticker entries");
+      updateView(ticker);
     }
 
     @Override
-    protected List<Trade> doInBackground(Void... params) {
-      ExchangeService exchangeService = application.getExchangeService();
-      Trades trades = exchangeService.getTrades();
-      return trades != null ? trades.getTrades() : new ArrayList<Trade>();
+    protected BitcoinChartsTicker[] doInBackground(Void... params) {
+      BitcoinChartsTicker[] ticker = BitcoinChartsFactory.createInstance().getMarketData();
+      return ticker == null ? new BitcoinChartsTicker[0] : ticker;
     }
   };
 }
