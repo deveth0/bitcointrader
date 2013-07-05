@@ -275,8 +275,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
               Log.d(TAG, "getting OrderResult failed", ee);
             }
           }
+          Log.d(TAG, "Sending out order executed intent");
           if (!extras.isEmpty()) {
-            intent.putExtra(Constants.EXTRA_ORDERRESULT, extras.toArray(new Parcelable[0]));
+            intent.putExtra(Constants.EXTRA_ORDERRESULT, extras.toArray(new Parcelable[extras.size()]));
             sendBroadcast(intent);
           }
         }

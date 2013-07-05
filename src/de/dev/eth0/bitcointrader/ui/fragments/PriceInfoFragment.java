@@ -19,6 +19,8 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
+import de.dev.eth0.bitcointrader.ui.WalletHistoryActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.text.DateFormat;
@@ -42,14 +44,20 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
 
   @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-    return inflater.inflate(R.layout.price_info_fragment, container, false);
+    View view = inflater.inflate(R.layout.price_info_fragment, container, false);
+    view.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        startActivity(new Intent(getActivity(), PriceChartActivity.class));
+      }
+    });
+    return view;
   }
 
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.application = (BitcoinTraderApplication) activity.getApplication();
-    this.activity = (AbstractBitcoinTraderActivity)activity;
+    this.activity = (AbstractBitcoinTraderActivity) activity;
   }
 
   @Override

@@ -12,8 +12,9 @@
 	<color name="bg_less_bright">#ffe8e8f0</color>
 	<color name="bg_panel">#ffd8d8e0</color>
 	<color name="bg_form">#ffe8e8f0</color>
+    
+    <color name="button_pressed">#33B5E5</color>
 
-    <!-- orange -->
     <color name="orange">#ff7711</color>
     <color name="red">#ff0a12</color>
     <color name="yellow">#ffef3f</color>

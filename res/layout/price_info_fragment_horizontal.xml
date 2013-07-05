@@ -5,6 +5,8 @@
               android:layout_height="wrap_content"
               android:paddingLeft="@dimen/default_padding"
               android:paddingRight="@dimen/default_padding"
+              android:background="@drawable/click_layout_selector"
+              android:clickable="true"
               android:gravity="center"
               android:orientation="vertical">
 
