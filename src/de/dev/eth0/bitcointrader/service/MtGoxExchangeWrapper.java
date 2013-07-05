@@ -74,9 +74,9 @@ public class MtGoxExchangeWrapper extends MtGoxExchange {
     }
   }
 
-  public MtGoxWalletHistory getMtGoxWalletHistory(String currency) {
+  public MtGoxWalletHistory getMtGoxWalletHistory(String currency, Integer page) {
     try {
-      MtGoxWalletHistoryWrapper mtGoxWalletHistoryWrapper = mtGoxV2.getWalletHistory(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce(), currency, null);
+      MtGoxWalletHistoryWrapper mtGoxWalletHistoryWrapper = mtGoxV2.getWalletHistory(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce(), currency, page);
       if (mtGoxWalletHistoryWrapper.getResult().equals("success")) {
         return mtGoxWalletHistoryWrapper.getMtGoxWalletHistory();
       }

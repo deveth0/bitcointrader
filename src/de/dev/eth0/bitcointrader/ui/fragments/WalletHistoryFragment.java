@@ -55,8 +55,8 @@ public class WalletHistoryFragment extends SherlockListFragment {
           Bundle savedInstanceState) {
     View layout = super.onCreateView(inflater, container,
             savedInstanceState);
-    ListView lv = (ListView)layout.findViewById(android.R.id.list);
-    ViewGroup parent = (ViewGroup)lv.getParent();
+    ListView lv = (ListView) layout.findViewById(android.R.id.list);
+    ViewGroup parent = (ViewGroup) lv.getParent();
 
     // Remove ListView and add CustomView  in its place
     int lvIndex = parent.indexOfChild(lv);
@@ -65,7 +65,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
             R.layout.wallet_history_fragment, container, false);
     parent.addView(view, lvIndex, lv.getLayoutParams());
 
-    historyCurrencySpinner = (Spinner)view.findViewById(R.id.wallet_history_currency_spinner);
+    historyCurrencySpinner = (Spinner) view.findViewById(R.id.wallet_history_currency_spinner);
     ExchangeService exchangeService = application.getExchangeService();
     Set<String> currencies = new HashSet<String>();
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
@@ -96,8 +96,8 @@ public class WalletHistoryFragment extends SherlockListFragment {
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity)activity;
-    this.application = (BitcoinTraderApplication)activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.application = (BitcoinTraderApplication) activity.getApplication();
   }
 
   @Override
@@ -164,12 +164,13 @@ public class WalletHistoryFragment extends SherlockListFragment {
     walletTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, forceUpdate);
   }
 
-  protected void updateView(MtGoxWalletHistory history) {
+  protected void updateView(List<MtGoxWalletHistory> history) {
     Log.d(TAG, ".updateView");
     List<MtGoxWalletHistoryEntry> entries = new ArrayList<MtGoxWalletHistoryEntry>();
     if (history != null) {
-      entries.addAll(Arrays.asList(history.getMtGoxWalletHistoryEntries()));
-      Log.d(TAG, "WalletHistory: " + history.getMtGoxWalletHistoryEntries().length);
+      for (MtGoxWalletHistory historyPage : history) {
+        entries.addAll(Arrays.asList(historyPage.getMtGoxWalletHistoryEntries()));
+      }
     }
     Collections.sort(entries, new Comparator<MtGoxWalletHistoryEntry>() {
       public int compare(MtGoxWalletHistoryEntry lhs, MtGoxWalletHistoryEntry rhs) {
@@ -180,7 +181,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
     adapter.replace(entries);
   }
 
-  private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Boolean, Void, MtGoxWalletHistory> {
+  private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Boolean, Void, List<MtGoxWalletHistory>> {
 
     @Override
     protected void onPreExecute() {
@@ -194,7 +195,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
 
     @Override
-    protected void onPostExecute(MtGoxWalletHistory history) {
+    protected void onPostExecute(List<MtGoxWalletHistory> history) {
       if (mDialog != null && mDialog.isShowing()) {
         mDialog.dismiss();
         mDialog = null;
@@ -203,14 +204,14 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
 
     @Override
-    protected MtGoxWalletHistory doInBackground(Boolean... params) {
+    protected List<MtGoxWalletHistory> doInBackground(Boolean... params) {
 
       ExchangeService exchangeService = application.getExchangeService();
-      String currency = (String)historyCurrencySpinner.getSelectedItem();
+      String currency = (String) historyCurrencySpinner.getSelectedItem();
 
       if (exchangeService != null) {
-        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter)historyCurrencySpinner.getAdapter();
-        Map<String, MtGoxWalletHistory> histories = exchangeService.getMtGoxWalletHistory(adapter.getEntries(), params[0]);
+        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter) historyCurrencySpinner.getAdapter();
+        Map<String, List<MtGoxWalletHistory>> histories = exchangeService.getMtGoxWalletHistory(adapter.getEntries(), params[0]);
         return histories.get(currency);
       }
       return null;

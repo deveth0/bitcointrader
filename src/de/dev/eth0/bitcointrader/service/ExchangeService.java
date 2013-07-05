@@ -78,7 +78,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private Ticker ticker;
   private Date lastUpdate;
   private Date lastUpdateWalletHistory;
-  private Map<String, MtGoxWalletHistory> walletHistoryCache = new HashMap<String, MtGoxWalletHistory>();
+  private Map<String, List<MtGoxWalletHistory>> walletHistoryCache = new HashMap<String, List<MtGoxWalletHistory>>();
 
   @Override
   public void onCreate() {
@@ -152,7 +152,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     return exchange;
   }
 
-  public Map<String, MtGoxWalletHistory> getMtGoxWalletHistory(String[] currencies, boolean forceUpdate) {
+  public Map<String, List<MtGoxWalletHistory>> getMtGoxWalletHistory(String[] currencies, boolean forceUpdate) {
     boolean update = forceUpdate;
     if (updateInterval > 0 && !forceUpdate) {
       // one minute has 60*1000 miliseconds
@@ -168,9 +168,21 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     walletHistoryCache.clear();
     for (String currency : currencies) {
       try {
-        MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency);
+        MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, null);
+        List<MtGoxWalletHistory> pages = new ArrayList<MtGoxWalletHistory>();
         if (walletHistory != null) {
-          walletHistoryCache.put(currency, walletHistory);
+          pages.add(walletHistory);
+          if (walletHistory.getCurrentPage() < walletHistory.getMaxPage()) {
+            for (int page = 1; page <= walletHistory.getMaxPage(); page++) {
+              walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, page);
+              if (walletHistory != null) {
+                pages.add(walletHistory);
+              }
+            }
+          }
+        }
+        if (!pages.isEmpty()) {
+          walletHistoryCache.put(currency, pages);
         }
       } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
