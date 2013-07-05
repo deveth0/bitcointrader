@@ -15,6 +15,7 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfoWrapper;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryWrapper;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
+import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResultWrapper;
 import com.xeiam.xchange.mtgox.v2.service.polling.MtGoxPollingAccountService;
 import com.xeiam.xchange.mtgox.v2.service.polling.MtGoxPollingMarketDataService;
 import com.xeiam.xchange.mtgox.v2.service.polling.MtGoxPollingTradeService;
@@ -57,42 +58,35 @@ public class MtGoxExchangeWrapper extends MtGoxExchange {
       super(exchangeSpecification);
     }
 
-  public MtGoxAccountInfo getMtGoxAccountInfo(){
-    try {
-      MtGoxAccountInfoWrapper mtGoxAccountInfoWrapper = mtGoxV2.getAccountInfo(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce());
-      if (mtGoxAccountInfoWrapper.getResult().equals("success")) {
-        return mtGoxAccountInfoWrapper.getMtGoxAccountInfo();
+    public MtGoxAccountInfo getMtGoxAccountInfo() {
+      try {
+        MtGoxAccountInfoWrapper mtGoxAccountInfoWrapper = mtGoxV2.getAccountInfo(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce());
+        if (mtGoxAccountInfoWrapper.getResult().equals("success")) {
+          return mtGoxAccountInfoWrapper.getMtGoxAccountInfo();
+        } else if (mtGoxAccountInfoWrapper.getResult().equals("error")) {
+          throw new ExchangeException("Error calling getAccountInfo(): " + mtGoxAccountInfoWrapper.getError());
+        } else {
+          throw new ExchangeException("Error calling getAccountInfo(): Unexpected result!");
+        }
+      } catch (MtGoxException e) {
+        throw new ExchangeException("Error calling getAccountInfo(): " + e.getError());
       }
-      else if (mtGoxAccountInfoWrapper.getResult().equals("error")) {
-        throw new ExchangeException("Error calling getAccountInfo(): " + mtGoxAccountInfoWrapper.getError());
-      }
-      else {
-        throw new ExchangeException("Error calling getAccountInfo(): Unexpected result!");
-      }
-    } catch (MtGoxException e) {
-      throw new ExchangeException("Error calling getAccountInfo(): " + e.getError());
     }
-  }
 
-  public MtGoxWalletHistory getMtGoxWalletHistory(String currency, Integer page) {
-    try {
-      MtGoxWalletHistoryWrapper mtGoxWalletHistoryWrapper = mtGoxV2.getWalletHistory(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce(), currency, page);
-      if (mtGoxWalletHistoryWrapper.getResult().equals("success")) {
-        return mtGoxWalletHistoryWrapper.getMtGoxWalletHistory();
-      }
-      else if (mtGoxWalletHistoryWrapper.getResult().equals("error")) {
-        throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + mtGoxWalletHistoryWrapper.getError());
-      }
-      else {
-        throw new ExchangeException("Error calling getMtGoxWalletHistory(): Unexpected result!");
+    public MtGoxWalletHistory getMtGoxWalletHistory(String currency, Integer page) {
+      try {
+        MtGoxWalletHistoryWrapper mtGoxWalletHistoryWrapper = mtGoxV2.getWalletHistory(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce(), currency, page);
+        if (mtGoxWalletHistoryWrapper.getResult().equals("success")) {
+          return mtGoxWalletHistoryWrapper.getMtGoxWalletHistory();
+        } else if (mtGoxWalletHistoryWrapper.getResult().equals("error")) {
+          throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + mtGoxWalletHistoryWrapper.getError());
+        } else {
+          throw new ExchangeException("Error calling getMtGoxWalletHistory(): Unexpected result!");
+        }
+      } catch (MtGoxException e) {
+        throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + e.getError());
       }
     }
-    catch (MtGoxException e) {
-      throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + e.getError());
-    }
-  }
-
-    
   }
 
   public static class MtGoxPollingTradeServiceWrapper extends MtGoxPollingTradeService {
@@ -101,8 +95,20 @@ public class MtGoxExchangeWrapper extends MtGoxExchange {
       super(exchangeSpecification);
     }
 
-    MtGoxOrderResult getOrderResult(LimitOrder lo) {
-      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public MtGoxOrderResult getOrderResult(LimitOrder lo) {
+      try {
+        MtGoxOrderResultWrapper mtGoxOrderResultWrapper = mtGoxV2.getOrderResult(exchangeSpecification.getApiKey(), signatureCreator, MtGoxUtils.getNonce(),
+                lo.getType().toString().toLowerCase(), lo.getId());
+        if (mtGoxOrderResultWrapper.getResult().equals("success")) {
+          return mtGoxOrderResultWrapper.getMtGoxOrderResult();
+        } else if (mtGoxOrderResultWrapper.getResult().equals("error")) {
+          throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + mtGoxOrderResultWrapper.getError());
+        } else {
+          throw new ExchangeException("Error calling getMtGoxWalletHistory(): Unexpected result!");
+        }
+      } catch (MtGoxException e) {
+        throw new ExchangeException("Error calling getMtGoxWalletHistory(): " + e.getError());
+      }
     }
   }
 

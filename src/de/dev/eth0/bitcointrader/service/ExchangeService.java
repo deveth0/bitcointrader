@@ -262,7 +262,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (!openOrders.isEmpty()) {
           Intent intent = new Intent(Constants.ORDER_EXECUTED);
           List<Parcelable> extras = new ArrayList<Parcelable>();
-          for (LimitOrder lo : orders) {
+          for (LimitOrder lo : openOrders) {
             try {
               MtGoxOrderResult result = exchange.getPollingTradeService().getOrderResult(lo);
               Bundle bundle = new Bundle();
