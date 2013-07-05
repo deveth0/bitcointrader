@@ -1,7 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+//$URL$
+//$Id$
 package de.dev.eth0.bitcointrader.service;
 
 import com.xeiam.xchange.ExchangeException;

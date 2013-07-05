@@ -2,7 +2,6 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui.fragments;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import com.xeiam.xchange.bitcoincharts.dto.marketdata.BitcoinChartsTicker;
