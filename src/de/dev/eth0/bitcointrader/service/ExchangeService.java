@@ -140,15 +140,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   public void setCurrency(String currency) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putString(Constants.PREFS_KEY_CURRENCY, currency).apply();
+    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    prefs.edit().putString(Constants.PREFS_KEY_CURRENCY, currency).apply();
   }
 
   public String getCurrency() {
     return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, null);
   }
-  
-  
+
   public MtGoxExchangeWrapper getExchange() {
     return exchange;
   }
@@ -158,7 +157,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     if (updateInterval > 0 && !forceUpdate) {
       // one minute has 60*1000 miliseconds
       Date now = new Date();
-      if(lastUpdateWalletHistory != null && (now.getTime() - lastUpdateWalletHistory.getTime()) >= updateInterval*60*1000){
+      if (lastUpdateWalletHistory != null && (now.getTime() - lastUpdateWalletHistory.getTime()) >= updateInterval * 60 * 1000) {
         update = true;
       }
     }
@@ -168,9 +167,20 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
     walletHistoryCache.clear();
     for (String currency : currencies) {
-      MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency);
-      if(walletHistory != null){
-      walletHistoryCache.put(currency, walletHistory);
+      try {
+        MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency);
+        if (walletHistory != null) {
+          walletHistoryCache.put(currency, walletHistory);
+        }
+      } catch (ExchangeException ee) {
+        Log.i(TAG, "ExchangeException", ee);
+        broadcastUpdateFailure();
+      } catch (HttpException uhe) {
+        Log.e(TAG, "HttpException", uhe);
+        broadcastUpdateFailure();
+      } catch (RuntimeException iae) {
+        Log.e(TAG, "RuntimeException", iae);
+        broadcastUpdateFailure();
       }
     }
     lastUpdateWalletHistory = new Date();
@@ -230,7 +240,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, "performing update...");
       try {
         accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
-        if(TextUtils.isEmpty(getCurrency())){
+        if (TextUtils.isEmpty(getCurrency())) {
           setCurrency(accountInfo.getWallets().getMtGoxWallets().get(1).getBalance().getCurrency());
         }
         //@TODO: don't trigger order executed notification on order delete
