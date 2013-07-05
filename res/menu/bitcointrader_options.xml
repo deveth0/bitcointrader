@@ -4,7 +4,11 @@
     android:id="@+id/bitcointrader_options_select_currency"
     android:icon="@drawable/ic_action_select_currency"
     android:showAsAction="ifRoom|withText"
-    android:title="@string/select_currency_title"/>
+    android:title="@string/select_currency_title">
+    <menu>
+      <item android:id="@+id/bitcointrader_options_select_currency_submenu" android:title="Placeholder"></item>
+    </menu>
+  </item>
   <item
     android:id="@+id/bitcointrader_options_refresh"
     android:icon="@drawable/ic_action_refresh"

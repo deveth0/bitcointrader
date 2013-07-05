@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.widget.PopupMenu;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -14,13 +13,11 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
-import java.util.HashSet;
-import java.util.Set;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
   private LocalBroadcastManager broadcastManager;
-  private PopupMenu selectCurrencyPopup;
+  private Menu selectCurrencyItem;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -39,6 +36,9 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   public boolean onCreateOptionsMenu(final Menu menu) {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);
+
+    selectCurrencyItem = menu.findItem(R.id.bitcointrader_options_select_currency).getSubMenu();
+    selectCurrencyItem.clear();
     return true;
   }
 
@@ -71,29 +71,24 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   private void showSelectCurrencyPopup() {
-    Set<String> currencies = new HashSet<String>();
-    if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
-      for (MtGoxWallet wallet : getExchangeService().getAccountInfo().getWallets().getMtGoxWallets()) {
-        if (wallet != null && wallet.getBalance() != null && !TextUtils.isEmpty(wallet.getBalance().getCurrency())) {
-          currencies.add(wallet.getBalance().getCurrency());
+    if (selectCurrencyItem.size() == 0) {
+      int idx = 0;
+      if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
+        for (MtGoxWallet wallet : getExchangeService().getAccountInfo().getWallets().getMtGoxWallets()) {
+          if (wallet != null && wallet.getBalance() != null
+                  && !TextUtils.isEmpty(wallet.getBalance().getCurrency())
+                  && !wallet.getBalance().getCurrency().equals(Constants.CURRENCY_CODE_BITCOIN)) {
+            MenuItem mi = selectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getBalance().getCurrency());
+            mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+              public boolean onMenuItemClick(MenuItem item) {
+                getExchangeService().setCurrency(item.getTitle().toString());
+                broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+                return true;
+              }
+            });
+          }
         }
       }
     }
-    if (selectCurrencyPopup == null) {
-      selectCurrencyPopup = new PopupMenu(this, findViewById(R.id.bitcointrader_options_select_currency));
-      for (String currency : currencies) {
-        if (!TextUtils.equals(currency, Constants.CURRENCY_CODE_BITCOIN)) {
-          selectCurrencyPopup.getMenu().add(currency);
-        }
-      }
-      selectCurrencyPopup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-        public boolean onMenuItemClick(android.view.MenuItem item) {
-          getExchangeService().setCurrency(item.getTitle().toString());
-          broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
-          return true;
-        }
-      });
-    }
-    selectCurrencyPopup.show();
   }
 }
