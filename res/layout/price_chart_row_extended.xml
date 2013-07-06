@@ -6,6 +6,12 @@
               android:paddingLeft="@dimen/list_entry_padding_horizontal"
               android:paddingTop="@dimen/default_padding"
 >
+  <ImageView
+        android:id="@+id/chart_row_trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/default_padding"
+  />
   
   <TextView
     android:id="@+id/chart_row_symbol"
@@ -17,14 +23,14 @@
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
     android:id="@+id/chart_row_last"
     android:layout_width="0dp"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_weight="1"
     android:gravity="center_horizontal"
   />        
 
   <de.dev.eth0.bitcointrader.ui.views.AmountTextView
     android:id="@+id/chart_row_vol"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_width="0dp"
     android:layout_weight="1"
     android:gravity="center_horizontal"
@@ -32,7 +38,7 @@
 
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
     android:id="@+id/chart_row_low"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_width="0dp"
     android:layout_weight="1"
     android:gravity="center_horizontal"
@@ -40,7 +46,7 @@
 
   <de.dev.eth0.bitcointrader.ui.views.CurrencyTextView
     android:id="@+id/chart_row_high"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:layout_width="0dp"
     android:layout_weight="1"
     android:gravity="center_horizontal"

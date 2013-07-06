@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +87,7 @@ public class PriceChartFragment extends SherlockListFragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup) getView().findViewById(R.id.chart_row_info_toast));
-    symbolView = (TextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
+     symbolView = (TextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
     lastView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
     avgView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
     volView = (AmountTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
@@ -130,7 +131,7 @@ public class PriceChartFragment extends SherlockListFragment {
       volView.setAmount(entry.getVolume());
 
       Toast toast = new Toast(getActivity());
-      toast.setDuration(Toast.LENGTH_SHORT);
+      toast.setDuration(Toast.LENGTH_LONG);
       toast.setView(infoToastLayout);
       toast.show();
 

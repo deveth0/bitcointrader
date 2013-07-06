@@ -3,6 +3,7 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.xeiam.xchange.bitcoincharts.dto.marketdata.BitcoinChartsTicker;
 import de.dev.eth0.bitcointrader.R;
@@ -30,25 +31,42 @@ public class PriceChartListAdapter extends AbstractListAdapter<BitcoinChartsTick
 
   @Override
   public void bindView(View row, BitcoinChartsTicker entry) {
+    
+   ImageView trendView = (ImageView) row.findViewById(R.id.chart_row_trend);
     TextView symbolView = (TextView) row.findViewById(R.id.chart_row_symbol);
     CurrencyTextView lastView = (CurrencyTextView) row.findViewById(R.id.chart_row_last);
     AmountTextView volView = (AmountTextView) row.findViewById(R.id.chart_row_vol);
     CurrencyTextView lowView = (CurrencyTextView) row.findViewById(R.id.chart_row_low);
     CurrencyTextView highView = (CurrencyTextView) row.findViewById(R.id.chart_row_high);
 
+    BigMoney last = BigMoney.parse("BTC " + entry.getClose());
+    BigMoney low = BigMoney.parse("BTC " + entry.getLow());
+    BigMoney high = BigMoney.parse("BTC " + entry.getHigh());
+    BigMoney avg = BigMoney.parse("BTC " + entry.getAvg());
+    
+    if(last.isLessThan(avg)){
+      trendView.setImageResource(R.drawable.trend_down);
+    }
+    else if(last.isGreaterThan(avg)){
+      trendView.setImageResource(R.drawable.trend_up);
+    }
+    else if(last.isEqual(avg)){
+      trendView.setImageResource(R.drawable.trend_stable);
+    }
+    
+    
     symbolView.setText(entry.getSymbol());
     
     volView.setAmount(entry.getVolume());
     volView.setPrecision(2);
     
-    lastView.setAmount(BigMoney.parse("BTC " + entry.getClose()));
+    lastView.setAmount(last);
     lastView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
     lastView.setPrecision(2);
-   
-    lowView.setAmount(BigMoney.parse("BTC " + entry.getLow()));
+    lowView.setAmount(low);
     lowView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
     lowView.setPrecision(2);
-    highView.setAmount(BigMoney.parse("BTC " + entry.getHigh()));
+    highView.setAmount(high);
     highView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
     highView.setPrecision(2);
   }
