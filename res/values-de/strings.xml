@@ -26,7 +26,7 @@
   <string name="initial_setup_failed_key_invalid">Key ungültig</string>
   <string name="initial_setup_failed_not_enough_permissions">Für die App sind werden die Permissions "Get Info" und "Trade" benötigt.</string>
   
-  <string name="wallet_history_title">Wallet Verlauf</string>
+  <string name="wallet_history_title">Verlauf</string>
   <string name="wallet_history_currency_spinner_label">Währung:</string>
   <string name="wallet_history_out">Out</string>
   <string name="wallet_history_in">In</string>
@@ -40,7 +40,7 @@
   <string name="wallet_history_date">Datum:</string>
   <string name="wallet_history_info_bought">BTC gekauft: %1$s für %2$s</string>
   <string name="wallet_history_info_sold">BTC verkauft: %1$s für %2$s</string>
-  <string name="wallet_history_empty_text">Keine Wallet Verlauf verfügbar.</string>
+  <string name="wallet_history_empty_text">Keine Verlauf für die aktuelle Währung verfügbar.</string>
 
   <string name="price_chart_title">Preistafel</string>
   <string name="price_chart_symbol">Symbol</string>
