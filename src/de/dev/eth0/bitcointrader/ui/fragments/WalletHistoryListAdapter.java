@@ -62,7 +62,6 @@ public class WalletHistoryListAdapter extends AbstractListAdapter<MtGoxWalletHis
     rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
     rowAmount.setAmount(amount);
     // balance
-
     CurrencyTextView rowBalance = (CurrencyTextView) row.findViewById(R.id.wallet_history_row_balance);
     BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
     rowBalance.setPrecision(Constants.PRECISION_BITCOIN);

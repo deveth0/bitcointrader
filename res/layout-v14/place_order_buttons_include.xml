@@ -15,6 +15,15 @@
     android:orientation="horizontal" >
 
     <Button
+      android:id="@+id/place_order_cancel"
+      style="?android:attr/buttonBarButtonStyle"
+      android:layout_width="0px"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:maxLines="2"
+      android:text="@string/place_order_cancel"
+      android:textStyle="bold" />
+    <Button
       android:id="@+id/place_order_perform"
       style="?android:attr/buttonBarButtonStyle"
       android:layout_width="0px"
@@ -24,15 +33,6 @@
       android:text="@string/place_order_perform"
     />
 
-    <Button
-      android:id="@+id/place_order_cancel"
-      style="?android:attr/buttonBarButtonStyle"
-      android:layout_width="0px"
-      android:layout_height="wrap_content"
-      android:layout_weight="1"
-      android:maxLines="2"
-      android:text="@string/place_order_cancel"
-      android:textStyle="bold" />
   </LinearLayout>
 
 </LinearLayout>

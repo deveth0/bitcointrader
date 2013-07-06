@@ -4,7 +4,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:padding="8dp"
-              android:background="@drawable/price_chart_row_info_toast_style"
+              android:background="@drawable/custom_toast_style"
               android:orientation="vertical"
 >
   

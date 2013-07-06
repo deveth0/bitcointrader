@@ -10,6 +10,7 @@
     android:layout_weight="1"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/list_entry_padding_horizontal"
+    android:gravity="center_vertical"
     android:textStyle="bold"
     android:textSize="@dimen/font_size_xlarge" />
   

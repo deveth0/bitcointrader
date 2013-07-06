@@ -9,7 +9,6 @@
   <string name="bitcoin_action_buy">Buy</string>
   <string name="bitcoin_action_sell">Sell</string>
   <string name="button_retry">Retry</string>
-  <string name="button_delete_order">Delete Order.</string>
   <string name="button_delete_order_text">Do you really want to delete the following order:\n%1$s (amount: %2$s)</string>
   <string name="button_delete_order_confirm">Confirm</string>
   <string name="button_delete_order_cancel">Cancel</string>
@@ -38,6 +37,9 @@
   <string name="wallet_history_deposit">Deposit</string>
   <string name="wallet_history_amount">Amount:</string>
   <string name="wallet_history_balance">Balance:</string>
+  <string name="wallet_history_date">Date:</string>
+  <string name="wallet_history_info_bought">BTC bought: %1$s at %2$s</string>
+  <string name="wallet_history_info_sold">BTC sold: %1$s at %2$s</string>
   <string name="wallet_history_empty_text">No wallet history available</string>
 
   <string name="price_chart_title">Price Chart</string>
@@ -90,8 +92,6 @@
     
   <string name="preferences_title">Preferences</string>
   <string name="preferences_category_mtgox">MtGox</string>
-  <string name="preferences_mtgox_enabled_summary">Enable MtGox trading</string>
-  <string name="preferences_mtgox_enabled_title">Use MtGox</string>
   <string name="preferences_mtgox_api_key_summary">Your MtGox API key</string>
   <string name="preferences_mtgox_api_key_title">API key</string>
   <string name="preferences_mtgox_secret_key_summary">Your MtGox Secret key</string>
@@ -108,9 +108,7 @@
   <string name="bitcointrader_options_donate">Donate</string>
 
 
-  <string name="report_issue_dialog_title_issue">Report issue</string>
   <string name="report_issue_dialog_title_crash">Previous crash detected</string>
-  <string name="report_issue_dialog_message_issue">Please describe your issue precisely enough so a developer can reproduce.</string>
   <string name="report_issue_dialog_message_crash">Would you like to send a crash report, helping to fix this issue in the future?</string>
   <string name="report_issue_dialog_description">issue description</string>
   <string name="report_issue_dialog_report">Report</string>

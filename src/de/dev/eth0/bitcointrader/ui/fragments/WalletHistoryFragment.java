@@ -18,19 +18,23 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.xeiam.xchange.currency.MoneyUtils;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.joda.money.BigMoney;
 
 public class WalletHistoryFragment extends SherlockListFragment {
 
@@ -49,6 +54,12 @@ public class WalletHistoryFragment extends SherlockListFragment {
   private WalletHistoryListAdapter adapter;
   private ProgressDialog mDialog;
   private Spinner historyCurrencySpinner;
+  private View infoToastLayout;
+  private TextView typeView;
+  private TextView infoView;
+  private CurrencyTextView amountView;
+  private CurrencyTextView balanceView;
+  private TextView dateView;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,13 +137,57 @@ public class WalletHistoryFragment extends SherlockListFragment {
             getString(text));
     emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
     setEmptyText(emptyText);
+    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.wallet_history_row_info_toast, (ViewGroup) getView().findViewById(R.id.history_row_info_toast));
+    typeView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_type);
+    infoView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_info);
+    amountView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_amount);
+    balanceView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_balance);
+    dateView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_date);
+    amountView.setPrecision(Constants.PRECISION_BITCOIN);
+    balanceView.setPrecision(Constants.PRECISION_BITCOIN);
   }
 
   @Override
   public void onListItemClick(final ListView l, final View v, final int position, final long id) {
     MtGoxWalletHistoryEntry entry = adapter.getItem(position);
     if (entry != null) {
-      Toast.makeText(activity, entry.getInfo(), Toast.LENGTH_LONG).show();
+      if (entry.getType().equals("out")) {
+        typeView.setText(R.string.wallet_history_out);
+      } else if (entry.getType().equals("fee")) {
+        typeView.setText(R.string.wallet_history_fee);
+      } else if (entry.getType().equals("in")) {
+        typeView.setText(R.string.wallet_history_in);
+      } else if (entry.getType().equals("spent")) {
+        typeView.setText(R.string.wallet_history_spent);
+      } else if (entry.getType().equals("earned")) {
+        typeView.setText(R.string.wallet_history_earned);
+      } else if (entry.getType().equals("withdraw")) {
+        typeView.setText(R.string.wallet_history_withdraw);
+      } else if (entry.getType().equals("deposit")) {
+        typeView.setText(R.string.wallet_history_deposit);
+      }
+      infoView.setText(entry.getInfo());
+      if (entry.getInfo().contains("bought")) {
+        String[] substrings = entry.getInfo().split(" ");
+        if (substrings.length >= 5) {
+          infoView.setText(getResources().getString(R.string.wallet_history_info_bought, substrings[3], substrings[5]));
+        }
+      } else if (entry.getInfo().contains("sold")) {
+        String[] substrings = entry.getInfo().split(" ");
+        if (substrings.length >= 5) {
+          infoView.setText(getResources().getString(R.string.wallet_history_info_sold, substrings[3], substrings[5]));
+        }
+      }
+      BigMoney amount = MoneyUtils.parse(entry.getValue().getCurrency() + " " + entry.getValue().getValue());
+      amountView.setAmount(amount);
+      BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
+      balanceView.setAmount(balance);
+      dateView.setText(entry.getDate());
+
+      Toast toast = new Toast(getActivity());
+      toast.setDuration(Toast.LENGTH_SHORT);
+      toast.setView(infoToastLayout);
+      toast.show();
     }
   }
 
