@@ -59,12 +59,12 @@ public class WalletHistoryListAdapter extends AbstractListAdapter<MtGoxWalletHis
     // amount
     CurrencyTextView rowAmount = (CurrencyTextView) row.findViewById(R.id.wallet_history_row_amount);
     BigMoney amount = MoneyUtils.parse(entry.getValue().getCurrency() + " " + entry.getValue().getValue());
-    rowAmount.setPrecision(Constants.PRECISION_BITCOIN);
+    rowAmount.setPrecision(8);
     rowAmount.setAmount(amount);
     // balance
     CurrencyTextView rowBalance = (CurrencyTextView) row.findViewById(R.id.wallet_history_row_balance);
     BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
-    rowBalance.setPrecision(Constants.PRECISION_BITCOIN);
+    rowBalance.setPrecision(8);
     rowBalance.setAmount(balance);
 
   }

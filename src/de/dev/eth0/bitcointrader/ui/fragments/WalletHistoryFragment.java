@@ -143,8 +143,8 @@ public class WalletHistoryFragment extends SherlockListFragment {
     amountView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_amount);
     balanceView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_balance);
     dateView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_date);
-    amountView.setPrecision(Constants.PRECISION_BITCOIN);
-    balanceView.setPrecision(Constants.PRECISION_BITCOIN);
+    amountView.setPrecision(8);
+    balanceView.setPrecision(8);
   }
 
   @Override
