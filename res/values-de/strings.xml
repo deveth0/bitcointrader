@@ -94,7 +94,7 @@
   <string name="preferences_category_mtgox">MtGox</string>
   <string name="preferences_mtgox_api_key_summary">MtGox API key</string>
   <string name="preferences_mtgox_api_key_title">API key</string>
-  <string name="preferences_mtgox_secret_key_summary">Your MtGox Secret key</string>
+  <string name="preferences_mtgox_secret_key_summary">MtGox Secret key</string>
   <string name="preferences_mtgox_secret_key_title">Secret key</string>
   <string name="preferences_category_labs">Labs</string>
   <string name="preferences_category_general">Allgemeine Einstellungen</string>
