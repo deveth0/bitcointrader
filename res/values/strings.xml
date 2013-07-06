@@ -2,8 +2,8 @@
 <resources>
   <string name="app_name">Bitcoin Trader</string>
 
-  <string name="loading_info">Loading...</string>
-  <string name="connecting_info">Connecting...</string>
+  <string name="loading_info">Loading&#8230;</string>
+  <string name="connecting_info">Connecting&#8230;</string>
   <string name="connection_failed">Could not connect. Please check your internet connection and try again.</string>
   <string name="bitcoin_order_fragment_empty_text">No Open Orders.</string>
   <string name="bitcoin_action_buy">Buy</string>
@@ -99,7 +99,7 @@
   <string name="preferences_category_labs">Labs</string>
   <string name="preferences_category_general">General Settings</string>
   <string name="preferences_general_update_summary">Please set value</string>
-  <string name="preferences_general_update_title">Automatically update every...</string>
+  <string name="preferences_general_update_title">Automatically update every&#8230;</string>
   <string name="preferences_general_notify_on_update_summary">Notify on update</string>
   <string name="preferences_general_notify_on_update_title">Notify even if update was successful</string>
   <string name="preferences_labs">Here be dragons!!!</string>
