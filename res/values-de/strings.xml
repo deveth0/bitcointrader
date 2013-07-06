@@ -13,7 +13,7 @@
   <string name="button_delete_order_confirm">Bestätigen</string>
   <string name="button_delete_order_cancel">Abbrechen</string>
 
-  <string name="initial_setup_headline">Initial Setup</string>
+  <string name="initial_setup_headline">Initiale Einrichtung</string>
   <string name="initial_setup_info_text">Um diese App zu nutzen, wird ein Mt.Gox Account benötigt.</string>
   <string name="initial_setup_manual_info">Alternativ können Sie hier den API und Secret Key manuell eintragen.</string>
   <string name="initial_setup_manual_setupbutton">Übernehmen</string>
@@ -52,7 +52,7 @@
   <string name="price_chart_ask">Briefkurs</string>
   <string name="price_chart_bid">Nachfrage</string>
     
-  <string name="account_info">Account Info</string>
+  <string name="account_info">Konto Info</string>
   <string name="account_info_trade_fee_label">Gebühr:</string>
   <string name="price_info">Ticker</string>
   <string name="price_info_low_label">Min: </string>
