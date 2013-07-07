@@ -3,7 +3,12 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -41,6 +46,7 @@ import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
 public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
+
   private static final String TAG = PlaceOrderFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
@@ -54,13 +60,15 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   private CurrencyTextView estimatedFeeView;
   private Button viewGo;
   private Button viewCancel;
+  private BroadcastReceiver broadcastReceiver;
+  private LocalBroadcastManager broadcastManager;
 
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
 
-    this.activity = (AbstractBitcoinTraderActivity) activity;
-    application = (BitcoinTraderApplication) activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity)activity;
+    application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -70,20 +78,44 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, ".onReceive");
+        updateView();
+      }
+    };
+    broadcastManager = LocalBroadcastManager.getInstance(application);
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+    updateView();
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    if (broadcastReceiver != null) {
+      broadcastManager.unregisterReceiver(broadcastReceiver);
+      broadcastReceiver = null;
+    }
+  }
+
+  @Override
   public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
     final View view = inflater.inflate(R.layout.place_order_fragment, container);
-    totalView = (CurrencyTextView) view.findViewById(R.id.place_order_total);
-    estimatedFeeView = (CurrencyTextView) view.findViewById(R.id.place_order_estimatedfee);
-    amountView = (CurrencyAmountView) view.findViewById(R.id.place_order_amount);
+    totalView = (CurrencyTextView)view.findViewById(R.id.place_order_total);
+    estimatedFeeView = (CurrencyTextView)view.findViewById(R.id.place_order_estimatedfee);
+    amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
     amountView.setCurrencyCode(Constants.CURRENCY_CODE_BITCOIN);
-    amountViewText = (EditText) view.findViewById(R.id.place_order_amount_text);
+    amountViewText = (EditText)view.findViewById(R.id.place_order_amount_text);
     amountViewText.addTextChangedListener(valueChangedListener);
 
-    priceView = (CurrencyAmountView) view.findViewById(R.id.place_order_price);
+    priceView = (CurrencyAmountView)view.findViewById(R.id.place_order_price);
     priceView.setCurrencyCode(getExchangeService().getCurrency());
     enablePriceViewContextButton();
 
-    orderTypeSpinner = (Spinner) view.findViewById(R.id.place_order_type);
+    orderTypeSpinner = (Spinner)view.findViewById(R.id.place_order_type);
     ArrayAdapter<Order.OrderType> adapter = new ArrayAdapter<Order.OrderType>(activity,
             R.layout.spinner_item, Order.OrderType.values());
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -104,16 +136,16 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       }
     });
 
-    priceViewText = (EditText) view.findViewById(R.id.place_order_price_text);
+    priceViewText = (EditText)view.findViewById(R.id.place_order_price_text);
     priceViewText.addTextChangedListener(valueChangedListener);
 
-    marketOrderCheckbox = (CheckBox) view.findViewById(R.id.place_order_marketorder);
+    marketOrderCheckbox = (CheckBox)view.findViewById(R.id.place_order_marketorder);
     marketOrderCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
       public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         Ticker ticker = getExchangeService().getTicker();
         if (ticker != null) {
           priceView.setEnabled(!isChecked);
-          Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+          Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
           priceViewText.setText(type.equals(Order.OrderType.ASK)
                   ? ticker.getAsk().getAmount().toString()
                   : ticker.getBid().getAmount().toString());
@@ -122,18 +154,19 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
         }
       }
     });
-    viewGo = (Button) view.findViewById(R.id.place_order_perform);
+    viewGo = (Button)view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
         if (everythingValid()) {
           handleGo();
-        } else {
+        }
+        else {
           Toast.makeText(activity, R.string.place_order_invalid, Toast.LENGTH_LONG).show();
         }
       }
     });
 
-    viewCancel = (Button) view.findViewById(R.id.place_order_cancel);
+    viewCancel = (Button)view.findViewById(R.id.place_order_cancel);
     viewCancel.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
         // only finish activity if the order has been created in a PlaceOrderActivity
@@ -153,7 +186,8 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Log.d(TAG, ".updateView()");
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
-    Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+    priceView.setCurrencyCode(getExchangeService().getCurrency());
+    Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
       BigMoney amountBTC = BigMoney.parse("BTC " + amount.toString());
       BigMoney amountUSD = BigMoney.parse(getExchangeService().getCurrency() + " " + price.toString());
@@ -164,7 +198,8 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
         if (type.equals(Order.OrderType.ASK)) {
           estimatedFeeView.setPrecision(Constants.PRECISION_DOLLAR);
           estimatedFeeView.setAmount(totalSpend.multipliedBy(accountInfo.getTradeFee().scaleByPowerOfTen(-2)));
-        } else {
+        }
+        else {
           BigMoney fee = amountBTC.multipliedBy(accountInfo.getTradeFee().scaleByPowerOfTen(-2));
           estimatedFeeView.setPrecision(Constants.PRECISION_BITCOIN);
           estimatedFeeView.setAmount(fee);
@@ -200,14 +235,15 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private void handleGo() {
     Order order;
-    Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
+    Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
     boolean marketOrder = marketOrderCheckbox.isChecked();
     Double amount = Double.parseDouble(amountViewText.getEditableText().toString());
     Double price = Double.parseDouble(priceViewText.getEditableText().toString());
 
     if (marketOrder) {
       order = new MarketOrder(type, BigDecimal.valueOf(amount), "BTC", getExchangeService().getCurrency());
-    } else {
+    }
+    else {
       order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", getExchangeService().getCurrency(), BigMoney.of(CurrencyUnit.of(getExchangeService().getCurrency()), price));
     }
     getExchangeService().placeOrder(order, activity);
@@ -215,9 +251,9 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   }
 
   public void resetValues() {
+    marketOrderCheckbox.setChecked(false);
     amountViewText.setText(null);
     priceViewText.setText(null);
-    marketOrderCheckbox.setChecked(false);
 
   }
 

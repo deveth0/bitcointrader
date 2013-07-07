@@ -7,8 +7,6 @@
               android:background="@drawable/custom_toast_style"
               android:orientation="vertical"
 >
-  
-  
   <TextView
     android:id="@+id/history_row_info_toast_type"
     android:layout_width="fill_parent"
