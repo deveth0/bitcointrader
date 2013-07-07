@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,6 +35,7 @@ import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
+import de.dev.eth0.bitcointrader.ui.fragments.PlaceOrderFragment;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -224,7 +226,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     executeTask(new DeleteOrderTask(), order);
   }
 
-  public void placeOrder(Order order, Activity activity) {
+  public void placeOrder(Order order, FragmentActivity activity) {
     Log.d(TAG, ".placeOrder()");
     executeTask(new PlaceOrderTask(activity), order);
   }
@@ -345,9 +347,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private class PlaceOrderTask extends ICSAsyncTask<Order, Void, Boolean> {
 
     private ProgressDialog mDialog;
-    private Activity activity;
+    private FragmentActivity activity;
 
-    public PlaceOrderTask(Activity activity) {
+    public PlaceOrderTask(FragmentActivity activity) {
       super();
       this.activity = activity;
     }
@@ -366,6 +368,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (success) {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success), Toast.LENGTH_LONG).show();
+        PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment)activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
+        if (placeOrderFragment != null) {
+          placeOrderFragment.resetValues();
+        }
+
       } else {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_failed), Toast.LENGTH_LONG).show();

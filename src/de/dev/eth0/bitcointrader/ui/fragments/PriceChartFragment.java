@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,7 +113,10 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
-    inflater.inflate(R.menu.wallethistory_options, menu);
+    // only add menu if refresh button is not available yet
+    if (menu.findItem(R.id.bitcointrader_options_refresh) == null) {
+      inflater.inflate(R.menu.wallethistory_options, menu);
+    }
   }
 
   @Override
@@ -154,6 +156,7 @@ public class PriceChartFragment extends SherlockListFragment {
   }
 
   protected void updateView() {
+    Log.d(TAG, ".updateView()");
     GetTickerTask tradesTask = new GetTickerTask();
     tradesTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR);
   }

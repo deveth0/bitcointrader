@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +33,7 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.math.BigDecimal;
@@ -39,7 +41,7 @@ import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
 public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
-
+  private static final String TAG = PlaceOrderFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
   private BitcoinTraderApplication application;
   private Spinner orderTypeSpinner;
@@ -123,7 +125,6 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     viewGo = (Button) view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
-
         if (everythingValid()) {
           handleGo();
         } else {
@@ -135,14 +136,21 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     viewCancel = (Button) view.findViewById(R.id.place_order_cancel);
     viewCancel.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
-        activity.setResult(Activity.RESULT_CANCELED);
-        activity.finish();
+        // only finish activity if the order has been created in a PlaceOrderActivity
+        if (activity instanceof PlaceOrderActivity) {
+          activity.setResult(Activity.RESULT_CANCELED);
+          activity.finish();
+        }
+        else {
+          resetValues();
+        }
       }
     });
     return view;
   }
 
   public void updateView() {
+    Log.d(TAG, ".updateView()");
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
     Order.OrderType type = (Order.OrderType) orderTypeSpinner.getSelectedItem();
@@ -203,6 +211,13 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       order = new LimitOrder(type, BigDecimal.valueOf(amount), "BTC", getExchangeService().getCurrency(), BigMoney.of(CurrencyUnit.of(getExchangeService().getCurrency()), price));
     }
     getExchangeService().placeOrder(order, activity);
+
+  }
+
+  public void resetValues() {
+    amountViewText.setText(null);
+    priceViewText.setText(null);
+    marketOrderCheckbox.setChecked(false);
 
   }
 

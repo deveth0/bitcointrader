@@ -14,7 +14,7 @@ public class Constants {
   public static final String APP_ACTIVATION_ID = "00287aa0-775a-41b3-b799-2d7a0116bb06";
   // About
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
-  public static final String REPORT_EMAIL = "bitcointrader@dev-eth0.de";
+  public static final String REPORT_EMAIL = "bitcointraderissues@dev-eth0.de";
   public static final String REPORT_SUBJECT_ISSUE = "Reported issue";
   public static final String REPORT_SUBJECT_CRASH = "Crash report";
   public static final String AUTHOR_URL = "http://www.dev-eth0.de";
@@ -42,5 +42,4 @@ public class Constants {
   public static final String EXTRA_ORDERRESULT_AVGCOST = "avgcost";
   public static final String EXTRA_ORDERRESULT_TOTALAMOUNT = "totalamount";
   public static final String EXTRA_ORDERRESULT_TOTALSPENT = "totalspent";
-  public static final int SDK_JELLY_BEAN = 16;
 }

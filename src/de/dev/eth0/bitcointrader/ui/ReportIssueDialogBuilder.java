@@ -64,7 +64,7 @@ public abstract class ReportIssueDialogBuilder extends AlertDialog.Builder imple
     
     viewCollectDeviceInfo = (CheckBox) view.findViewById(R.id.report_issue_dialog_collect_device_info);
     viewCollectApplicationLog = (CheckBox) view.findViewById(R.id.report_issue_dialog_collect_application_log);
-    viewCollectApplicationLog.setVisibility(Build.VERSION.SDK_INT >= Constants.SDK_JELLY_BEAN ? View.VISIBLE : View.GONE);
+    viewCollectApplicationLog.setVisibility(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ? View.VISIBLE : View.GONE);
     
     setInverseBackgroundForced(true);
     setTitle(titleResId);

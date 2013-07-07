@@ -47,25 +47,25 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_select_currency:
         showSelectCurrencyPopup();
-        return true;
+        break;
       case R.id.bitcointrader_options_price_chart:
         startActivity(new Intent(this, PriceChartActivity.class));
-        return true;
+        break;
       case R.id.bitcointrader_options_wallet_history:
         startActivity(new Intent(this, WalletHistoryActivity.class));
-        return true;
+        break;
       case R.id.bitcointrader_options_refresh:
         broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
         break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
-        return true;
+        break;
       case R.id.bitcointrader_options_preferences:
         startActivity(new Intent(this, PreferencesActivity.class));
-        return true;
+        break;
       case R.id.bitcointrader_options_donate:
         BitcoinIntegration.request(this, Constants.DONATION_ADDRESS);
-        return true;
+        break;
     }
     return super.onOptionsItemSelected(item);
   }
