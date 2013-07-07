@@ -36,6 +36,7 @@ import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -197,6 +198,9 @@ public class WalletHistoryFragment extends SherlockListFragment {
       case R.id.bitcointrader_options_refresh:
         updateView(true);
         break;
+      case R.id.bitcointrader_options_help:
+        HelpDialogFragment.page(activity.getSupportFragmentManager(), "help_wallet_history");
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }

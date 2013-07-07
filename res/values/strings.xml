@@ -106,6 +106,7 @@
   <string name="preferences_labs_delete_account">Delete Account</string>
     
   <string name="bitcointrader_options_donate">Donate</string>
+  <string name="bitcointrader_options_help">Help</string>
 
 
   <string name="report_issue_dialog_title_crash">Previous crash detected</string>

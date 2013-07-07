@@ -26,6 +26,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.account.AccountInfo;
@@ -41,6 +44,7 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
+import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.math.BigDecimal;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
@@ -75,6 +79,25 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   public void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    super.onCreateOptionsMenu(menu, inflater);
+    // only add menu if included in pricechartactivity
+    if (activity instanceof PlaceOrderActivity) {
+      inflater.inflate(R.menu.placeorder_options, menu);
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.bitcointrader_options_help:
+        HelpDialogFragment.page(activity.getSupportFragmentManager(), "help_place_order");
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

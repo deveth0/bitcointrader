@@ -13,6 +13,7 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
+import de.schildbach.wallet.ui.HelpDialogFragment;
 
 public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
@@ -66,6 +67,9 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       case R.id.bitcointrader_options_donate:
         BitcoinIntegration.request(this, Constants.DONATION_ADDRESS);
         break;
+      case R.id.bitcointrader_options_help:
+        HelpDialogFragment.page(getSupportFragmentManager(), "help");
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }

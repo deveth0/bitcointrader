@@ -5,6 +5,8 @@ package de.dev.eth0.bitcointrader.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.Order;

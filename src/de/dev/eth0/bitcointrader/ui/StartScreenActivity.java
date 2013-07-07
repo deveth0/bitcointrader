@@ -2,6 +2,7 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui;
 
+import de.schildbach.wallet.ui.ReportIssueDialogBuilder;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;

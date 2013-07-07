@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.dev.eth0.bitcointrader.ui;
+package de.schildbach.wallet.ui;
 
 import java.io.File;
 import java.io.FileWriter;

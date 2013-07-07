@@ -23,9 +23,11 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
+import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -71,6 +73,9 @@ public class PriceChartFragment extends SherlockListFragment {
       case R.id.bitcointrader_options_refresh:
         updateView();
         break;
+      case R.id.bitcointrader_options_help:
+        HelpDialogFragment.page(activity.getSupportFragmentManager(), "help_price_chart");
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }
@@ -113,9 +118,9 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
-    // only add menu if refresh button is not available yet
-    if (menu.findItem(R.id.bitcointrader_options_refresh) == null) {
-      inflater.inflate(R.menu.wallethistory_options, menu);
+    // only add menu if included in pricechartactivity
+    if (activity instanceof PriceChartActivity) {
+      inflater.inflate(R.menu.pricechart_options, menu);
     }
   }
 
