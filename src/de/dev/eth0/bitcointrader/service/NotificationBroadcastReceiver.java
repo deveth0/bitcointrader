@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.NotificationCompat;
@@ -18,7 +20,6 @@ import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 /**
  *
  * @author deveth0
- * @TODO: Notify on withdraw and received money
  */
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
@@ -82,6 +83,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(resultPendingIntent);
     mBuilder.setAutoCancel(true);
+    Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+    mBuilder.setSound(alarmSound);
     NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     mNotificationManager.notify(ORDER_EXECUTED_NOTIFICATION_ID, mBuilder.build());
   }
