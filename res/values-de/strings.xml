@@ -5,7 +5,7 @@
   <string name="loading_info">Bitte warten&#8230;</string>
   <string name="connecting_info">Verbindung wird hergestellt&#8230;</string>
   <string name="connection_failed">Verbindung fehlgeschlagen. Bitte überprüfen Sie ihre Internetverbindung und versuchen es erneut.</string>
-  <string name="bitcoin_order_fragment_empty_text">Keine offenen Orders.</string>
+  <string name="bitcoin_order_fragment_empty_text">Keine offenen Ordern.</string>
   <string name="bitcoin_action_buy">Kaufen</string>
   <string name="bitcoin_action_sell">Verkaufen</string>
   <string name="button_retry">Erneut versuchen.</string>
@@ -14,8 +14,9 @@
   <string name="button_delete_order_cancel">Abbrechen</string>
 
   <string name="initial_setup_headline">Initiale Einrichtung</string>
-  <string name="initial_setup_info_text">Um diese App zu nutzen, wird ein Mt.Gox Account benötigt.</string>
-  <string name="initial_setup_manual_info">Alternativ können Sie hier den API und Secret Key manuell eintragen.</string>
+  <string name="initial_setup_info_text">Um diese App nutzen zu können, müssen Sie eine Verbindung zu Ihrem Mt.Gox Account herstellen.\nHierzu gibt es zwei Möglichkeiten, welche beide unterhalb des \"Security Centers\" auf der Mt.Gox Seite (<a href="https://mtgox.com/security">https://mtgox.com/security</a>) zu finden sind.\nEs werden jeweils die Rechte \"Get Info\" sowie \"Trade\" benötigt.</string>
+  <string name="initial_setup_manual_qrinfo">Klicken Sie auf den QR-Code um ihren \"Application access\" Schlüssel einzuscannen.</string>
+  <string name="initial_setup_manual_info">Alternativ können Sie hier die mittels \"Advanced Api Key Generation\" erstellten Schlüssel eintragen.</string>
   <string name="initial_setup_manual_setupbutton">Übernehmen</string>
   <string name="initial_setup_manual_key_label">Key</string>
   <string name="initial_setup_manual_secretkey_label">Secret key</string>
@@ -24,7 +25,7 @@
   <string name="initial_setup_failed_wrong_credentials">Bitte überprüfen Sie die Zugangsdaten.</string>
   <string name="initial_setup_failed_key_expired">Key abgelaufen</string>
   <string name="initial_setup_failed_key_invalid">Key ungültig</string>
-  <string name="initial_setup_failed_not_enough_permissions">Für die App sind werden die Permissions "Get Info" und "Trade" benötigt.</string>
+  <string name="initial_setup_failed_not_enough_permissions">Für die App sind werden die Permissions \"Get Info\" und \"Trade\" benötigt.</string>
   
   <string name="wallet_history_title">Verlauf</string>
   <string name="wallet_history_currency_spinner_label">Währung:</string>
@@ -65,7 +66,7 @@
   <string name="select_currency_title">Währung</string>
 
   <string name="notify_order_executed_title">Order ausgeführt</string>
-  <string name="notify_order_executed_text">Ein oder mehrere Orders konnten ausgeführt werden: %1$s %2$s %3$s %4$s</string>
+  <string name="notify_order_executed_text">Ein oder mehrere Ordern konnten ausgeführt werden: %1$s %2$s %3$s %4$s</string>
   <string name="notify_update_success_text">Update erfolgreich</string>
   <string name="notify_update_failed_title">Update fehlgeschlagen!</string>
   <string name="notify_update_failed_text">Beim Update ist ein Fehler aufgetreten.</string>

@@ -9,6 +9,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -28,6 +31,7 @@ import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -45,6 +49,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = InitialSetupActivity.class.getSimpleName();
   private TextView headlineTextView;
+  private TextView infoTextView;
   private ImageButton startScanButton;
   private EditText manualSetupKey;
   private EditText manualSetupSecretKey;
@@ -56,6 +61,9 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     setContentView(R.layout.initial_setup_activity);
 
     headlineTextView = (TextView) findViewById(R.id.initial_setup_activity_headline);
+    infoTextView = (TextView) findViewById(R.id.initial_setup_activity_info);
+    infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
     startScanButton = (ImageButton) findViewById(R.id.initial_setup_activity_start_scan);
     startScanButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
@@ -76,6 +84,23 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         }
       }
     });
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(final Menu menu) {
+    super.onCreateOptionsMenu(menu);
+    getSupportMenuInflater().inflate(R.menu.initialsetup_options, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(final MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.bitcointrader_options_help:
+        HelpDialogFragment.page(getSupportFragmentManager(), "help_setup");
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

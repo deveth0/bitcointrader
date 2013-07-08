@@ -22,12 +22,20 @@
     android:layout_centerHorizontal="true"
     android:text="@string/initial_setup_info_text"
   />
+  <TextView
+    android:id="@+id/initial_setup_activity_manual_qrinfo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/initial_setup_activity_info"
+    android:layout_centerHorizontal="true"
+    android:text="@string/initial_setup_manual_qrinfo"
+  />
   <ImageButton
     android:id="@+id/initial_setup_activity_start_scan"
     style="@style/My.Widget.Button.Borderless"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_below="@id/initial_setup_activity_info"
+    android:layout_below="@id/initial_setup_activity_manual_qrinfo"
     android:layout_centerHorizontal="true"
     android:src="@drawable/ic_action_scan_qr" />
   <TextView

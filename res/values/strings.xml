@@ -14,17 +14,18 @@
   <string name="button_delete_order_cancel">Cancel</string>
 
   <string name="initial_setup_headline">Initial Setup</string>
-  <string name="initial_setup_info_text">This app requires a MtGox account and "get Info" and "Trade" permissions.</string>
-  <string name="initial_setup_manual_info">Or input the api and secret key manually</string>
+  <string name="initial_setup_info_text">To be able to use this app, you have to connect it to your Mt.Gox account.\nThere are two possibilities available which you can find in the \"Security Center\" on MtGox.com (<a href="https://mtgox.com/security">https://mtgox.com/security</a>).\nIn both cases you need to set the \"Get Info\" and \"Trade\" permission.</string>
+  <string name="initial_setup_manual_qrinfo">Click the QR code to scan your \"application access\" key</string>
+  <string name="initial_setup_manual_info">Or input the keypair generated with \"advanced api key generation\"</string>
   <string name="initial_setup_manual_setupbutton">Go</string>
   <string name="initial_setup_manual_key_label">Key</string>
   <string name="initial_setup_manual_secretkey_label">Secret key</string>
   <string name="initial_setup_success">Setup completed for username %s</string>
   <string name="initial_setup_testing">Testing credentials</string>
   <string name="initial_setup_failed_wrong_credentials">Seems to be wrong credentials</string>
-  <string name="initial_setup_failed_key_expired">Key expired</string>
-  <string name="initial_setup_failed_key_invalid">Key invalid</string>
-  <string name="initial_setup_failed_not_enough_permissions">Not enough permissions</string>
+  <string name="initial_setup_failed_key_expired">Key expired.</string>
+  <string name="initial_setup_failed_key_invalid">Key invalid.</string>
+  <string name="initial_setup_failed_not_enough_permissions">Not enough permissions.</string>
   
   <string name="wallet_history_title">Wallet History</string>
   <string name="wallet_history_currency_spinner_label">Select Currency:</string>
