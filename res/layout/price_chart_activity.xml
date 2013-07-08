@@ -5,7 +5,7 @@
               android:orientation="vertical" >
 
   <fragment
-    android:id="@+id/place_order_fragment"
+    android:id="@+id/price_chart_fragment"
     android:name="de.dev.eth0.bitcointrader.ui.fragments.PriceChartFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

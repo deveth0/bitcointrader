@@ -49,16 +49,16 @@
   <string name="price_chart_last">Last</string>
   <string name="price_chart_vol">Vol</string>
   <string name="price_chart_avg">Durchschnitt</string>
-  <string name="price_chart_ask">Briefkurs</string>
-  <string name="price_chart_bid">Nachfrage</string>
+  <string name="price_chart_ask">Ask</string>
+  <string name="price_chart_bid">Bid</string>
     
   <string name="account_info">Konto Info</string>
   <string name="account_info_trade_fee_label">Gebühr:</string>
   <string name="price_info">Ticker</string>
   <string name="price_info_low_label">Min: </string>
   <string name="price_info_high_label">Max: </string>
-  <string name="price_info_ask_label">Briefkurs: </string>
-  <string name="price_info_bid_label">Nachfrage: </string>
+  <string name="price_info_ask_label">Ask </string>
+  <string name="price_info_bid_label">Bit </string>
   <string name="price_info_volume_label">Volumen: </string>
   <string name="refresh_title">Aktualisieren</string>
 
