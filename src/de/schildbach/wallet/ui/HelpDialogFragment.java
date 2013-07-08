@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package de.schildbach.wallet.ui;
 
 import java.util.Locale;
@@ -30,84 +29,57 @@ import android.webkit.WebView;
 /**
  * @author Andreas Schildbach
  */
-public final class HelpDialogFragment extends DialogFragment
-{
-	private static final String FRAGMENT_TAG = HelpDialogFragment.class.getName();
+public final class HelpDialogFragment extends DialogFragment {
 
-	private static final String KEY_PAGE = "page";
+  private static final String FRAGMENT_TAG = HelpDialogFragment.class.getName();
+  private static final String KEY_PAGE = "page";
 
-	public static void page(final FragmentManager fm, final String page)
-	{
-		final DialogFragment newFragment = HelpDialogFragment.instance(page);
-		newFragment.show(fm, FRAGMENT_TAG);
-	}
+  public static void page(final FragmentManager fm, final String page) {
+    final DialogFragment newFragment = HelpDialogFragment.instance(page);
+    newFragment.show(fm, FRAGMENT_TAG);
+  }
 
-	private static HelpDialogFragment instance(final String page)
-	{
-		final HelpDialogFragment fragment = new HelpDialogFragment();
+  private static HelpDialogFragment instance(final String page) {
+    final HelpDialogFragment fragment = new HelpDialogFragment();
 
-		final Bundle args = new Bundle();
-		args.putString(KEY_PAGE, page);
-		fragment.setArguments(args);
+    final Bundle args = new Bundle();
+    args.putString(KEY_PAGE, page);
+    fragment.setArguments(args);
 
-		return fragment;
-	}
+    return fragment;
+  }
+  private Activity activity;
 
-	private Activity activity;
+  @Override
+  public void onAttach(final Activity activity) {
+    super.onAttach(activity);
 
-	@Override
-	public void onAttach(final Activity activity)
-	{
-		super.onAttach(activity);
+    this.activity = activity;
+  }
 
-		this.activity = activity;
-	}
+  @Override
+  public Dialog onCreateDialog(final Bundle savedInstanceState) {
+    final Bundle args = getArguments();
+    final String page = args.getString(KEY_PAGE);
 
-	@Override
-	public Dialog onCreateDialog(final Bundle savedInstanceState)
-	{
-		final Bundle args = getArguments();
-		final String page = args.getString(KEY_PAGE);
+    final WebView webView = new WebView(activity);
+    webView.loadUrl("file:///android_asset/" + page + languagePrefix() + ".html");
 
-		final WebView webView = new WebView(activity);
-		webView.loadUrl("file:///android_asset/" + page + ".html");
+    final Dialog dialog = new Dialog(activity);
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    dialog.setContentView(webView);
+    dialog.setCanceledOnTouchOutside(true);
 
-		final Dialog dialog = new Dialog(activity);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.setContentView(webView);
-		dialog.setCanceledOnTouchOutside(true);
+    return dialog;
+  }
 
-		return dialog;
-	}
-
-	private final static String languagePrefix()
-	{
-		final String language = Locale.getDefault().getLanguage();
-		if ("de".equals(language))
-			return "_de";
-		else if ("cs".equals(language))
-			return "_cs";
-		else if ("el".equals(language))
-			return "_el";
-		else if ("es".equals(language))
-			return "_es";
-		else if ("fr".equals(language))
-			return "_fr";
-		else if ("it".equals(language))
-			return "_it";
-		else if ("nl".equals(language))
-			return "_nl";
-		else if ("pl".equals(language))
-			return "_pl";
-		else if ("ru".equals(language))
-			return "_ru";
-		else if ("sv".equals(language))
-			return "_sv";
-		else if ("tr".equals(language))
-			return "_tr";
-		else if ("zh".equals(language))
-			return "_zh";
-		else
-			return "";
-	}
+  private final static String languagePrefix() {
+    final String language = Locale.getDefault().getLanguage();
+    if ("de".equals(language)) {
+      return "_de";
+    }
+    else {
+      return "";
+    }
+  }
 }
