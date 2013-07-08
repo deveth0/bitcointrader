@@ -72,6 +72,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
               if (alertDialog == null || !alertDialog.isShowing()) {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(StartScreenActivity.this);
                 alertDialogBuilder.setMessage(R.string.connection_failed);
+                alertDialogBuilder.setCancelable(false);
                 alertDialogBuilder.setPositiveButton(R.string.button_retry, new DialogInterface.OnClickListener() {
                   public void onClick(DialogInterface dialog, int which) {
                     connect();
