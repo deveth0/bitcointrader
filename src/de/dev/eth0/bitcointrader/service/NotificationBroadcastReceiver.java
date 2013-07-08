@@ -18,8 +18,7 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 
 /**
- *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public class NotificationBroadcastReceiver extends BroadcastReceiver {
 

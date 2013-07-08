@@ -9,8 +9,7 @@ import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 
 /**
- *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
 

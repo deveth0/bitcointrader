@@ -22,7 +22,7 @@ import android.support.v4.app.Fragment;
 
 /**
  * IntentIntegrator for the V4 Android compatibility package.
- * 
+ *
  * @author Lachezar Dobrev
  */
 public final class IntentIntegratorSupportV4 extends IntentIntegrator {
@@ -41,5 +41,4 @@ public final class IntentIntegratorSupportV4 extends IntentIntegrator {
   protected void startActivityForResult(Intent intent, int code) {
     fragment.startActivityForResult(intent, code);
   }
-
 }

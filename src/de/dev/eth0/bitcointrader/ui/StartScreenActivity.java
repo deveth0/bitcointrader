@@ -22,8 +22,8 @@ import de.dev.eth0.bitcointrader.util.CrashReporter;
 import java.io.IOException;
 
 /**
- *
- * @author deveth0
+ * @author Alexander Muthmann
+ * @author Andreas Schildbach
  */
 public class StartScreenActivity extends AbstractBitcoinTraderActivity {
 

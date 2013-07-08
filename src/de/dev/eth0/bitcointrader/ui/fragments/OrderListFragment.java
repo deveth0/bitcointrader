@@ -25,6 +25,9 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class OrderListFragment extends SherlockListFragment {
 
   private static final String TAG = OrderListFragment.class.getSimpleName();
@@ -35,14 +38,14 @@ public class OrderListFragment extends SherlockListFragment {
   private LocalBroadcastManager broadcastManager;
   
   @Override
-  public void onAttach(final Activity activity) {
+  public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity) activity;
     this.application = (BitcoinTraderApplication) activity.getApplication();
   }
 
   @Override
-  public void onCreate(final Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
     adapter = new OrderListAdapter(activity);
@@ -65,7 +68,7 @@ public class OrderListFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onViewCreated(final View view, final Bundle savedInstanceState) {
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
     int text = R.string.bitcoin_order_fragment_empty_text;

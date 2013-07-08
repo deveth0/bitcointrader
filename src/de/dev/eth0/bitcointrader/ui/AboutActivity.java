@@ -14,6 +14,9 @@ import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class AboutActivity extends SherlockPreferenceActivity {
 
   private static final String KEY_ABOUT_VERSION = "about_version";
@@ -24,12 +27,12 @@ public class AboutActivity extends SherlockPreferenceActivity {
   private static final String KEY_ABOUT_CREDITS_ZXING = "about_credits_zxing";
 
   @Override
-  protected void onCreate(final Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     addPreferencesFromResource(R.xml.about);
 
-    final ActionBar actionBar = getSupportActionBar();
+    ActionBar actionBar = getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
 
     findPreference(KEY_ABOUT_VERSION).setSummary(((BitcoinTraderApplication) getApplication()).applicationVersionName());
@@ -40,7 +43,7 @@ public class AboutActivity extends SherlockPreferenceActivity {
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
         finish();
@@ -51,8 +54,8 @@ public class AboutActivity extends SherlockPreferenceActivity {
   }
 
   @Override
-  public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen, final Preference preference) {
-    final String key = preference.getKey();
+  public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    String key = preference.getKey();
     if (KEY_ABOUT_AUTHOR_TWITTER.equals(key)) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(Constants.AUTHOR_TWITTER_URL)));
       finish();

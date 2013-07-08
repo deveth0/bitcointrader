@@ -13,8 +13,7 @@ import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.BigMoney;
 
 /**
- *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public class PriceChartListAdapter extends AbstractListAdapter<BitcoinChartsTicker> {
   

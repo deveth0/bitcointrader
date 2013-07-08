@@ -17,20 +17,23 @@ import android.util.Log;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class BitcoinTraderApplication extends Application implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   private PendingIntent updateServiceActionIntent;
   private Intent exchangeServiceIntent;
   private static final String TAG = BitcoinTraderApplication.class.getSimpleName();
   private ExchangeService exchangeService;
-  private final ServiceConnection serviceConnection = new ServiceConnection() {
-    public void onServiceConnected(final ComponentName name, final IBinder binder) {
-      exchangeService = ((ExchangeService.LocalBinder)binder).getService();
+  private ServiceConnection serviceConnection = new ServiceConnection() {
+    public void onServiceConnected(ComponentName name, IBinder binder) {
+      exchangeService = ((ExchangeService.LocalBinder) binder).getService();
       createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));
       BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
     }
 
-    public void onServiceDisconnected(final ComponentName name) {
+    public void onServiceDisconnected(ComponentName name) {
       exchangeService = null;
     }
   };
@@ -49,26 +52,24 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     Log.d(TAG, ".onSharedPreferenceChanged(" + key + ")");
     if (Constants.PREFS_KEY_GENERAL_UPDATE.equals(key)) {
-      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
       alarmManager.cancel(updateServiceActionIntent);
       createAutoUpdater(sharedPreferences);
     }
   }
 
-  public final String applicationVersionName() {
+  public String applicationVersionName() {
     try {
       return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-    }
-    catch (NameNotFoundException x) {
+    } catch (NameNotFoundException x) {
       return "unknown";
     }
   }
 
-  public final int applicationVersionCode() {
+  public int applicationVersionCode() {
     try {
       return getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-    }
-    catch (NameNotFoundException x) {
+    } catch (NameNotFoundException x) {
       return 0;
     }
   }
@@ -82,7 +83,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     String autoUpdateInt = prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0");
     int autoUpdateInterval = Integer.parseInt(autoUpdateInt);
     if (autoUpdateInterval > 0) {
-      AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+      AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
       alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, autoUpdateInterval * 60 * 1000, updateServiceActionIntent);
     }
   }
@@ -98,7 +99,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
       exchangeService = null;
     }
     stopService(exchangeServiceIntent);
-    AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
     alarmManager.cancel(updateServiceActionIntent);
   }
 

@@ -24,7 +24,10 @@ import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import java.text.DateFormat;
 
-public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
+/**
+ * @author Alexander Muthmann
+ */
+public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = PriceInfoFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
@@ -42,7 +45,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   private DateFormat timeFormat;
 
   @Override
-  public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.price_info_fragment, container, false);
     view.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
@@ -84,7 +87,7 @@ public final class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public void onViewCreated(final View view, final Bundle savedInstanceState) {
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     viewPriceInfoLow = (CurrencyTextView) view.findViewById(R.id.price_info_low);
     viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);

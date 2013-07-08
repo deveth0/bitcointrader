@@ -31,7 +31,6 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
-import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -47,6 +46,9 @@ import java.util.Map;
 import java.util.Set;
 import org.joda.money.BigMoney;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class WalletHistoryFragment extends SherlockListFragment {
 
   private static final String TAG = WalletHistoryFragment.class.getSimpleName();
@@ -131,7 +133,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onViewCreated(final View view, final Bundle savedInstanceState) {
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     int text = R.string.wallet_history_empty_text;
     SpannableStringBuilder emptyText = new SpannableStringBuilder(
@@ -149,7 +151,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+  public void onListItemClick(ListView l, View v, int position, long id) {
     MtGoxWalletHistoryEntry entry = adapter.getItem(position);
     if (entry != null) {
       if (entry.getType().equals("out")) {
@@ -193,7 +195,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_refresh:
         updateView(true);

@@ -13,6 +13,9 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Alexander Muthmann
+ */
 public abstract class AbstractListAdapter<T> extends BaseAdapter {
 
   protected final AbstractBitcoinTraderActivity activity;
@@ -32,7 +35,7 @@ public abstract class AbstractListAdapter<T> extends BaseAdapter {
     notifyDataSetChanged();
   }
 
-  public void replace(final Collection<T> orders) {
+  public void replace(Collection<T> orders) {
     this.entries.clear();
     this.entries.addAll(orders);
     showEmptyText = true;
@@ -50,12 +53,12 @@ public abstract class AbstractListAdapter<T> extends BaseAdapter {
   }
 
   @Override
-  public T getItem(final int position) {
+  public T getItem(int position) {
     return entries.get(position);
   }
 
   @Override
-  public long getItemId(final int position) {
+  public long getItemId(int position) {
     return entries.get(position).hashCode();
   }
 
@@ -65,11 +68,11 @@ public abstract class AbstractListAdapter<T> extends BaseAdapter {
   }
 
   @Override
-  public View getView(final int position, View row, final ViewGroup parent) {
+  public View getView(int position, View row, ViewGroup parent) {
     if (row == null) {
       row = inflater.inflate(getRowLayout(), null);
     }
-    final T tx = getItem(position);
+    T tx = getItem(position);
     bindView(row, tx);
     return row;
   }

@@ -19,8 +19,7 @@ import com.xeiam.xchange.mtgox.v2.service.polling.MtGoxPollingMarketDataService;
 import com.xeiam.xchange.mtgox.v2.service.polling.MtGoxPollingTradeService;
 
 /**
- *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public class MtGoxExchangeWrapper extends MtGoxExchange {
 

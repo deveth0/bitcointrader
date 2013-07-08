@@ -2,6 +2,9 @@
 //$Id$
 package de.dev.eth0.bitcointrader;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class Constants {
 
   // General Settings
@@ -27,7 +30,7 @@ public class Constants {
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";
   public static final String PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE = "general_notify_on_update";
-  public static final String PREFS_KEY_CURRENCY ="selected_currency";
+  public static final String PREFS_KEY_CURRENCY = "selected_currency";
   public static final String MTGOX_SSL_URI = "https://data.mtgox.com";
   public static final String MTGOX_PLAIN_WEBSOCKET_URI = "ws://websocket.mtgox.com";
   public static final String MTGOX_SSL_WEBSOCKET_URI = "ws://websocket.mtgox.com";

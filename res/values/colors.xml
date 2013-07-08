@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <!-- foreground -->
-  <color name="fg_significant">#ff000000</color>
-  <color name="fg_less_significant">#ff666666</color>
-  <color name="fg_error">#ffff0000</color>
-
-  <!-- background -->
+  <color name="fg_black">#ff000000</color>
+  <color name="fg_grey">#ff666666</color>
   <color name="bg_panel">#ffdcdce4</color>
   <color name="bg_form">#ffebebf2</color>
     
   <color name="button_pressed">#85D3EF</color>
   
+  <color name="red">#ffff0000</color>
   <color name="orange">#ff7711</color>
   
   <color name="history_in">#F8EB09</color>

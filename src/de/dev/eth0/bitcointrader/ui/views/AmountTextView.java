@@ -11,6 +11,9 @@ import de.dev.eth0.bitcointrader.Constants;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class AmountTextView extends TextView {
 
   private BigDecimal amount = null;

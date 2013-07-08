@@ -11,7 +11,7 @@ import android.util.Log;
 /**
  * Broadcastreceiver to convert a global broadcast to a localbroadcast
  *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public class AutoUpdateBroadcastReceiver extends BroadcastReceiver {
 

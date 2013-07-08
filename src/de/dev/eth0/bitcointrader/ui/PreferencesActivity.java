@@ -19,17 +19,19 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
-
-public final class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
+/**
+ * @author Alexander Muthmann
+ */
+public class PreferencesActivity extends SherlockPreferenceActivity implements OnSharedPreferenceChangeListener {
   private static final String KEY_DELETE_ACCOUNT = "labs_delete_account";
 
   @Override
-  protected void onCreate(final Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     addPreferencesFromResource(R.xml.preferences);
 
-    final ActionBar actionBar = getSupportActionBar();
+    ActionBar actionBar = getSupportActionBar();
     actionBar.setDisplayHomeAsUpEnabled(true);
 
     SharedPreferences sp = getPreferenceScreen().getSharedPreferences();
@@ -44,7 +46,7 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
       findPreference(Constants.PREFS_KEY_MTGOX_APIKEY).setSummary(mtgoxApiKey);
     }
 
-    final ListPreference listPreference = (ListPreference)findPreference(Constants.PREFS_KEY_GENERAL_UPDATE);
+    ListPreference listPreference = (ListPreference)findPreference(Constants.PREFS_KEY_GENERAL_UPDATE);
     if (listPreference.getValue() == null) {
       listPreference.setValueIndex(0);
     }
@@ -52,7 +54,7 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case android.R.id.home:
         finish();
@@ -81,8 +83,8 @@ public final class PreferencesActivity extends SherlockPreferenceActivity implem
   }
 
   @Override
-  public boolean onPreferenceTreeClick(final PreferenceScreen preferenceScreen, final Preference preference) {
-    final String key = preference.getKey();
+  public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    String key = preference.getKey();
     if (KEY_DELETE_ACCOUNT.equals(key)) {
       Editor editor = preference.getEditor();
       editor.putString(Constants.PREFS_KEY_MTGOX_APIKEY, null);

@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.google.zxing.integration.android;
 
 import android.app.Fragment;
@@ -23,7 +22,7 @@ import android.content.Intent;
 
 /**
  * IntentIntegrator for Android version 3.0 and beyond.
- * 
+ *
  * @author Lachezar Dobrev
  */
 public final class IntentIntegratorV30 extends IntentIntegrator {
@@ -42,5 +41,4 @@ public final class IntentIntegratorV30 extends IntentIntegrator {
   protected void startActivityForResult(Intent intent, int code) {
     fragment.startActivityForResult(intent, code);
   }
-
 }

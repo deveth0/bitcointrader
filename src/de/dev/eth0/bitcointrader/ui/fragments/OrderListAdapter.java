@@ -17,6 +17,9 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class OrderListAdapter extends AbstractListAdapter<Order> {
 
   public OrderListAdapter(AbstractBitcoinTraderActivity activity) {

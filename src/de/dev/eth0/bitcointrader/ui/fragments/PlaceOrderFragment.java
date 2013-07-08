@@ -48,8 +48,11 @@ import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.math.BigDecimal;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
+/**
+ * @author Alexander Muthmann
+ */
 
-public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
+public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = PlaceOrderFragment.class.getSimpleName();
   private AbstractBitcoinTraderActivity activity;
@@ -68,7 +71,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   private LocalBroadcastManager broadcastManager;
 
   @Override
-  public void onAttach(final Activity activity) {
+  public void onAttach(Activity activity) {
     super.onAttach(activity);
 
     this.activity = (AbstractBitcoinTraderActivity)activity;
@@ -76,7 +79,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public void onCreate(final Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setHasOptionsMenu(true);
   }
@@ -91,7 +94,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_help:
         HelpDialogFragment.page(activity.getSupportFragmentManager(), "help_place_order");
@@ -125,8 +128,8 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-    final View view = inflater.inflate(R.layout.place_order_fragment, container);
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.place_order_fragment, container);
     totalView = (CurrencyTextView)view.findViewById(R.id.place_order_total);
     estimatedFeeView = (CurrencyTextView)view.findViewById(R.id.place_order_estimatedfee);
     amountView = (CurrencyAmountView)view.findViewById(R.id.place_order_amount);
@@ -179,7 +182,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     });
     viewGo = (Button)view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
-      public void onClick(final View v) {
+      public void onClick(View v) {
         if (everythingValid()) {
           handleGo();
         }
@@ -191,7 +194,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
     viewCancel = (Button)view.findViewById(R.id.place_order_cancel);
     viewCancel.setOnClickListener(new OnClickListener() {
-      public void onClick(final View v) {
+      public void onClick(View v) {
         // only finish activity if the order has been created in a PlaceOrderActivity
         if (activity instanceof PlaceOrderActivity) {
           activity.setResult(Activity.RESULT_CANCELED);
@@ -233,7 +236,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private void enableAmountViewContextButton() {
     amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
-      public void onClick(final View v) {
+      public void onClick(View v) {
         MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
         if (mtgoxaccountInfo != null) {
           AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
@@ -247,7 +250,7 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
 
   private void enablePriceViewContextButton() {
     priceView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
-      public void onClick(final View v) {
+      public void onClick(View v) {
         Ticker ticker = getExchangeService().getTicker();
         if (ticker != null && ticker.getLast().getAmount() != BigDecimal.ZERO) {
           priceView.setAmount(ticker.getLast().getAmount());
@@ -307,20 +310,20 @@ public final class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     }
   }
 
-  private final class ValueChangedListener implements TextWatcher {
+  private class ValueChangedListener implements TextWatcher {
 
     @Override
-    public void afterTextChanged(final Editable s) {
+    public void afterTextChanged(Editable s) {
       updateView();
     }
 
     @Override
-    public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
     }
 
     @Override
-    public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
   }
-  private final ValueChangedListener valueChangedListener = new ValueChangedListener();
+  private ValueChangedListener valueChangedListener = new ValueChangedListener();
 }

@@ -48,7 +48,7 @@ import si.mazi.rescu.HttpException;
 /**
  * Service to cache all data from exchange to prevent multiple calls
  *
- * @author deveth0
+ * @author Alexander Muthmann
  */
 public class ExchangeService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -257,7 +257,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (TextUtils.isEmpty(getCurrency())) {
           setCurrency(accountInfo.getWallets().getMtGoxWallets().get(1).getBalance().getCurrency());
         }
-        //@TODO: don't trigger order executed notification on order delete
         List<LimitOrder> orders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
         openOrders.removeAll(orders);
         // Order executed

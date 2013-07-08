@@ -34,6 +34,9 @@ import java.util.Comparator;
 import java.util.List;
 import org.joda.money.BigMoney;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class PriceChartFragment extends SherlockListFragment {
 
   private static final String TAG = PriceChartFragment.class.getSimpleName();
@@ -52,14 +55,14 @@ public class PriceChartFragment extends SherlockListFragment {
   private CurrencyTextView askView;
 
   @Override
-  public void onAttach(final Activity activity) {
+  public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity) activity;
     this.application = (BitcoinTraderApplication) activity.getApplication();
   }
 
   @Override
-  public void onCreate(final Bundle savedInstanceState) {
+  public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
     adapter = new PriceChartListAdapter(activity);
@@ -68,7 +71,7 @@ public class PriceChartFragment extends SherlockListFragment {
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_refresh:
         updateView();
@@ -125,7 +128,7 @@ public class PriceChartFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onListItemClick(final ListView l, final View v, final int position, final long id) {
+  public void onListItemClick(ListView l, View v, int position, long id) {
     BitcoinChartsTicker entry = adapter.getItem(position);
     if (entry != null) {
       symbolView.setText(entry.getSymbol());

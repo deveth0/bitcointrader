@@ -14,14 +14,16 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-
-public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
+/**
+ * @author Alexander Muthmann
+ */
+public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
   private LocalBroadcastManager broadcastManager;
   private Menu selectCurrencyItem;
 
   @Override
-  protected void onCreate(final Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
     broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
@@ -34,7 +36,7 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   @Override
-  public boolean onCreateOptionsMenu(final Menu menu) {
+  public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);
 
@@ -44,7 +46,7 @@ public final class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_select_currency:
         showSelectCurrencyPopup();

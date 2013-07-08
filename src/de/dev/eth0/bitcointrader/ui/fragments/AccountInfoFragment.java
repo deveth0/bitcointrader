@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
@@ -25,8 +24,10 @@ import de.dev.eth0.bitcointrader.ui.WalletHistoryActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
-
-public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
+/**
+ * @author Alexander Muthmann
+ */
+public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = AccountInfoFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
@@ -50,7 +51,7 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public View onCreateView(final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view =  inflater.inflate(R.layout.account_info_fragment, container, false);
     view.setOnClickListener(new View.OnClickListener() {
 
@@ -86,7 +87,7 @@ public final class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   }
 
   @Override
-  public void onViewCreated(final View view, final Bundle savedInstanceState) {
+  public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     viewName = (TextView) view.findViewById(R.id.your_wallet_name);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);

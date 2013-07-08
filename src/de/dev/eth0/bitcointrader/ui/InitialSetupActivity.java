@@ -45,6 +45,9 @@ import javax.net.ssl.HttpsURLConnection;
 import si.mazi.rescu.HttpException;
 import si.mazi.rescu.JSONUtils;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = InitialSetupActivity.class.getSimpleName();
@@ -87,14 +90,14 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
   }
 
   @Override
-  public boolean onCreateOptionsMenu(final Menu menu) {
+  public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.initialsetup_options, menu);
     return true;
   }
 
   @Override
-  public boolean onOptionsItemSelected(final MenuItem item) {
+  public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
       case R.id.bitcointrader_options_help:
         HelpDialogFragment.page(getSupportFragmentManager(), "help_setup");

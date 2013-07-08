@@ -15,7 +15,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.google.zxing.integration.android;
 
 /**
@@ -36,10 +35,10 @@ public final class IntentResult {
   }
 
   IntentResult(String contents,
-               String formatName,
-               byte[] rawBytes,
-               Integer orientation,
-               String errorCorrectionLevel) {
+          String formatName,
+          byte[] rawBytes,
+          Integer orientation,
+          String errorCorrectionLevel) {
     this.contents = contents;
     this.formatName = formatName;
     this.rawBytes = rawBytes;
@@ -81,7 +80,7 @@ public final class IntentResult {
   public String getErrorCorrectionLevel() {
     return errorCorrectionLevel;
   }
-  
+
   @Override
   public String toString() {
     StringBuilder dialogText = new StringBuilder(100);
@@ -93,5 +92,4 @@ public final class IntentResult {
     dialogText.append("EC level: ").append(errorCorrectionLevel).append('\n');
     return dialogText.toString();
   }
-
 }

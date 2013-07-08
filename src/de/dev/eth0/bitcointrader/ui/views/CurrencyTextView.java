@@ -14,6 +14,9 @@ import org.joda.money.format.MoneyAmountStyle;
 import org.joda.money.format.MoneyFormatter;
 import org.joda.money.format.MoneyFormatterBuilder;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class CurrencyTextView extends TextView {
 
   public enum DISPLAY_MODE {
@@ -52,7 +55,7 @@ public class CurrencyTextView extends TextView {
     updateView();
   }
 
-  public void setPrefix(final String prefix) {
+  public void setPrefix(String prefix) {
     this.prefix = prefix + Constants.CHAR_HAIR_SPACE;
     updateView();
   }

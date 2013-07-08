@@ -8,11 +8,13 @@ import android.widget.TextView;
 import com.xeiam.xchange.currency.MoneyUtils;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.R;
-import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.BigMoney;
 
+/**
+ * @author Alexander Muthmann
+ */
 public class WalletHistoryListAdapter extends AbstractListAdapter<MtGoxWalletHistoryEntry> {
 
   public WalletHistoryListAdapter(AbstractBitcoinTraderActivity activity) {
@@ -24,7 +26,7 @@ public class WalletHistoryListAdapter extends AbstractListAdapter<MtGoxWalletHis
     return R.layout.wallet_history_row_extended;
   }
   
-  public void bindView(View row, final MtGoxWalletHistoryEntry entry) {
+  public void bindView(View row, MtGoxWalletHistoryEntry entry) {
     // type (out, fee, earned)
     TextView rowType = (TextView) row.findViewById(R.id.wallet_history_row_type);
     if (entry.getType().equals("out")) {

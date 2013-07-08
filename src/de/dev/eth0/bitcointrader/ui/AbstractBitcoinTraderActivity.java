@@ -7,13 +7,15 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
-
+/**
+ * @author Alexander Muthmann
+ */
 public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActivity {
 
   private BitcoinTraderApplication application;
 
   @Override
-  protected void onCreate(final Bundle savedInstanceState) {
+  protected void onCreate(Bundle savedInstanceState) {
     application = (BitcoinTraderApplication) getApplication();
     super.onCreate(savedInstanceState);
   }
