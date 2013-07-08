@@ -14,7 +14,7 @@ public class Constants {
   public static final int PRECISION_BITCOIN = 5;
   public static final int PRECISION_DOLLAR = 5;
   public static final String APP_ACTIVATION_URL = "https://mtgox.com/api/1/generic/api/activate";
-  public static final String APP_ACTIVATION_ID = "00287aa0-775a-41b3-b799-2d7a0116bb06";
+  public static final String APP_ACTIVATION_ID = "SOME_ACTIVATION_ID";
   // About
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
   public static final String REPORT_EMAIL = "bitcointraderissues@dev-eth0.de";
