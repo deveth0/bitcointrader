@@ -4,8 +4,6 @@
   <style name="My.Theme" parent="@style/Theme.Sherlock.Light.DarkActionBar">
     <item name="actionBarStyle">@style/My.Widget.ActionBar</item>
     <item name="android:actionBarStyle">@style/My.Widget.ActionBar</item>
-    <item name="actionModeStyle">@style/My.Widget.ActionMode</item>
-    <item name="android:actionModeStyle">@style/My.Widget.ActionMode</item>
     <item name="android:editTextStyle">@style/My.Widget.EditText</item>
     <item name="android:autoCompleteTextViewStyle">@style/My.Widget.AutoCompleteTextView</item>
     <item name="android:spinnerStyle">@style/My.Widget.Spinner</item>
@@ -34,15 +32,6 @@
   <style name="My.TextAppearance.Widget.ActionBar.Subtitle" parent="@style/TextAppearance.Sherlock.Widget.ActionBar.Subtitle">
     <item name="android:textColor">@android:color/white</item>
     <item name="android:textStyle">normal</item>
-  </style>
-
-  <style name="My.Widget.ActionMode" parent="@style/Widget.Sherlock.Light.ActionMode.Inverse">
-    <item name="background">@drawable/action_mode_background</item>
-    <item name="android:background">@drawable/action_mode_background</item>
-    <item name="titleTextStyle">@style/My.TextAppearance.Widget.ActionMode.Title</item>
-    <item name="android:titleTextStyle">@style/My.TextAppearance.Widget.ActionMode.Title</item>
-    <item name="subtitleTextStyle">@style/My.TextAppearance.Widget.ActionMode.Subtitle</item>
-    <item name="android:subtitleTextStyle">@style/My.TextAppearance.Widget.ActionMode.Subtitle</item>
   </style>
 
   <style name="My.TextAppearance.Widget.ActionMode.Title" parent="@style/TextAppearance.Sherlock.Widget.ActionMode.Title">
