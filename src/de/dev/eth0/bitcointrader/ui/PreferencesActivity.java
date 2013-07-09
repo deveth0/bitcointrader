@@ -89,6 +89,7 @@ public class PreferencesActivity extends SherlockPreferenceActivity implements O
       Editor editor = preference.getEditor();
       editor.putString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
       editor.putString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
+      editor.putBoolean(Constants.PREFS_KEY_DEMO, false);
       editor.commit();
       Toast.makeText(this, R.string.preferences_labs_delete_account, Toast.LENGTH_LONG).show();
       startActivity(new Intent(this, StartScreenActivity.class));

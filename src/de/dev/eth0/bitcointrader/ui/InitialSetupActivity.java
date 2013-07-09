@@ -64,11 +64,11 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.initial_setup_activity);
 
-    headlineTextView = (TextView) findViewById(R.id.initial_setup_activity_headline);
-    infoTextView = (TextView) findViewById(R.id.initial_setup_activity_info);
+    headlineTextView = (TextView)findViewById(R.id.initial_setup_activity_headline);
+    infoTextView = (TextView)findViewById(R.id.initial_setup_activity_info);
     infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
-    startScanButton = (ImageButton) findViewById(R.id.initial_setup_activity_start_scan);
+    startScanButton = (ImageButton)findViewById(R.id.initial_setup_activity_start_scan);
     startScanButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         IntentIntegrator integrator = new IntentIntegrator(InitialSetupActivity.this);
@@ -76,9 +76,9 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         integrator.initiateScan();
       }
     });
-    manualSetupKey = (EditText) findViewById(R.id.initial_setup_activity_manual_key);
-    manualSetupSecretKey = (EditText) findViewById(R.id.initial_setup_activity_manual_secretkey);
-    manualSetupButton = (Button) findViewById(R.id.initial_setup_activity_manual_setupbutton);
+    manualSetupKey = (EditText)findViewById(R.id.initial_setup_activity_manual_key);
+    manualSetupSecretKey = (EditText)findViewById(R.id.initial_setup_activity_manual_secretkey);
+    manualSetupButton = (Button)findViewById(R.id.initial_setup_activity_manual_setupbutton);
     manualSetupButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         String key = manualSetupKey.getText().toString();
@@ -100,6 +100,12 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         InitialSetupActivity.this.finish();
       }
     });
+  }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    this.finish();
   }
 
   @Override
@@ -153,7 +159,8 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     protected Exception doInBackground(String... params) {
       try {
         getApiKeys(params[0]);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         return e;
       }
       return null;
@@ -175,7 +182,8 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       }
       if (exception == null) {
         testAndSaveAccessKeys(key, secretKey);
-      } else {
+      }
+      else {
         if (exception instanceof ExpiredException) {
           Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_failed_key_expired, Toast.LENGTH_LONG).show();
         }
@@ -184,7 +192,8 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         }
         if (exception instanceof NotEnoughPermissionsException) {
           Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_failed_not_enough_permissions, Toast.LENGTH_LONG).show();
-        } else if (exception instanceof Exception) {
+        }
+        else if (exception instanceof Exception) {
           Toast.makeText(InitialSetupActivity.this, R.string.connection_failed, Toast.LENGTH_LONG).show();
         }
       }
@@ -194,7 +203,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
             throws UnsupportedEncodingException, HttpException, IOException, ExpiredException, InvalidException, NotEnoughPermissionsException {
       String urlEncodedKey = URLEncoder.encode(scannedKey, "UTF-8");
       URL query = new URL(Constants.APP_ACTIVATION_URL);
-      HttpsURLConnection c = (HttpsURLConnection) query.openConnection();
+      HttpsURLConnection c = (HttpsURLConnection)query.openConnection();
       c.setRequestMethod("POST");
       c.setRequestProperty("User-Agent", "biTrader");
 
@@ -210,7 +219,8 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       DataInputStream input;
       if (c.getResponseCode() >= 400) {
         input = new DataInputStream(c.getErrorStream());
-      } else {
+      }
+      else {
         input = new DataInputStream(c.getInputStream());
       }
 
@@ -239,31 +249,32 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> rawJSON = JSONUtils.getJsonGenericMap(response, mapper);
 
-      String result = (String) rawJSON.get("result");
+      String result = (String)rawJSON.get("result");
       if ("error".equals(result)) {
-        String error = (String) rawJSON.get("error");
+        String error = (String)rawJSON.get("error");
 
         if ("Expired key".equals(error)) {
           throw new ExpiredException();
-        } else if ("Invalid or already used key".equals(error)) {
+        }
+        else if ("Invalid or already used key".equals(error)) {
           throw new InvalidException();
         }
         throw new IOException();
       }
 
-      Map<String, Object> returnObject = (Map<String, Object>) rawJSON.get("return");
-      Map<String, Object> rightsObject = (Map<String, Object>) returnObject.get("Rights");
+      Map<String, Object> returnObject = (Map<String, Object>)rawJSON.get("return");
+      Map<String, Object> rightsObject = (Map<String, Object>)returnObject.get("Rights");
       if (rightsObject == null) {
         throw new NotEnoughPermissionsException();
       }
 
-      String getInfo = (String) rightsObject.get("get_info");
-      String trade = (String) rightsObject.get("trade");
+      String getInfo = (String)rightsObject.get("get_info");
+      String trade = (String)rightsObject.get("trade");
       if (getInfo == null || trade == null) {
         throw new NotEnoughPermissionsException();
       }
-      String apiKey = (String) returnObject.get("Rest-Key");
-      String apiSecret = (String) returnObject.get("Secret");
+      String apiKey = (String)returnObject.get("Rest-Key");
+      String apiSecret = (String)returnObject.get("Secret");
 
       if (apiKey == null || apiSecret == null) {
         throw new InvalidException();
@@ -302,9 +313,10 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
         exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
         exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-        Exchange exchange = (MtGoxExchange) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+        Exchange exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
         accountInfo = exchange.getPollingAccountService().getAccountInfo();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         Log.i(TAG, "Exception", e);
         return e;
       }
@@ -325,10 +337,12 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         Toast.makeText(InitialSetupActivity.this,
                 InitialSetupActivity.this.getString(R.string.initial_setup_success, accountInfo.getUsername()), Toast.LENGTH_LONG).show();
         InitialSetupActivity.this.finish();
-      } else {
+      }
+      else {
         if (exception instanceof HttpException) {
           Toast.makeText(InitialSetupActivity.this, R.string.connection_failed, Toast.LENGTH_LONG).show();
-        } else if (exception instanceof ExchangeException) {
+        }
+        else if (exception instanceof ExchangeException) {
           Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_failed_wrong_credentials, Toast.LENGTH_LONG).show();
         }
       }
