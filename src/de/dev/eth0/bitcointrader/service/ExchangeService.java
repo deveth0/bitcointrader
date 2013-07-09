@@ -154,7 +154,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   public String getCurrency() {
-    return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, null);
+    return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, "USD");
   }
 
   public MtGoxExchangeWrapper getExchange() {
