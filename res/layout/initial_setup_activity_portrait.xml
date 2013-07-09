@@ -38,7 +38,8 @@
     android:layout_below="@id/initial_setup_activity_manual_qrinfo"
     android:layout_centerHorizontal="true"
     android:src="@drawable/ic_action_scan_qr" />
-  <TextView
+
+    <TextView
     android:id="@+id/initial_setup_activity_manual_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -92,5 +93,12 @@
       android:paddingRight="12dp"
       android:text="@string/initial_setup_manual_setupbutton"
       android:textStyle="bold" />
-
+      <ImageButton
+        android:id="@+id/initial_setup_activity_demo_button"
+        style="@style/My.Widget.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/initial_setup_activity_info"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_action_scan_qr" />
 </RelativeLayout>

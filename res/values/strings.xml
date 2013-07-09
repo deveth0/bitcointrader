@@ -20,6 +20,7 @@
   <string name="initial_setup_manual_setupbutton">Go</string>
   <string name="initial_setup_manual_key_label">Key</string>
   <string name="initial_setup_manual_secretkey_label">Secret key</string>
+  <string name="initial_setup_demo">Starting Demo</string>
   <string name="initial_setup_success">Setup completed for username %s</string>
   <string name="initial_setup_testing">Testing credentials</string>
   <string name="initial_setup_failed_wrong_credentials">Seems to be wrong credentials</string>
@@ -84,6 +85,7 @@
   <string name="place_order_invalid">Please validate your input</string>
   <string name="place_order_success">Order created</string>
   <string name="place_order_failed">Could not create order</string>
+  <string name="place_order_failed_demo">You cannot create orders in demo mode.</string>
     
   <string name="about_title">About</string>
   <string name="about_author_twitter_title">Author at Twitter</string>

@@ -54,6 +54,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
   private TextView headlineTextView;
   private TextView infoTextView;
   private ImageButton startScanButton;
+  private ImageButton demoButton;
   private EditText manualSetupKey;
   private EditText manualSetupSecretKey;
   private Button manualSetupButton;
@@ -85,6 +86,18 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(secretKey)) {
           testAndSaveAccessKeys(key, secretKey);
         }
+      }
+    });
+    demoButton = (ImageButton)findViewById(R.id.initial_setup_activity_demo_button);
+    demoButton.setOnClickListener(new View.OnClickListener() {
+      public void onClick(View v) {
+        // start demo
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBitcoinTraderApplication());
+        Editor editor = prefs.edit();
+        editor.putBoolean(Constants.PREFS_KEY_DEMO, true);
+        editor.apply();
+        Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_demo, Toast.LENGTH_LONG).show();
+        InitialSetupActivity.this.finish();
       }
     });
   }

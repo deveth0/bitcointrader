@@ -15,6 +15,8 @@ public class Constants {
   public static final int PRECISION_DOLLAR = 5;
   public static final String APP_ACTIVATION_URL = "https://mtgox.com/api/1/generic/api/activate";
   public static final String APP_ACTIVATION_ID = "00287aa0-775a-41b3-b799-2d7a0116bb06";
+  public static final String MTGOX_DEMO_ACCOUNT_APIKEY = "379c8413-2bdb-4b55-88f9-657570e1527d";
+  public static final String MTGOX_DEMO_ACCOUNT_SECRETKEY = "6PqEIhKq1FmRpAb1BFRrp9GYOmn0AxcZ5lpX8yXN24cHbS2u53gZ2Y9w1cGPYDfbIRnx1McHRBW0qYybe65NvQ==";
   // About
   public static final String DONATION_ADDRESS = "1KjAux47WJUTfwpeTduNkBtbcdKGhN7yVj";
   public static final String REPORT_EMAIL = "bitcointraderissues@dev-eth0.de";
@@ -26,6 +28,7 @@ public class Constants {
   public static final String CREDITS_XCHANGE_URL = "https://github.com/timmolter/XChange";
   public static final String CREDITS_ZXING_URL = "http://zxing.googlecode.com";
   // Prefs
+  public static final String PREFS_KEY_DEMO = "demo";
   public static final String PREFS_KEY_MTGOX_APIKEY = "mtgox_apikey";
   public static final String PREFS_KEY_MTGOX_SECRETKEY = "mtgox_secretkey";
   public static final String PREFS_KEY_GENERAL_UPDATE = "general_update";

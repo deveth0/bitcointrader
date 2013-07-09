@@ -2,7 +2,6 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui;
 
-import de.schildbach.wallet.ui.ReportIssueDialogBuilder;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
@@ -19,6 +18,7 @@ import android.util.Log;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
+import de.schildbach.wallet.ui.ReportIssueDialogBuilder;
 import java.io.IOException;
 
 /**
@@ -50,8 +50,8 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
     if (!hadErrors) {
       // if there has been no initial setup (or no mtgox keys are set, we need to start the initalSetupActivity
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBitcoinTraderApplication());
-      if (TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null))
-              || TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null))) {
+      if (!prefs.getBoolean(Constants.PREFS_KEY_DEMO, false) && (TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null))
+              || TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null)))) {
         startActivity(new Intent(this, InitialSetupActivity.class));
       } else {
         // otherwise we can connect the exchangeservice and start
