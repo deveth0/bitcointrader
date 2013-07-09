@@ -40,7 +40,6 @@
     </activity>
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.InitialSetupActivity"
-      android:configChanges="orientation|keyboard|keyboardHidden"
     />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity"
@@ -48,27 +47,23 @@
       android:launchMode="singleTask" />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.AboutActivity"
-      android:configChanges="orientation|keyboard|keyboardHidden"
       android:label="@string/about_title"
       android:screenOrientation="behind" />
       <activity
         android:name="de.dev.eth0.bitcointrader.ui.PriceChartActivity"
-        android:configChanges="orientation|keyboard|keyboardHidden"
         android:label="@string/price_chart_title"
       />
       <activity
-        android:name="de.dev.eth0.bitcointrader.ui.WalletHistoryActivity"
-        android:configChanges="orientation|keyboard|keyboardHidden"
+      android:name="de.dev.eth0.bitcointrader.ui.WalletHistoryActivity"
       android:label="@string/wallet_history_title"
     />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.PreferencesActivity"
-      android:configChanges="orientation|keyboard|keyboardHidden"
       android:label="@string/preferences_title"
       android:screenOrientation="behind" />
     <activity
       android:name="de.dev.eth0.bitcointrader.ui.PlaceOrderActivity"
-      android:configChanges="orientation|keyboard|keyboardHidden"
+      android:configChanges="keyboard|keyboardHidden"
       android:label="@string/placeorder_title"
       android:screenOrientation="behind"
       android:windowSoftInputMode="adjustResize" />
