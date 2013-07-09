@@ -90,14 +90,13 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     demoButton = (Button)findViewById(R.id.initial_setup_activity_demo_button);
     demoButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        throw new RuntimeException("Foo");
-//        // start demo
-//        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBitcoinTraderApplication());
-//        Editor editor = prefs.edit();
-//        editor.putBoolean(Constants.PREFS_KEY_DEMO, true);
-//        editor.apply();
-//        Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_demo, Toast.LENGTH_LONG).show();
-//        InitialSetupActivity.this.finish();
+        // start demo
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBitcoinTraderApplication());
+        Editor editor = prefs.edit();
+        editor.putBoolean(Constants.PREFS_KEY_DEMO, true);
+        editor.apply();
+        Toast.makeText(InitialSetupActivity.this, R.string.initial_setup_demo, Toast.LENGTH_LONG).show();
+        InitialSetupActivity.this.finish();
       }
     });
   }

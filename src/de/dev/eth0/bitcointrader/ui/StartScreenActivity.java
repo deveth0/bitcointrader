@@ -38,6 +38,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.start_activity);
+    hadErrors = false;
     if (savedInstanceState == null) {
       checkAlerts();
     }
@@ -136,6 +137,13 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
 
         @Override
         protected CharSequence subject() {
+          try {
+            if (CrashReporter.hasReason()) {
+              return CrashReporter.getReason();
+            }
+          } catch (IOException ioe) {
+            Log.w(TAG, "Exception", ioe);
+          }
           return Constants.REPORT_SUBJECT_CRASH + " " + getBitcoinTraderApplication().applicationVersionName();
         }
 
