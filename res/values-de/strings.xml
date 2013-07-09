@@ -8,6 +8,7 @@
   <string name="bitcoin_order_fragment_empty_text">Keine offenen Ordern.</string>
   <string name="bitcoin_action_buy">Kaufen</string>
   <string name="bitcoin_action_sell">Verkaufen</string>
+  <string name="bitcoin_action_demo_info">Demo beenden</string>
   <string name="button_retry">Erneut versuchen.</string>
   <string name="button_delete_order_text">Sind Sie sicher, dass Sie die folgenden Order löschen wollen:\n%1$s (Betrag: %2$s)</string>
   <string name="button_delete_order_confirm">Bestätigen</string>
@@ -20,6 +21,9 @@
   <string name="initial_setup_manual_setupbutton">Übernehmen</string>
   <string name="initial_setup_manual_key_label">Key</string>
   <string name="initial_setup_manual_secretkey_label">Secret key</string>
+  <string name="initial_setup_demo_label">Falls Sie sich noch nicht sicher sind, dass dies die richtige App für Sie ist, können Sie hier den Demo-Modus starten.</string>
+  <string name="initial_setup_demo_button">Demo starten</string>
+  <string name="initial_setup_demo">Demo wird gestartet</string>
   <string name="initial_setup_success">Setup erfolgreich mit folgendem Nutzer durchgeführt: %s</string>
   <string name="initial_setup_testing">Zugangsdaten werden getestet</string>
   <string name="initial_setup_failed_wrong_credentials">Bitte überprüfen Sie die Zugangsdaten.</string>
@@ -84,6 +88,7 @@
   <string name="place_order_invalid">Bitte überprüfen Sie Ihre eingaben</string>
   <string name="place_order_success">Order erstellt</string>
   <string name="place_order_failed">Order konnte nicht erstellt werden</string>
+  <string name="place_order_failed_demo">Im Demo-Modus können Sie leider keine Ordern erstellen.</string>
     
   <string name="about_title">Info</string>
   <string name="about_author_twitter_title">Author auf Twitter</string>
@@ -107,7 +112,8 @@
   <string name="preferences_labs_delete_account">Account löschen</string>
     
   <string name="bitcointrader_options_donate">Spenden</string>
-
+  <string name="bitcointrader_options_help">Hilfe</string>
+  
   <string name="report_issue_dialog_title_crash">Absturz erkannt</string>
   <string name="report_issue_dialog_message_crash">Möchtest du einen Fehlerbericht senden, um bei der Fehlerbehebung zu helfen?</string>
   <string name="report_issue_dialog_description">Problembeschreibung</string>
@@ -115,7 +121,6 @@
   <string name="report_issue_dialog_collect_device_info">Geräte-Informationen anhängen</string>
   <string name="report_issue_dialog_collect_application_log">Applikations-Logfile anhängen</string>
   <string name="report_issue_dialog_mail_intent_chooser">Bericht senden mit…</string>
-
 
   <string name="button_cancel">Abbrechen</string>
 	

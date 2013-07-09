@@ -8,6 +8,7 @@
   <string name="bitcoin_order_fragment_empty_text">No Open Orders.</string>
   <string name="bitcoin_action_buy">Buy</string>
   <string name="bitcoin_action_sell">Sell</string>
+  <string name="bitcoin_action_demo_info">End demo</string>
   <string name="button_retry">Retry</string>
   <string name="button_delete_order_text">Do you really want to delete the following order:\n%1$s (amount: %2$s)</string>
   <string name="button_delete_order_confirm">Confirm</string>
@@ -20,6 +21,8 @@
   <string name="initial_setup_manual_setupbutton">Go</string>
   <string name="initial_setup_manual_key_label">Key</string>
   <string name="initial_setup_manual_secretkey_label">Secret key</string>
+  <string name="initial_setup_demo_label">If you are not sure, if this is the right app for you, you can start a demo here.</string>
+  <string name="initial_setup_demo_button">Start demo</string>
   <string name="initial_setup_demo">Starting Demo</string>
   <string name="initial_setup_success">Setup completed for username %s</string>
   <string name="initial_setup_testing">Testing credentials</string>
@@ -110,7 +113,6 @@
     
   <string name="bitcointrader_options_donate">Donate</string>
   <string name="bitcointrader_options_help">Help</string>
-
 
   <string name="report_issue_dialog_title_crash">Previous crash detected</string>
   <string name="report_issue_dialog_message_crash">Would you like to send a crash report, helping to fix this issue in the future?</string>

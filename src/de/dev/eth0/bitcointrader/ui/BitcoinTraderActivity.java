@@ -27,6 +27,8 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
     broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
+    
+    
   }
 
   @Override

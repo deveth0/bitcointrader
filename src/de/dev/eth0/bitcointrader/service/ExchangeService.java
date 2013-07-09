@@ -59,7 +59,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void)null);
+        executeTask(new UpdateTask(), (Void) null);
       }
     }
   };
@@ -105,8 +105,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     if (prefs.getBoolean(Constants.PREFS_KEY_DEMO, false)) {
       mtGoxAPIKey = Constants.MTGOX_DEMO_ACCOUNT_APIKEY;
       mtGoxSecretKey = Constants.MTGOX_DEMO_ACCOUNT_SECRETKEY;
-    }
-    else {
+    } else {
       mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
       mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
     }
@@ -117,7 +116,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchangeWrapper)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchangeWrapper) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
   }
@@ -193,16 +192,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (!pages.isEmpty()) {
           walletHistoryCache.put(currency, pages);
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
-      }
-      catch (RuntimeException iae) {
+      } catch (RuntimeException iae) {
         Log.e(TAG, "RuntimeException", iae);
         broadcastUpdateFailure();
       }
@@ -282,8 +278,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
               bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT, result.getTotalAmount().getValue().toString());
               bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALSPENT, result.getTotalSpent().getValue().toString());
               extras.add(bundle);
-            }
-            catch (Exception ee) {
+            } catch (Exception ee) {
               Log.d(TAG, "getting OrderResult failed", ee);
             }
           }
@@ -297,18 +292,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, getCurrency());
         lastUpdate = new Date();
         broadcastUpdateSuccess();
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (RuntimeException iae) {
+      } catch (RuntimeException iae) {
         Log.e(TAG, "RuntimeException", iae);
         broadcastUpdateFailure();
         return false;
@@ -321,8 +313,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (success && notifyOnUpdate) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
-      }
-      else if (!success) {
+      } else if (!success) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_failed_title, Toast.LENGTH_LONG).show();
       }
@@ -341,12 +332,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           broadcastUpdate();
           return ret;
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
@@ -385,12 +374,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (success) {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success), Toast.LENGTH_LONG).show();
-        PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment)activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
+        PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment) activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
         if (placeOrderFragment != null) {
           placeOrderFragment.resetValues();
         }
-      }
-      else {
+      } else {
         Toast.makeText(ExchangeService.this, demoMode ? R.string.place_order_failed_demo : R.string.place_order_failed, Toast.LENGTH_LONG).show();
       }
       mDialog.dismiss();
@@ -401,28 +389,25 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     protected Boolean doInBackground(Order... params) {
       String orderId = null;
       if (!demoMode) {
-      try {
-        if (params.length == 1) {
-          Order order = params[0];
-          if (order instanceof MarketOrder) {
-            MarketOrder mo = (MarketOrder)order;
-            orderId = exchange.getPollingTradeService().placeMarketOrder(mo);
+        try {
+          if (params.length == 1) {
+            Order order = params[0];
+            if (order instanceof MarketOrder) {
+              MarketOrder mo = (MarketOrder) order;
+              orderId = exchange.getPollingTradeService().placeMarketOrder(mo);
+            } else if (order instanceof LimitOrder) {
+              LimitOrder lo = (LimitOrder) order;
+              orderId = exchange.getPollingTradeService().placeLimitOrder(lo);
+            }
+            lastUpdate = new Date();
+            broadcastUpdateSuccess();
           }
-          else if (order instanceof LimitOrder) {
-            LimitOrder lo = (LimitOrder)order;
-            orderId = exchange.getPollingTradeService().placeLimitOrder(lo);
-          }
-          lastUpdate = new Date();
-          broadcastUpdateSuccess();
-        }
-      }
-      catch (ExchangeException ee) {
-        Log.i(TAG, "ExchangeException", ee);
-        broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
-        Log.e(TAG, "HttpException", uhe);
-        broadcastUpdateFailure();
+        } catch (ExchangeException ee) {
+          Log.i(TAG, "ExchangeException", ee);
+          broadcastUpdateFailure();
+        } catch (HttpException uhe) {
+          Log.e(TAG, "HttpException", uhe);
+          broadcastUpdateFailure();
         }
       }
       // only finish activity if the order has been created in a PlaceOrderActivity

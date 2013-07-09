@@ -51,10 +51,9 @@ import si.mazi.rescu.JSONUtils;
 public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = InitialSetupActivity.class.getSimpleName();
-  private TextView headlineTextView;
   private TextView infoTextView;
   private ImageButton startScanButton;
-  private ImageButton demoButton;
+  private Button demoButton;
   private EditText manualSetupKey;
   private EditText manualSetupSecretKey;
   private Button manualSetupButton;
@@ -64,7 +63,6 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.initial_setup_activity);
 
-    headlineTextView = (TextView)findViewById(R.id.initial_setup_activity_headline);
     infoTextView = (TextView)findViewById(R.id.initial_setup_activity_info);
     infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -77,6 +75,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       }
     });
     manualSetupKey = (EditText)findViewById(R.id.initial_setup_activity_manual_key);
+    manualSetupKey.clearFocus();
     manualSetupSecretKey = (EditText)findViewById(R.id.initial_setup_activity_manual_secretkey);
     manualSetupButton = (Button)findViewById(R.id.initial_setup_activity_manual_setupbutton);
     manualSetupButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +87,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         }
       }
     });
-    demoButton = (ImageButton)findViewById(R.id.initial_setup_activity_demo_button);
+    demoButton = (Button)findViewById(R.id.initial_setup_activity_demo_button);
     demoButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         // start demo
