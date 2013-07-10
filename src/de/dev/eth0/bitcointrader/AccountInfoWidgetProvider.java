@@ -23,7 +23,7 @@ public class AccountInfoWidgetProvider extends AppWidgetProvider {
     updateWidgets(context, appWidgetManager, appWidgetIds, exchangeService);
   }
 
-  private void updateWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, ExchangeService exchangeService) {
+  public static void updateWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds, ExchangeService exchangeService) {
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
       RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.account_info_widget_content);
       Wallets wallets = exchangeService.getAccountInfo().getWallets();
