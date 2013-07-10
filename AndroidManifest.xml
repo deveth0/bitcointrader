@@ -68,6 +68,11 @@
       android:label="@string/placeorder_title"
       android:screenOrientation="behind"
       android:windowSoftInputMode="adjustResize" />
+      <!--    <activity android:name="de.dev.eth0.bitcointrader.ui.widgets.AccountInfoWidgetConfigure">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+      </intent-filter>
+      </activity>-->
     
     <receiver android:name="de.dev.eth0.bitcointrader.service.AutoUpdateBroadcastReceiver"
               android:exported="false"    
@@ -88,7 +93,15 @@
         <action android:name="de.dev.eth0.bitcointrader.ORDER_EXECUTED" />
       </intent-filter>
     </receiver>
-    
+
+    <receiver android:name="de.dev.eth0.bitcointrader.AccountInfoWidgetProvider" >
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider"
+               android:resource="@xml/account_info_widget" />
+    </receiver>
+
     <service
       android:name="de.dev.eth0.bitcointrader.service.ExchangeService"
     />
