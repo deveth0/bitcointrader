@@ -27,6 +27,7 @@ import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,17 +104,17 @@ public class PriceChartFragment extends SherlockListFragment {
     bidView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
     askView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
 
-    lastView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lastView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lastView.setPrecision(Constants.PRECISION_DOLLAR);
-    avgView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    avgView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     avgView.setPrecision(Constants.PRECISION_DOLLAR);
-    lowView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lowView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lowView.setPrecision(Constants.PRECISION_DOLLAR);
-    highView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    highView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     highView.setPrecision(Constants.PRECISION_DOLLAR);
-    bidView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    bidView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     bidView.setPrecision(Constants.PRECISION_DOLLAR);
-    askView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    askView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     askView.setPrecision(Constants.PRECISION_DOLLAR);
     volView.setPrecision(Constants.PRECISION_BITCOIN);
   }

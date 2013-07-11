@@ -124,5 +124,7 @@
 
   <string name="button_cancel">Cancel</string>
 	
-	
+  <string name="widget_accountinfo_name">Bitcoin Trader Account Info</string>
+  <string name="widget_priceinfo_name">Bitcoin Trader Price Info</string>
+  
 </resources>

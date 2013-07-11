@@ -278,7 +278,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
   };
 
-  private class HistoryCurrencySpinnerAdapter extends ArrayAdapter<String> {
+  public static class HistoryCurrencySpinnerAdapter extends ArrayAdapter<String> {
 
     private String[] entries;
 

@@ -22,6 +22,8 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
+import de.dev.eth0.bitcointrader.util.FormatHelper;
+import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
 import java.text.DateFormat;
 
 /**
@@ -41,8 +43,6 @@ public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   private TextView viewPriceInfoLastUpdate;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
-  private DateFormat dateFormat;
-  private DateFormat timeFormat;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,8 +96,6 @@ public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
     viewPriceInfoBid = (CurrencyTextView) view.findViewById(R.id.price_info_bid);
     viewPriceInfoVolume = (AmountTextView) view.findViewById(R.id.price_info_volume);
     viewPriceInfoLastUpdate = (TextView) view.findViewById(R.id.price_info_lastupdate);
-    dateFormat = android.text.format.DateFormat.getDateFormat(activity);
-    timeFormat = android.text.format.DateFormat.getTimeFormat(activity);
     updateView();
   }
 
@@ -107,23 +105,23 @@ public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
       Ticker ticker = getExchangeService().getTicker();
       if (ticker != null) {
         viewPriceInfoLow.setAmount(ticker.getLow());
-        viewPriceInfoLow.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoLow.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoLow.setPrefix(activity.getString(R.string.price_info_low_label));
         viewPriceInfoCurrent.setAmount(ticker.getLast());
-        viewPriceInfoCurrent.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoCurrent.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoHigh.setAmount(ticker.getHigh());
-        viewPriceInfoHigh.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoHigh.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoHigh.setPrefix(activity.getString(R.string.price_info_high_label));
         viewPriceInfoAsk.setAmount(ticker.getAsk());
-        viewPriceInfoAsk.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoAsk.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoAsk.setPrefix(activity.getString(R.string.price_info_ask_label));
         viewPriceInfoBid.setAmount(ticker.getBid());
-        viewPriceInfoBid.setDisplayMode(CurrencyTextView.DISPLAY_MODE.CURRENCY_SYMBOL);
+        viewPriceInfoBid.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoBid.setPrefix(activity.getString(R.string.price_info_bid_label));
         viewPriceInfoVolume.setAmount(ticker.getVolume());
         viewPriceInfoVolume.setPrecision(0);
         viewPriceInfoVolume.setPrefix(activity.getString(R.string.price_info_volume_label));
-        viewPriceInfoLastUpdate.setText(dateFormat.format(ticker.getTimestamp()) + ", " + timeFormat.format(ticker.getTimestamp()));
+        viewPriceInfoLastUpdate.setText(FormatHelper.formatDate(activity, ticker.getTimestamp()));
       }
     }
   }

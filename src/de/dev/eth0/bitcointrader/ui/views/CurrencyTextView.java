@@ -8,35 +8,17 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.util.FormatHelper;
+import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
 import java.math.RoundingMode;
 import org.joda.money.BigMoney;
-import org.joda.money.format.MoneyAmountStyle;
-import org.joda.money.format.MoneyFormatter;
-import org.joda.money.format.MoneyFormatterBuilder;
 
 /**
  * @author Alexander Muthmann
  */
 public class CurrencyTextView extends TextView {
 
-  public enum DISPLAY_MODE {
-
-    NO_CURRENCY_CODE(new MoneyFormatterBuilder().
-    appendAmount(MoneyAmountStyle.ASCII_DECIMAL_POINT_NO_GROUPING).toFormatter()),
-    CURRENCY_CODE(new MoneyFormatterBuilder().appendCurrencyCode().appendLiteral(" ")
-    .appendAmount(MoneyAmountStyle.ASCII_DECIMAL_POINT_NO_GROUPING).toFormatter()),
-    CURRENCY_SYMBOL(new MoneyFormatterBuilder().appendCurrencySymbolLocalized().appendLiteral(" ")
-    .appendAmount(MoneyAmountStyle.ASCII_DECIMAL_POINT_NO_GROUPING).toFormatter());
-    private MoneyFormatter formater;
-
-    private DISPLAY_MODE(MoneyFormatter formater) {
-      this.formater = formater;
-    }
-
-    public MoneyFormatter getFormater() {
-      return formater;
-    }
-  }
+  
   private BigMoney amount = null;
   private String prefix = null;
   private Integer precision = null;
@@ -74,11 +56,9 @@ public class CurrencyTextView extends TextView {
     if (amount != null) {
       Editable text;
       if (precision != null) {
-        text = new SpannableStringBuilder(
-                displayMode.getFormater().print(amount.withScale(precision, RoundingMode.HALF_EVEN)));
+        text = new SpannableStringBuilder(FormatHelper.formatBigMoney(displayMode, amount, precision));
       } else {
-        text = new SpannableStringBuilder(
-                displayMode.getFormater().print(amount.withCurrencyScale(RoundingMode.HALF_EVEN)));
+        text = new SpannableStringBuilder(FormatHelper.formatBigMoney(displayMode, amount));
       }
       if (prefix != null) {
         text.insert(0, prefix);

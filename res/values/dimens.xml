@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+	<dimen name="font_size_smaller">13sp</dimen>
 	<dimen name="font_size_small">15sp</dimen>
 	<dimen name="font_size_normal">18sp</dimen>
     <dimen name="font_size_xlarge">25sp</dimen>

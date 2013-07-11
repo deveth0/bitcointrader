@@ -10,6 +10,7 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
+import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
 import org.joda.money.BigMoney;
 
 /**
@@ -60,13 +61,13 @@ public class PriceChartListAdapter extends AbstractListAdapter<BitcoinChartsTick
     volView.setPrecision(2);
     
     lastView.setAmount(last);
-    lastView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lastView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lastView.setPrecision(2);
     lowView.setAmount(low);
-    lowView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    lowView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lowView.setPrecision(2);
     highView.setAmount(high);
-    highView.setDisplayMode(CurrencyTextView.DISPLAY_MODE.NO_CURRENCY_CODE);
+    highView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     highView.setPrecision(2);
   }
 }
