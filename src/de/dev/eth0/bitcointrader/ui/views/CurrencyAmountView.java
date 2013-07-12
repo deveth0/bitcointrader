@@ -73,7 +73,7 @@ public class CurrencyAmountView extends FrameLayout {
   protected void onFinishInflate() {
     super.onFinishInflate();
     final Context context = getContext();
-    textView = (TextView) getChildAt(0);
+    textView = (TextView)getChildAt(0);
     textView.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
     textView.setHorizontalFadingEdgeEnabled(true);
     textView.addTextChangedListener(new TextWatcher() {
@@ -105,7 +105,8 @@ public class CurrencyAmountView extends FrameLayout {
     if (currencyCode != null) {
       final float textSize = textView.getTextSize();
       currencyCodeDrawable = new CurrencyCodeDrawable(currencyCode, textSize, lessSignificantColor, textSize * 0.37f);
-    } else {
+    }
+    else {
       currencyCodeDrawable = null;
     }
     updateAppearance();
@@ -114,7 +115,8 @@ public class CurrencyAmountView extends FrameLayout {
   public BigDecimal getAmount() {
     try {
       return new BigDecimal(textView.getText().toString());
-    } catch (NumberFormatException nfe) {
+    }
+    catch (NumberFormatException nfe) {
       Log.w(TAG, "getAmount", nfe);
       return new BigDecimal(BigInteger.ZERO);
     }
@@ -122,8 +124,9 @@ public class CurrencyAmountView extends FrameLayout {
 
   public void setAmount(BigDecimal amount) {
     if (amount != null) {
-      textView.setText(amount.toString());
-    } else {
+      textView.setText((amount.signum() == 0 ? "0" : amount.toString()));
+    }
+    else {
       textView.setText(null);
     }
   }
@@ -154,7 +157,8 @@ public class CurrencyAmountView extends FrameLayout {
         new BigDecimal(amount);
         return true;
       }
-    } catch (NumberFormatException x) {
+    }
+    catch (NumberFormatException x) {
     }
     return false;
   }
@@ -175,10 +179,12 @@ public class CurrencyAmountView extends FrameLayout {
     if (enabled && !amount.isEmpty()) {
       textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, deleteButtonDrawable, null);
       contextButton.setOnClickListener(deleteClickListener);
-    } else if (enabled && contextButtonDrawable != null) {
+    }
+    else if (enabled && contextButtonDrawable != null) {
       textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, contextButtonDrawable, null);
       contextButton.setOnClickListener(contextButtonClickListener);
-    } else {
+    }
+    else {
       textView.setCompoundDrawablesWithIntrinsicBounds(currencyCodeDrawable, null, null, null);
       contextButton.setOnClickListener(null);
     }
@@ -198,11 +204,12 @@ public class CurrencyAmountView extends FrameLayout {
   @Override
   protected void onRestoreInstanceState(final Parcelable state) {
     if (state instanceof Bundle) {
-      final Bundle bundle = (Bundle) state;
+      final Bundle bundle = (Bundle)state;
       super.onRestoreInstanceState(bundle.getParcelable("super_state"));
       textView.onRestoreInstanceState(bundle.getParcelable("child_textview"));
-      setAmount((BigDecimal) bundle.getSerializable("amount"));
-    } else {
+      setAmount((BigDecimal)bundle.getSerializable("amount"));
+    }
+    else {
       super.onRestoreInstanceState(state);
     }
   }
