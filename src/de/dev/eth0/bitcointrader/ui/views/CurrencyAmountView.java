@@ -124,7 +124,7 @@ public class CurrencyAmountView extends FrameLayout {
 
   public void setAmount(BigDecimal amount) {
     if (amount != null) {
-      textView.setText((amount.signum() == 0 ? "0" : amount.toString()));
+      textView.setText((amount.signum() == 0 ? "0.00" : amount.toString()));
     }
     else {
       textView.setText(null);
