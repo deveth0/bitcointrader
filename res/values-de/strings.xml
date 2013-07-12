@@ -106,8 +106,8 @@
   <string name="preferences_category_general">Allgemeine Einstellungen</string>
   <string name="preferences_general_update_summary">Bitte Wert wählen</string>
   <string name="preferences_general_update_title">Automatisches Update alle&#8230;</string>
-  <string name="preferences_general_notify_on_update_summary">Bei Update benachrichtigen</string>
-  <string name="preferences_general_notify_on_update_title">Auf bei erfolgreichen Updates benachrichtigen</string>
+  <string name="preferences_general_notify_on_update_summary">Auch bei erfolgreichen Updates benachrichtigen</string>
+  <string name="preferences_general_notify_on_update_title">Bei Erfolgreichen Updates benachrichtigen</string>
   <string name="preferences_labs">Here be dragons!!!</string>
   <string name="preferences_labs_delete_account">Account löschen</string>
     

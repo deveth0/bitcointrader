@@ -106,8 +106,8 @@
   <string name="preferences_category_general">General Settings</string>
   <string name="preferences_general_update_summary">Please set value</string>
   <string name="preferences_general_update_title">Automatically update every&#8230;</string>
-  <string name="preferences_general_notify_on_update_summary">Notify on update</string>
-  <string name="preferences_general_notify_on_update_title">Notify even if update was successful</string>
+  <string name="preferences_general_notify_on_update_summary">Notify even if update was successful</string>
+  <string name="preferences_general_notify_on_update_title">Notify on success</string>
   <string name="preferences_labs">Here be dragons!!!</string>
   <string name="preferences_labs_delete_account">Delete Account</string>
     
