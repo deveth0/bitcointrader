@@ -67,6 +67,8 @@
   <string name="price_info_volume_label">Volume: </string>
   <string name="refresh_title">Refresh</string>
 
+  <string name="price_chart_detail_title">Price Chart Details</string>
+
   <string name="select_currency_title">Select currency</string>
 
   <string name="notify_order_executed_title">Orders executed</string>

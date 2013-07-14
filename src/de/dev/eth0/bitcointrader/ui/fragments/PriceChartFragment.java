@@ -24,6 +24,7 @@ import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
+import de.dev.eth0.bitcointrader.ui.PriceChartDetailActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
@@ -147,6 +148,7 @@ public class PriceChartFragment extends SherlockListFragment {
       toast.show();
 
     }
+    startActivity(new Intent(activity, PriceChartDetailActivity.class));
   }
 
   @Override
