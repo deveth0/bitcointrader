@@ -57,6 +57,7 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
   private EditText manualSetupKey;
   private EditText manualSetupSecretKey;
   private Button manualSetupButton;
+  private ProgressDialog dialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,14 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
         InitialSetupActivity.this.finish();
       }
     });
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (dialog != null && dialog.isShowing()) {
+      dialog.dismiss();
+    }
   }
 
   @Override
@@ -150,7 +159,6 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
 
     private class NotEnoughPermissionsException extends Exception {
     }
-    private ProgressDialog dialog;
     private String key;
     private String secretKey;
 
