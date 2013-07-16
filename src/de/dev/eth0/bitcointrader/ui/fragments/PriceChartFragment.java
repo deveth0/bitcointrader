@@ -59,8 +59,8 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity) activity;
-    this.application = (BitcoinTraderApplication) activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity)activity;
+    this.application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -95,15 +95,15 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup) getView().findViewById(R.id.chart_row_info_toast));
-     symbolView = (TextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
-    lastView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
-    avgView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
-    volView = (AmountTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
-    lowView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_low);
-    highView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_high);
-    bidView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
-    askView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
+    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup)getView().findViewById(R.id.chart_row_info_toast));
+    symbolView = (TextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
+    lastView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
+    avgView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
+    volView = (AmountTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
+    lowView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_low);
+    highView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_high);
+    bidView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
+    askView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
 
     lastView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lastView.setPrecision(Constants.PRECISION_DOLLAR);
@@ -174,21 +174,23 @@ public class PriceChartFragment extends SherlockListFragment {
 
   protected void updateView(BitcoinChartsTicker[] tradesList) {
     Log.d(TAG, ".updateView");
-    // Sort Tickers by volume
-    Arrays.sort(tradesList, new Comparator<BitcoinChartsTicker>() {
-      @Override
-      public int compare(BitcoinChartsTicker entry1,
-              BitcoinChartsTicker entry2) {
-        return entry2.getVolume().compareTo(entry1.getVolume());
+    if (tradesList != null) {
+      // Sort Tickers by volume
+      Arrays.sort(tradesList, new Comparator<BitcoinChartsTicker>() {
+        @Override
+        public int compare(BitcoinChartsTicker entry1,
+                BitcoinChartsTicker entry2) {
+          return entry2.getVolume().compareTo(entry1.getVolume());
+        }
+      });
+      List<BitcoinChartsTicker> tickers = new ArrayList<BitcoinChartsTicker>();
+      for (BitcoinChartsTicker data : tradesList) {
+        if (data.getVolume().intValue() != 0) {
+          tickers.add(data);
+        }
       }
-    });
-    List<BitcoinChartsTicker> tickers = new ArrayList<BitcoinChartsTicker>();
-    for (BitcoinChartsTicker data : tradesList) {
-      if (data.getVolume().intValue() != 0) {
-        tickers.add(data);
-      }
+      adapter.replace(tickers);
     }
-    adapter.replace(tickers);
   }
 
   private class GetTickerTask extends ICSAsyncTask<Void, Void, BitcoinChartsTicker[]> {
@@ -210,7 +212,7 @@ public class PriceChartFragment extends SherlockListFragment {
         mDialog.dismiss();
         mDialog = null;
       }
-      Log.d(TAG, "Found " + ticker.length + " ticker entries");
+      Log.d(TAG, "Found " + (ticker != null ? ticker.length : 0) + " ticker entries");
       updateView(ticker);
     }
 
@@ -219,7 +221,8 @@ public class PriceChartFragment extends SherlockListFragment {
       try {
         BitcoinChartsTicker[] ticker = BitcoinChartsFactory.createInstance().getMarketData();
         return ticker == null ? new BitcoinChartsTicker[0] : ticker;
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         activity.sendBroadcast(new Intent(Constants.UPDATE_FAILED));
         Log.e(TAG, "Exception", e);
       }
