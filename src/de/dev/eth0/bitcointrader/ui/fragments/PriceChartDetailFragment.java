@@ -30,7 +30,6 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
   private static final String TAG = PriceChartDetailFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
-  private ImageView imageView;
 
   @Override
   public void onAttach(Activity activity) {
@@ -80,6 +79,7 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
     // graph with dynamically genereated horizontal and vertical labels
     GraphView graphView;
     graphView = new LineGraphView(activity, "GraphViewDemo");
+
     // add data
     graphView.addSeries(new GraphViewSeries(data));
     // set view port, start=2, size=40
