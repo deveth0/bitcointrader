@@ -146,9 +146,12 @@ public class PriceChartFragment extends SherlockListFragment {
       toast.setDuration(Toast.LENGTH_LONG);
       toast.setView(infoToastLayout);
       toast.show();
-
+      
+      Intent detailsActivity = new Intent(activity, PriceChartDetailActivity.class);
+      detailsActivity.putExtra(PriceChartDetailActivity.INTENT_EXTRA_EXCHANGE, entry.getSymbol());
+      startActivity(detailsActivity);
     }
-    startActivity(new Intent(activity, PriceChartDetailActivity.class));
+
   }
 
   @Override

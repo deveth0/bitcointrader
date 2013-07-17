@@ -15,10 +15,11 @@ import android.widget.LinearLayout;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.jjoe64.graphview.BarGraphView;
+import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.GraphViewData;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewStyle;
+import com.jjoe64.graphview.LineGraphView;
 import com.xeiam.xchange.bitcoincharts.BitcoinChartsAdapters;
 import com.xeiam.xchange.bitcoincharts.BitcoinChartsFactory;
 import com.xeiam.xchange.bitcoincharts.dto.charts.ChartData;
@@ -39,8 +40,9 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
   private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
   private ProgressDialog mDialog;
-  private BarGraphView graphView;
+  private GraphView graphView;
   private GraphViewSeries graphViewSeries;
+  private String exchange;
 
   @Override
   public void onAttach(Activity activity) {
@@ -79,7 +81,7 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    graphView = new BarGraphView(activity, "GraphViewDemo");
+    graphView = new LineGraphView(activity, "GraphViewDemo");
     graphView.setScrollable(true);
     graphView.setGraphViewStyle(new GraphViewStyle(Color.BLACK, Color.BLACK, Color.WHITE));
     LinearLayout layout = (LinearLayout)view.findViewById(R.id.price_chart_detail_graph);
@@ -120,11 +122,14 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
     Log.d(TAG, ".updateView");
     if (chartData != null) {
       GraphViewData[] data = new GraphViewData[chartData.length];
-
+      double min = Double.MAX_VALUE;
+      double max = Double.MIN_VALUE;
       for (int i = 0; i < chartData.length; i++) {
         ChartData cd = chartData[i];
         Log.d(TAG, "new entry: " + cd.toString());
         data[i] = new GraphViewData(i, cd.getWeightedPrice().doubleValue());
+        min = Math.min(data[i].valueY, min);
+        max = Math.max(data[i].valueY, max);
         Log.d(TAG, "entry: " + data[i].valueX + "/" + data[i].valueY);
       }
       if (graphViewSeries == null) {
@@ -134,8 +139,15 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
       else {
         graphViewSeries.resetData(data);
       }
+      graphView.setManualYAxisBounds(max * 1.05, min * 0.95);
       graphView.redrawAll();
     }
+  }
+
+  public void update(String exchange) {
+    this.exchange = exchange;
+    this.graphView.setTitle(exchange);
+    updateView();
   }
 
   private class GetChartDataTask extends ICSAsyncTask<Void, Void, ChartData[]> {
@@ -164,10 +176,10 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
     @Override
     protected ChartData[] doInBackground(Void... params) {
       try {
-        ChartData[] chartdata = BitcoinChartsAdapters.adaptChartData(BitcoinChartsFactory.createInstance().getChartData("mtGoxUSD", 1));
+        ChartData[] chartdata = BitcoinChartsAdapters.adaptChartData(BitcoinChartsFactory.createInstance().getChartData(exchange, 1));
         return chartdata == null ? new ChartData[0] : chartdata;
       }
-     catch (Exception e) {
+      catch (Exception e) {
         activity.sendBroadcast(new Intent(Constants.UPDATE_FAILED));
         Log.e(TAG, "Exception", e);
       }
