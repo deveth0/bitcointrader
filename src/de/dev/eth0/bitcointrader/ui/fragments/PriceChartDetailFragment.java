@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
@@ -66,10 +69,24 @@ public class PriceChartDetailFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    imageView = (ImageView)view.findViewById(R.id.price_chart_detail_image);
-    UrlImageViewHelper.setUrlDrawable(imageView,
-            "http://bitcoincharts.com/charts/chart.png?m=mtgoxUSD&v=1&t=S&noheader=1&height=80&width=750&r=60",
-            R.drawable.loading);
+    // draw sin curve
+    int num = 150;
+    GraphView.GraphViewData[] data = new GraphView.GraphViewData[num];
+    double v = 0;
+    for (int i = 0; i < num; i++) {
+      v += 0.2;
+      data[i] = new GraphView.GraphViewData(i, Math.sin(v));
+    }
+    // graph with dynamically genereated horizontal and vertical labels
+    GraphView graphView;
+    graphView = new LineGraphView(activity, "GraphViewDemo");
+    // add data
+    graphView.addSeries(new GraphViewSeries(data));
+    // set view port, start=2, size=40
+    graphView.setViewPort(2, 40);
+    graphView.setScrollable(true);
+    LinearLayout layout = (LinearLayout)view.findViewById(R.id.price_chart_detail_graph);
+    layout.addView(graphView);
   }
 
   @Override
