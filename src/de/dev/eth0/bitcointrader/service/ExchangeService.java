@@ -3,6 +3,8 @@
 package de.dev.eth0.bitcointrader.service;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -18,6 +20,8 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +30,7 @@ import com.xeiam.xchange.ExchangeException;
 import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.currency.Currencies;
+import com.xeiam.xchange.currency.MoneyUtils;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
@@ -34,12 +39,14 @@ import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
-import de.dev.eth0.bitcointrader.ui.widgets.AccountInfoWidgetProvider;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.ui.widgets.PriceInfoWidgetProvider;
+import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.fragments.PlaceOrderFragment;
+import de.dev.eth0.bitcointrader.ui.widgets.AccountInfoWidgetProvider;
+import de.dev.eth0.bitcointrader.ui.widgets.PriceInfoWidgetProvider;
+import de.dev.eth0.bitcointrader.util.FormatHelper;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.joda.money.BigMoney;
 import si.mazi.rescu.HttpException;
 
 /**
@@ -63,7 +71,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void)null);
+        executeTask(new UpdateTask(), (Void) null);
       }
     }
   };
@@ -109,8 +117,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     if (prefs.getBoolean(Constants.PREFS_KEY_DEMO, false)) {
       mtGoxAPIKey = Constants.MTGOX_DEMO_ACCOUNT_APIKEY;
       mtGoxSecretKey = Constants.MTGOX_DEMO_ACCOUNT_SECRETKEY;
-    }
-    else {
+    } else {
       mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
       mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
     }
@@ -121,7 +128,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
       exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
       exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-      exchange = (MtGoxExchangeWrapper)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
+      exchange = (MtGoxExchangeWrapper) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
   }
@@ -197,16 +204,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (!pages.isEmpty()) {
           walletHistoryCache.put(currency, pages);
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
-      }
-      catch (RuntimeException iae) {
+      } catch (RuntimeException iae) {
         Log.e(TAG, "RuntimeException", iae);
         broadcastUpdateFailure();
       }
@@ -251,11 +255,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
   private void broadcastUpdate() {
     broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
-    AppWidgetManager gm = AppWidgetManager.getInstance(ExchangeService.this);
-    int[] ids = gm.getAppWidgetIds(new ComponentName(this, AccountInfoWidgetProvider.class));
-    AccountInfoWidgetProvider.updateWidgets(this, gm, ids, this);
-    ids = gm.getAppWidgetIds(new ComponentName(this, PriceInfoWidgetProvider.class));
-    PriceInfoWidgetProvider.updateWidgets(this, gm, ids, this);
   }
 
   private void broadcastUpdateSuccess() {
@@ -286,13 +285,18 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
             try {
               MtGoxOrderResult result = exchange.getPollingTradeService().getOrderResult(lo);
               Bundle bundle = new Bundle();
-              bundle.putString(Constants.EXTRA_ORDERRESULT_ID, result.getOrderId());
-              bundle.putString(Constants.EXTRA_ORDERRESULT_AVGCOST, result.getAvgCost().getValue().toString());
-              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT, result.getTotalAmount().getValue().toString());
-              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALSPENT, result.getTotalSpent().getValue().toString());
+              BigMoney amount = MoneyUtils.parse(result.getAvgCost().getCurrency() + " " + result.getAvgCost().getValue());
+
+              bundle.putString(Constants.EXTRA_ORDERRESULT_AVGCOST, FormatHelper.formatBigMoney(
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
+              amount = MoneyUtils.parse(result.getTotalAmount().getCurrency() + " " + result.getTotalAmount().getValue());
+              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT, FormatHelper.formatBigMoney(
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
+              amount = MoneyUtils.parse(result.getTotalSpent().getCurrency() + " " + result.getTotalSpent().getValue());
+              bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALSPENT, FormatHelper.formatBigMoney(
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
               extras.add(bundle);
-            }
-            catch (Exception ee) {
+            } catch (Exception ee) {
               Log.d(TAG, "getting OrderResult failed", ee);
             }
           }
@@ -306,18 +310,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, getCurrency());
         lastUpdate = new Date();
         broadcastUpdateSuccess();
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
-      }
-      catch (RuntimeException iae) {
+      } catch (RuntimeException iae) {
         Log.e(TAG, "RuntimeException", iae);
         broadcastUpdateFailure();
         return false;
@@ -327,11 +328,33 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     @Override
     protected void onPostExecute(Boolean success) {
-      if (success && notifyOnUpdate) {
-        Toast.makeText(ExchangeService.this,
-                R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
-      }
-      else if (!success) {
+      if (success) {
+        // update widgets
+        AppWidgetManager gm = AppWidgetManager.getInstance(ExchangeService.this);
+        int[] ids = gm.getAppWidgetIds(new ComponentName(ExchangeService.this, AccountInfoWidgetProvider.class));
+        AccountInfoWidgetProvider.updateWidgets(ExchangeService.this, gm, ids, ExchangeService.this);
+        ids = gm.getAppWidgetIds(new ComponentName(ExchangeService.this, PriceInfoWidgetProvider.class));
+        PriceInfoWidgetProvider.updateWidgets(ExchangeService.this, gm, ids, ExchangeService.this);
+
+        if (notifyOnUpdate) {
+          Toast.makeText(ExchangeService.this,
+                  R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
+          NotificationCompat.Builder mBuilder =
+                  new NotificationCompat.Builder(getApplicationContext())
+                  .setSmallIcon(R.drawable.ic_action_bitcoin)
+                  .setContentTitle(getApplicationContext().getString(R.string.notify_update_success_text))
+                  .setContentText(getApplicationContext().getString(R.string.notify_update_success_text));
+          Intent resultIntent = new Intent(getApplicationContext(), BitcoinTraderActivity.class);
+          TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+          stackBuilder.addParentStack(BitcoinTraderActivity.class);
+          stackBuilder.addNextIntent(resultIntent);
+          PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+          mBuilder.setContentIntent(resultPendingIntent);
+          mBuilder.setAutoCancel(true);
+          NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+          mNotificationManager.notify(1234, mBuilder.build());
+        }
+      } else if (!success) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_failed_title, Toast.LENGTH_LONG).show();
       }
@@ -350,12 +373,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           broadcastUpdate();
           return ret;
         }
-      }
-      catch (ExchangeException ee) {
+      } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure();
-      }
-      catch (HttpException uhe) {
+      } catch (HttpException uhe) {
         Log.e(TAG, "HttpException", uhe);
         broadcastUpdateFailure();
         return false;
@@ -394,12 +415,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       if (success) {
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success), Toast.LENGTH_LONG).show();
-        PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment)activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
+        PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment) activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
         if (placeOrderFragment != null) {
           placeOrderFragment.resetValues();
         }
-      }
-      else {
+      } else {
         Toast.makeText(ExchangeService.this, demoMode ? R.string.place_order_failed_demo : R.string.place_order_failed, Toast.LENGTH_LONG).show();
       }
       mDialog.dismiss();
@@ -414,22 +434,19 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           if (params.length == 1) {
             Order order = params[0];
             if (order instanceof MarketOrder) {
-              MarketOrder mo = (MarketOrder)order;
+              MarketOrder mo = (MarketOrder) order;
               orderId = exchange.getPollingTradeService().placeMarketOrder(mo);
-            }
-            else if (order instanceof LimitOrder) {
-              LimitOrder lo = (LimitOrder)order;
+            } else if (order instanceof LimitOrder) {
+              LimitOrder lo = (LimitOrder) order;
               orderId = exchange.getPollingTradeService().placeLimitOrder(lo);
             }
             lastUpdate = new Date();
             broadcastUpdateSuccess();
           }
-        }
-        catch (ExchangeException ee) {
+        } catch (ExchangeException ee) {
           Log.i(TAG, "ExchangeException", ee);
           broadcastUpdateFailure();
-        }
-        catch (HttpException uhe) {
+        } catch (HttpException uhe) {
           Log.e(TAG, "HttpException", uhe);
           broadcastUpdateFailure();
         }
