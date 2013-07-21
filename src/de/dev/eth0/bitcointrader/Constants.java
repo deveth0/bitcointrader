@@ -44,7 +44,6 @@ public class Constants {
   public static final String ORDER_EXECUTED = "de.dev.eth0.bitcointrader.ORDER_EXECUTED";
   // Extras for intents
   public static final String EXTRA_ORDERRESULT = "orderresults";
-  public static final String EXTRA_ORDERRESULT_ID = "id";
   public static final String EXTRA_ORDERRESULT_AVGCOST = "avgcost";
   public static final String EXTRA_ORDERRESULT_TOTALAMOUNT = "totalamount";
   public static final String EXTRA_ORDERRESULT_TOTALSPENT = "totalspent";

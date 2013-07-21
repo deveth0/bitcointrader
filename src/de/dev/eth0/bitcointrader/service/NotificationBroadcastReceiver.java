@@ -30,11 +30,15 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     if (intent.getAction().equals(Constants.UPDATE_FAILED)) {
       notifyUpdateFailed(context);
     } else if (intent.getAction().equals(Constants.UPDATE_SUCCEDED)) {
-      NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-      notificationmanager.cancel(UPDATE_FAILED_NOTIFICATION_ID);
+      notifyUpdateSucceded(context);
     } else if (intent.getAction().equals(Constants.ORDER_EXECUTED)) {
       notifyOrderExecuted(context, intent.getParcelableArrayExtra(Constants.EXTRA_ORDERRESULT));
     }
+  }
+
+  private void notifyUpdateSucceded(Context context) {
+    NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationmanager.cancel(UPDATE_FAILED_NOTIFICATION_ID);
   }
 
   private void notifyUpdateFailed(Context context) {
@@ -67,7 +71,6 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
       if (parcelable instanceof Bundle) {
         Bundle bundle = (Bundle) parcelable;
         sb.append(context.getString(R.string.notify_order_executed_text,
-                bundle.getString(Constants.EXTRA_ORDERRESULT_ID),
                 bundle.getString(Constants.EXTRA_ORDERRESULT_AVGCOST),
                 bundle.getString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT),
                 bundle.getString(Constants.EXTRA_ORDERRESULT_TOTALSPENT)));

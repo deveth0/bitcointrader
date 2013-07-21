@@ -70,7 +70,7 @@
   <string name="select_currency_title">Währung</string>
 
   <string name="notify_order_executed_title">Order ausgeführt</string>
-  <string name="notify_order_executed_text">Ein oder mehrere Ordern konnten ausgeführt werden: %1$s %2$s %3$s %4$s</string>
+  <string name="notify_order_executed_text">Eine Order wurde bei %1$s ausgeführt (%2$s für %3$s)</string>
   <string name="notify_update_success_text">Update erfolgreich</string>
   <string name="notify_update_failed_title">Update fehlgeschlagen!</string>
   <string name="notify_update_failed_text">Beim Update ist ein Fehler aufgetreten.</string>
