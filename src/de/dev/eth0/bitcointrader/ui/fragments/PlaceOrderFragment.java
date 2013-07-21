@@ -215,8 +215,8 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     priceView.setCurrencyCode(getExchangeService().getCurrency());
     Order.OrderType type = (Order.OrderType)orderTypeSpinner.getSelectedItem();
     if (!TextUtils.isEmpty(amount) && !TextUtils.isEmpty(price)) {
-      BigMoney amountBTC = BigMoney.parse("BTC " + amount.toString());
-      BigMoney amountUSD = BigMoney.parse(getExchangeService().getCurrency() + " " + price.toString());
+      BigMoney amountBTC = BigMoney.parse("BTC 0" + amount.toString());
+      BigMoney amountUSD = BigMoney.parse(getExchangeService().getCurrency() + " 0" + price.toString());
       BigMoney totalSpend = amountUSD.multipliedBy(amountBTC.getAmount());
       totalView.setAmount(totalSpend);
       MtGoxAccountInfo accountInfo = getExchangeService().getAccountInfo();
