@@ -91,7 +91,7 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     super.onViewCreated(view, savedInstanceState);
     viewName = (TextView) view.findViewById(R.id.your_wallet_name);
     viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
-    viewDollar.setPrecision(Constants.PRECISION_DOLLAR);
+    viewDollar.setPrecision(Constants.PRECISION_CURRENCY);
     viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
     viewBtc.setPrecision(Constants.PRECISION_BITCOIN);
     viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);

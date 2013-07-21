@@ -12,7 +12,7 @@ public class Constants {
   public static final char CHAR_THIN_SPACE = '\u2009';
   public static final String CURRENCY_CODE_BITCOIN = "BTC";
   public static final int PRECISION_BITCOIN = 5;
-  public static final int PRECISION_DOLLAR = 5;
+  public static final int PRECISION_CURRENCY = 5;
   public static final String APP_ACTIVATION_URL = "https://mtgox.com/api/1/generic/api/activate";
   public static final String APP_ACTIVATION_ID = "00287aa0-775a-41b3-b799-2d7a0116bb06";
   public static final String MTGOX_DEMO_ACCOUNT_APIKEY = "cb7897cc-5c08-4e74-82a4-4c5e72457589";

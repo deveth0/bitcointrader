@@ -43,8 +43,8 @@ public class OrderListAdapter extends AbstractListAdapter<Order> {
     // value
     CurrencyTextView rowValue = (CurrencyTextView) row.findViewById(R.id.order_row_value);
     CurrencyTextView rowTotal = (CurrencyTextView) row.findViewById(R.id.order_row_total);
-    rowValue.setPrecision(Constants.PRECISION_DOLLAR);
-    rowTotal.setPrecision(Constants.PRECISION_DOLLAR);
+    rowValue.setPrecision(Constants.PRECISION_CURRENCY);
+    rowTotal.setPrecision(Constants.PRECISION_CURRENCY);
     if (order instanceof LimitOrder) {
       LimitOrder lo = (LimitOrder) order;
       rowValue.setAmount(lo.getLimitPrice());

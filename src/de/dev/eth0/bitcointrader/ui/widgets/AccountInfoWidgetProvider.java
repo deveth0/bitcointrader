@@ -42,7 +42,7 @@ public class AccountInfoWidgetProvider extends AbstractWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.account_info_widget_content);
 
         views.setTextViewText(R.id.account_info_widget_btc, formatCurrency(btc, Constants.PRECISION_BITCOIN));
-        views.setTextViewText(R.id.account_info_widget_balance, formatCurrency(usd, Constants.PRECISION_DOLLAR));
+        views.setTextViewText(R.id.account_info_widget_balance, formatCurrency(usd, Constants.PRECISION_CURRENCY));
         views.setOnClickPendingIntent(R.id.account_info_widget_content,
                 PendingIntent.getActivity(context, 0, new Intent(context, BitcoinTraderActivity.class), 0));
         for (int appWidgetId : appWidgetIds) {

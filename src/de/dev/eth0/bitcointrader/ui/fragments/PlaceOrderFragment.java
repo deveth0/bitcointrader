@@ -222,7 +222,7 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       MtGoxAccountInfo accountInfo = getExchangeService().getAccountInfo();
       if (accountInfo != null) {
         if (type.equals(Order.OrderType.ASK)) {
-          estimatedFeeView.setPrecision(Constants.PRECISION_DOLLAR);
+          estimatedFeeView.setPrecision(Constants.PRECISION_CURRENCY);
           estimatedFeeView.setAmount(totalSpend.multipliedBy(accountInfo.getTradeFee().scaleByPowerOfTen(-2)));
         }
         else {

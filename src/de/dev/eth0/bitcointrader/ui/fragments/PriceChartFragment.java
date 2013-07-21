@@ -105,17 +105,17 @@ public class PriceChartFragment extends SherlockListFragment {
     askView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
 
     lastView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    lastView.setPrecision(Constants.PRECISION_DOLLAR);
+    lastView.setPrecision(Constants.PRECISION_CURRENCY);
     avgView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    avgView.setPrecision(Constants.PRECISION_DOLLAR);
+    avgView.setPrecision(Constants.PRECISION_CURRENCY);
     lowView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    lowView.setPrecision(Constants.PRECISION_DOLLAR);
+    lowView.setPrecision(Constants.PRECISION_CURRENCY);
     highView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    highView.setPrecision(Constants.PRECISION_DOLLAR);
+    highView.setPrecision(Constants.PRECISION_CURRENCY);
     bidView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    bidView.setPrecision(Constants.PRECISION_DOLLAR);
+    bidView.setPrecision(Constants.PRECISION_CURRENCY);
     askView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
-    askView.setPrecision(Constants.PRECISION_DOLLAR);
+    askView.setPrecision(Constants.PRECISION_CURRENCY);
     volView.setPrecision(Constants.PRECISION_BITCOIN);
   }
 

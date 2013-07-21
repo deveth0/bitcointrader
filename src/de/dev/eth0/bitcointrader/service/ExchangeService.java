@@ -288,13 +288,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
               BigMoney amount = MoneyUtils.parse(result.getAvgCost().getCurrency() + " " + result.getAvgCost().getValue());
 
               bundle.putString(Constants.EXTRA_ORDERRESULT_AVGCOST, FormatHelper.formatBigMoney(
-                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount, Constants.PRECISION_BITCOIN).toString());
               amount = MoneyUtils.parse(result.getTotalAmount().getCurrency() + " " + result.getTotalAmount().getValue());
               bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALAMOUNT, FormatHelper.formatBigMoney(
-                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount, Constants.PRECISION_BITCOIN).toString());
               amount = MoneyUtils.parse(result.getTotalSpent().getCurrency() + " " + result.getTotalSpent().getValue());
               bundle.putString(Constants.EXTRA_ORDERRESULT_TOTALSPENT, FormatHelper.formatBigMoney(
-                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount).toString());
+                      FormatHelper.DISPLAY_MODE.CURRENCY_CODE, amount,Constants.PRECISION_CURRENCY).toString());
               extras.add(bundle);
             } catch (Exception ee) {
               Log.d(TAG, "getting OrderResult failed", ee);
