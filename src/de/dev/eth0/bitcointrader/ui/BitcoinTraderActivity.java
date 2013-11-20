@@ -9,7 +9,7 @@ import android.text.TextUtils;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
+import com.xeiam.xchange.dto.trade.Wallet;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
@@ -85,11 +85,11 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     if (selectCurrencyItem.size() == 0) {
       int idx = 0;
       if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
-        for (MtGoxWallet wallet : getExchangeService().getAccountInfo().getWallets().getMtGoxWallets()) {
+        for (Wallet wallet : getExchangeService().getAccountInfo().getWallets()) {
           if (wallet != null && wallet.getBalance() != null
-                  && !TextUtils.isEmpty(wallet.getBalance().getCurrency())
-                  && !wallet.getBalance().getCurrency().equals(Constants.CURRENCY_CODE_BITCOIN)) {
-            MenuItem mi = selectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getBalance().getCurrency());
+                  && !TextUtils.isEmpty(wallet.getCurrency())
+                  && !wallet.getCurrency().equals(Constants.CURRENCY_CODE_BITCOIN)) {
+            MenuItem mi = selectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getCurrency());
             mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
               public boolean onMenuItemClick(MenuItem item) {
                 getExchangeService().setCurrency(item.getTitle().toString());

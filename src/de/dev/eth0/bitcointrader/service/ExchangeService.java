@@ -32,18 +32,17 @@ import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.currency.Currencies;
 import com.xeiam.xchange.currency.MoneyUtils;
 import com.xeiam.xchange.dto.Order;
-import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.OrderBook;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
+import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.fragments.PlaceOrderFragment;
@@ -77,7 +76,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       Log.d(TAG, ".onReceive()");
       // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void)null);
+        executeTask(new UpdateTask(), (Void) null);
       }
     }
   };
@@ -91,7 +90,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
   private MtGoxExchangeWrapper exchange;
   private final Binder binder = new LocalBinder();
-  private MtGoxAccountInfo accountInfo;
+  private ExchangeAccountInfo accountInfo;
   private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
   private Float trailingStopThreadhold;
   private BigDecimal trailingStopValue;
@@ -101,7 +100,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private Ticker ticker;
   private Date lastUpdate;
   private Date lastUpdateWalletHistory;
-  private final Map<String, List<MtGoxWalletHistory>> walletHistoryCache = new HashMap<String, List<MtGoxWalletHistory>>();
+  private final Map<String, ExchangeWalletHistory> walletHistoryCache = new HashMap<String, ExchangeWalletHistory>();
 
   @Override
   public void onCreate() {
@@ -221,7 +220,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     return getExchange().getPollingMarketDataService().getPartialOrderBook("BTC", getCurrency());
   }
 
-  public Map<String, List<MtGoxWalletHistory>> getMtGoxWalletHistory(String[] currencies, boolean forceUpdate, ProgressDialog dialog) {
+  /**
+   * Returns a the WalletHistory for the given exchange
+   *
+   * @param currency
+   * @param forceUpdate
+   * @return
+   */
+  public ExchangeWalletHistory getWalletHistory(String currency, boolean forceUpdate) {
     boolean update = forceUpdate;
     if (updateInterval > 0 && !forceUpdate) {
       // one minute has 60*1000 miliseconds
@@ -231,53 +237,44 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
     }
     // no update is required and cache contains wallethistory
-    if (!update) {
-      return Collections.unmodifiableMap(walletHistoryCache);
+    if (!update && walletHistoryCache.containsKey(currency)) {
+      return walletHistoryCache.get(currency);
     }
-    walletHistoryCache.clear();
-    if (dialog != null) {
-      dialog.setMax(currencies.length);
-    }
-    int i = 1;
-    for (String currency : currencies) {
-      if (dialog != null) {
-        dialog.setProgress(i++);
-      }
-      try {
-        MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, null);
-        List<MtGoxWalletHistory> pages = new ArrayList<MtGoxWalletHistory>();
-        if (walletHistory != null) {
-          pages.add(walletHistory);
-          if (walletHistory.getCurrentPage() < walletHistory.getMaxPage()) {
-            for (int page = 2; page <= walletHistory.getMaxPage(); page++) {
-              walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, page);
-              if (walletHistory != null) {
-                pages.add(walletHistory);
-              }
+    ExchangeWalletHistory ret = null;
+    try {
+      MtGoxWalletHistory walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, null);
+      List<MtGoxWalletHistory> pages = new ArrayList<MtGoxWalletHistory>();
+      if (walletHistory != null) {
+        pages.add(walletHistory);
+        if (walletHistory.getCurrentPage() < walletHistory.getMaxPage()) {
+          for (int page = 2; page <= walletHistory.getMaxPage(); page++) {
+            walletHistory = exchange.getPollingAccountService().getMtGoxWalletHistory(currency, page);
+            if (walletHistory != null) {
+              pages.add(walletHistory);
             }
           }
         }
-        if (!pages.isEmpty()) {
-          walletHistoryCache.put(currency, pages);
-        }
-      } catch (ExchangeException ee) {
-        Log.i(TAG, "ExchangeException", ee);
-        broadcastUpdateFailure(ee);
       }
-      catch (RuntimeException iae) {
-        Log.e(TAG, "RuntimeException", iae);
-        broadcastUpdateFailure(iae);
+      if (!pages.isEmpty()) {
+        ret = ExchangeWalletHistory.fromMtGoxWalletHistory(pages);
+        walletHistoryCache.put(currency, ret);
       }
+    } catch (ExchangeException ee) {
+      Log.i(TAG, "ExchangeException", ee);
+      broadcastUpdateFailure(ee);
+    } catch (RuntimeException iae) {
+      Log.e(TAG, "RuntimeException", iae);
+      broadcastUpdateFailure(iae);
     }
     lastUpdateWalletHistory = new Date();
-    return Collections.unmodifiableMap(walletHistoryCache);
+    return ret;
   }
 
   public Trades getTrades() throws IOException {
     return exchange.getPollingMarketDataService().getTrades("BTC", getCurrency());
   }
 
-  public MtGoxAccountInfo getAccountInfo() {
+  public ExchangeAccountInfo getAccountInfo() {
     return accountInfo;
   }
 
@@ -373,12 +370,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     protected Boolean doInBackground(Void... params) {
       Log.d(TAG, "performing update...");
       try {
-        accountInfo = exchange.getPollingAccountService().getMtGoxAccountInfo();
+        accountInfo = ExchangeAccountInfo.fromAccountInfo(exchange.getPollingAccountService().getMtGoxAccountInfo());
         ticker = exchange.getPollingMarketDataService().getTicker(Currencies.BTC, getCurrency());
         checkTrailingStop();
 
         if (TextUtils.isEmpty(getCurrency())) {
-          setCurrency(accountInfo.getWallets().getMtGoxWallets().get(1).getBalance().getCurrency());
+          setCurrency(accountInfo.getWallets().get(1).getCurrency());
         }
         List<LimitOrder> orders = exchange.getPollingTradeService().getOpenOrders().getOpenOrders();
         openOrders.removeAll(orders);
@@ -393,8 +390,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure(ee);
         return false;
-      }
-      catch (IOException ioe) {
+      } catch (IOException ioe) {
         Log.e(TAG, "IOException", ioe);
         broadcastUpdateFailure(ioe);
         return false;
@@ -435,8 +431,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ExchangeService.this);
           if (prefs.getBoolean(Constants.PREFS_KEY_TRAILING_STOP_SELLING_ENABLED, false)) {
             Log.d(TAG, "selling is enabled, selling btc");
-            AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(getAccountInfo());
-            Order marketOrder = new MarketOrder(Order.OrderType.ASK, accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount(), "BTC", getCurrency());
+            Order marketOrder = new MarketOrder(Order.OrderType.ASK, getAccountInfo().getBalance(CurrencyUnit.of("BTC")).getAmount(), "BTC", getCurrency());
             placeOrder(marketOrder, null);
           }
         }
@@ -467,8 +462,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (notifyOnUpdate) {
           Toast.makeText(ExchangeService.this,
                   R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
-          NotificationCompat.Builder mBuilder =
-                  new NotificationCompat.Builder(getApplicationContext())
+          NotificationCompat.Builder mBuilder
+                  = new NotificationCompat.Builder(getApplicationContext())
                   .setSmallIcon(R.drawable.ic_action_bitcoin)
                   .setContentTitle(getApplicationContext().getString(R.string.notify_update_success_text))
                   .setContentText(getApplicationContext().getString(R.string.notify_update_success_text));
@@ -504,8 +499,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       } catch (ExchangeException ee) {
         Log.i(TAG, "ExchangeException", ee);
         broadcastUpdateFailure(ee);
-      }
-      catch (IOException ioe) {
+      } catch (IOException ioe) {
         Log.e(TAG, "IOException", ioe);
         broadcastUpdateFailure(ioe);
         return false;
@@ -588,8 +582,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         } catch (ExchangeException ee) {
           Log.i(TAG, "ExchangeException", ee);
           broadcastUpdateFailure(ee);
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
           Log.e(TAG, "IOException", ioe);
           broadcastUpdateFailure(ioe);
           return false;

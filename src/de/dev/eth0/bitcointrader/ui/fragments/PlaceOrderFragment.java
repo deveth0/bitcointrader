@@ -31,15 +31,13 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
 import com.xeiam.xchange.dto.Order;
-import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
@@ -221,7 +219,7 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       BigMoney totalSpend = amountUSD.multipliedBy(amountBTC.getAmount());
       totalView.setAmount(totalSpend);
       if (getExchangeService() != null) {
-        MtGoxAccountInfo accountInfo = getExchangeService().getAccountInfo();
+        ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
         if (accountInfo != null) {
           if (type.equals(Order.OrderType.ASK)) {
             estimatedFeeView.setPrecision(Constants.PRECISION_CURRENCY);
@@ -240,13 +238,10 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   private void enableAmountViewContextButton() {
     amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
       public void onClick(View v) {
-        MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
-        if (mtgoxaccountInfo != null) {
-          AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
-          if (accountInfo != null) {
+        ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+        if (accountInfo != null) {
             amountView.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount());
           }
-        }
       }
     });
   }
@@ -290,10 +285,7 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
     boolean marketOrder = marketOrderCheckbox.isChecked();
-    if (!TextUtils.isEmpty(amount) && (!TextUtils.isEmpty(price) || marketOrder)) {
-      return true;
-    }
-    return false;
+    return !TextUtils.isEmpty(amount) && (!TextUtils.isEmpty(price) || marketOrder);
   }
 
   public void update(Order.OrderType ordertype) {
@@ -328,5 +320,5 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     public void onTextChanged(CharSequence s, int start, int before, int count) {
     }
   }
-  private ValueChangedListener valueChangedListener = new ValueChangedListener();
+  private final ValueChangedListener valueChangedListener = new ValueChangedListener();
 }

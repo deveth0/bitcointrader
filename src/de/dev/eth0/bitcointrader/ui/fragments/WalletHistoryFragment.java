@@ -25,26 +25,19 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.xeiam.xchange.currency.MoneyUtils;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
+import com.xeiam.xchange.dto.trade.Wallet;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
+import de.dev.eth0.bitcointrader.data.ExchangeWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.joda.money.BigMoney;
 
 /**
  * @author Alexander Muthmann
@@ -85,9 +78,9 @@ public class WalletHistoryFragment extends SherlockListFragment {
     ExchangeService exchangeService = application.getExchangeService();
     Set<String> currencies = new HashSet<String>();
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
-      for (MtGoxWallet wallet : exchangeService.getAccountInfo().getWallets().getMtGoxWallets()) {
-        if (wallet != null && wallet.getBalance() != null && !TextUtils.isEmpty(wallet.getBalance().getCurrency())) {
-          currencies.add(wallet.getBalance().getCurrency());
+      for (Wallet wallet : exchangeService.getAccountInfo().getWallets()) {
+        if (wallet != null && wallet.getBalance() != null && !TextUtils.isEmpty(wallet.getCurrency())) {
+          currencies.add(wallet.getCurrency());
         }
       }
     }
@@ -155,42 +148,28 @@ public class WalletHistoryFragment extends SherlockListFragment {
 
   @Override
   public void onListItemClick(ListView l, View v, int position, long id) {
-    MtGoxWalletHistoryEntry entry = adapter.getItem(position);
+    ExchangeWalletHistoryEntry entry = adapter.getItem(position);
     if (entry != null) {
       if (mInfoToast != null) {
         mInfoToast.cancel();
       }
-      if (entry.getType().equals("out")) {
-        typeView.setText(R.string.wallet_history_out);
-      } else if (entry.getType().equals("fee")) {
-        typeView.setText(R.string.wallet_history_fee);
-      } else if (entry.getType().equals("in")) {
-        typeView.setText(R.string.wallet_history_in);
-      } else if (entry.getType().equals("spent")) {
-        typeView.setText(R.string.wallet_history_spent);
-      } else if (entry.getType().equals("earned")) {
-        typeView.setText(R.string.wallet_history_earned);
-      } else if (entry.getType().equals("withdraw")) {
-        typeView.setText(R.string.wallet_history_withdraw);
-      } else if (entry.getType().equals("deposit")) {
-        typeView.setText(R.string.wallet_history_deposit);
-      }
-      infoView.setText(entry.getInfo());
-      if (entry.getInfo().contains("bought")) {
-        String[] substrings = entry.getInfo().split(" ");
+      typeView.setText(entry.getType().getText());
+
+      infoView.setText(entry.getInfoText());
+      //TODO: can't this be solved with the entry type??
+      if (entry.getInfoText().contains("bought")) {
+        String[] substrings = entry.getInfoText().split(" ");
         if (substrings.length >= 5) {
           infoView.setText(getResources().getString(R.string.wallet_history_info_bought, substrings[3], substrings[5]));
         }
-      } else if (entry.getInfo().contains("sold")) {
-        String[] substrings = entry.getInfo().split(" ");
+      } else if (entry.getInfoText().contains("sold")) {
+        String[] substrings = entry.getInfoText().split(" ");
         if (substrings.length >= 5) {
           infoView.setText(getResources().getString(R.string.wallet_history_info_sold, substrings[3], substrings[5]));
         }
       }
-      BigMoney amount = MoneyUtils.parse(entry.getValue().getCurrency() + " " + entry.getValue().getValue());
-      amountView.setAmount(amount);
-      BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
-      balanceView.setAmount(balance);
+      amountView.setAmount(entry.getValue());
+      balanceView.setAmount(entry.getBalance());
       dateView.setText(entry.getDate());
 
       mInfoToast = new Toast(getActivity());
@@ -226,34 +205,21 @@ public class WalletHistoryFragment extends SherlockListFragment {
   }
 
   protected void updateView(boolean forceUpdate) {
-    GetMtGoxWalletHistoryTask walletTask = new GetMtGoxWalletHistoryTask();
+    GetWalletHistoryTask walletTask = new GetWalletHistoryTask();
     walletTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, forceUpdate);
   }
 
-  protected void updateView(List<MtGoxWalletHistory> history) {
+  protected void updateView(ExchangeWalletHistory history) {
     Log.d(TAG, ".updateView");
-    List<MtGoxWalletHistoryEntry> entries = new ArrayList<MtGoxWalletHistoryEntry>();
-    if (history != null) {
-      for (MtGoxWalletHistory historyPage : history) {
-        entries.addAll(Arrays.asList(historyPage.getMtGoxWalletHistoryEntries()));
-      }
-    }
-    Collections.sort(entries, new Comparator<MtGoxWalletHistoryEntry>() {
-      public int compare(MtGoxWalletHistoryEntry lhs, MtGoxWalletHistoryEntry rhs) {
-        return Long.valueOf(rhs.getDate()).compareTo(Long.valueOf(lhs.getDate()));
-      }
-    });
-
-    adapter.replace(entries);
+    adapter.replace(history != null ? history.getWalletHistoryEntries() : new ArrayList<ExchangeWalletHistoryEntry>());
   }
 
-  private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Boolean, Void, List<MtGoxWalletHistory>> {
+  private class GetWalletHistoryTask extends ICSAsyncTask<Boolean, Void, ExchangeWalletHistory> {
 
     @Override
     protected void onPreExecute() {
       if (mDialog == null) {
         mDialog = new ProgressDialog(activity);
-        mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setMessage(mDialogLoadingString);
         mDialog.setCancelable(false);
         mDialog.setOwnerActivity(activity);
@@ -262,7 +228,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
 
     @Override
-    protected void onPostExecute(List<MtGoxWalletHistory> history) {
+    protected void onPostExecute(ExchangeWalletHistory history) {
       if (mDialog != null && mDialog.isShowing()) {
         mDialog.dismiss();
         mDialog = null;
@@ -271,15 +237,13 @@ public class WalletHistoryFragment extends SherlockListFragment {
     }
 
     @Override
-    protected List<MtGoxWalletHistory> doInBackground(Boolean... params) {
+    protected ExchangeWalletHistory doInBackground(Boolean... params) {
 
       ExchangeService exchangeService = application.getExchangeService();
       String currency = (String) historyCurrencySpinner.getSelectedItem();
 
       if (exchangeService != null) {
-        HistoryCurrencySpinnerAdapter adapter = (HistoryCurrencySpinnerAdapter) historyCurrencySpinner.getAdapter();
-        Map<String, List<MtGoxWalletHistory>> histories = exchangeService.getMtGoxWalletHistory(adapter.getEntries(), params[0], mDialog);
-        return histories.get(currency);
+        return exchangeService.getWalletHistory(currency, params[0]);
       }
       return null;
     }
@@ -287,7 +251,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
 
   public static class HistoryCurrencySpinnerAdapter extends ArrayAdapter<String> {
 
-    private String[] entries;
+    private final String[] entries;
 
     public HistoryCurrencySpinnerAdapter(Context context, int textViewResourceId, String[] objects) {
       super(context, textViewResourceId, objects);

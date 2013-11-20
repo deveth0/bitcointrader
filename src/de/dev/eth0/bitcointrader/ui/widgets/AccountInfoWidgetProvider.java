@@ -7,11 +7,10 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
-import com.xeiam.xchange.dto.account.AccountInfo;
-import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
@@ -39,7 +38,7 @@ public class AccountInfoWidgetProvider extends AbstractWidgetProvider {
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
       views.setOnClickPendingIntent(R.id.account_info_widget_content,
               PendingIntent.getActivity(context, 0, new Intent(context, BitcoinTraderActivity.class), 0));
-      AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(exchangeService.getAccountInfo());
+      ExchangeAccountInfo accountInfo = exchangeService.getAccountInfo();
 
       BigMoney btc = accountInfo.getBalance(CurrencyUnit.of("BTC"));
       BigMoney usd = accountInfo.getBalance(CurrencyUnit.of(exchangeService.getCurrency()));

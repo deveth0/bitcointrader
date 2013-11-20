@@ -28,7 +28,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private boolean serviceBound = false;
   private ExchangeService exchangeService;
   private Cache cache;
-  private ServiceConnection serviceConnection = new ServiceConnection() {
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName name, IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder) binder).getService();
       createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));

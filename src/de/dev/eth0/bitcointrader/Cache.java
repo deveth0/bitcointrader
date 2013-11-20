@@ -13,7 +13,7 @@ import java.util.Map;
 public class Cache {
 
   private static final long DEFAULT_LIFETIME = 15 * 60 * 1000; // 15 minutes
-  private Map<Class, CacheEntry> cache;
+  private final Map<Class, CacheEntry> cache;
 
   public Cache() {
     cache = new HashMap<Class, CacheEntry>();
@@ -31,21 +31,21 @@ public class Cache {
 
   public <T> T getEntry(Class<T> clazz) {
     if (cache.containsKey(clazz)) {
-      CacheEntry entry = cache.get(clazz);
+      CacheEntry<T> entry = cache.get(clazz);
       if (entry.isValid()) {
-        return (T) entry.getContent();
+        return entry.getContent();
       }
     }
     return null;
   }
 
-  public class CacheEntry {
+  public class CacheEntry<T> {
 
     private final long lifetime;
     private final long created;
-    private final Object content;
+    private final T content;
 
-    public CacheEntry(long lifetime, Object content) {
+    public CacheEntry(long lifetime, T content) {
       this.lifetime = lifetime;
       this.content = content;
       this.created = new Date().getTime();
@@ -55,7 +55,7 @@ public class Cache {
       return lifetime;
     }
 
-    public Object getContent() {
+    public T getContent() {
       return content;
     }
 

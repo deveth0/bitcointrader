@@ -16,6 +16,6 @@
   <color name="history_deposit">#D1EED1</color>
   <color name="history_withdraw">#FF7878</color>
   <color name="history_fee">#FDDB38</color>
-  <color name="history_spend">#FDDFDE</color>
+  <color name="history_spent">#FDDFDE</color>
   <color name="history_earned">#D0EBF4</color>
 </resources>
