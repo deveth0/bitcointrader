@@ -26,6 +26,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xeiam.xchange.ExchangeException;
 import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
@@ -39,8 +40,8 @@ import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.trade.polling.MtGoxOrderResult;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
@@ -54,7 +55,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -101,13 +101,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private Date lastUpdate;
   private Date lastUpdateWalletHistory;
   private final Map<String, ExchangeWalletHistory> walletHistoryCache = new HashMap<String, ExchangeWalletHistory>();
+  private final ObjectMapper mapper = new ObjectMapper();
 
   @Override
   public void onCreate() {
     super.onCreate();
     broadcastManager = LocalBroadcastManager.getInstance(this);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SERVICE_ACTION));
-
   }
 
   @Override
@@ -149,7 +149,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       exchange = (MtGoxExchangeWrapper) ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
       broadcastUpdate();
     }
-  }
+ }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (key.equals(Constants.PREFS_KEY_MTGOX_APIKEY) || key.equals(Constants.PREFS_KEY_MTGOX_SECRETKEY)) {

@@ -1,8 +1,6 @@
 //$URL$
 //$Id$
-package de.dev.eth0.bitcointrader.ui.fragments;
-
-import java.util.Collection;
+package de.dev.eth0.bitcointrader.ui.fragments.listAdapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +9,8 @@ import android.widget.BaseAdapter;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,6 +60,10 @@ public abstract class AbstractListAdapter<T> extends BaseAdapter {
   @Override
   public long getItemId(int position) {
     return entries.get(position).hashCode();
+  }
+
+  public List<T> getEntries() {
+    return Collections.unmodifiableList(entries);
   }
 
   @Override

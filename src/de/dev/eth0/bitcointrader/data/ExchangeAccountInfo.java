@@ -12,6 +12,7 @@ import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
 /**
+ * Generic AccountInfo Class
  *
  * @author deveth0
  */

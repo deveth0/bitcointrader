@@ -2,6 +2,7 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui.fragments;
 
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.WalletHistoryListAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;

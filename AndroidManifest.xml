@@ -76,6 +76,18 @@
       android:label="@string/wallet_history_title"
     />
     <activity
+      android:name="de.dev.eth0.bitcointrader.ui.ExchangeConfigurationActivity"
+      android:label="@string/exchange_configuration_title"
+    />
+    <activity
+      android:name="de.dev.eth0.bitcointrader.ui.AddExchangeConfigurationActivity"
+      android:label="@string/add_exchange_configuration_title"
+    />
+    <activity
+      android:name="de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity"
+      android:label="@string/mtgox_setup_activity_title"
+    />
+    <activity
       android:name="de.dev.eth0.bitcointrader.ui.PreferencesActivity"
       android:label="@string/preferences_title"
       android:screenOrientation="behind" />

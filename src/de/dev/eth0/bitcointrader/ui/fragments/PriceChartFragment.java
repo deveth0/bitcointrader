@@ -2,6 +2,7 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui.fragments;
 
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.PriceChartListAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -254,7 +255,7 @@ public class PriceChartFragment extends SherlockListFragment {
       }
       catch (Exception e) {
         Intent intent = new Intent(Constants.UPDATE_FAILED);
-        intent.getExtras().putString(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
+        intent.putExtra(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
         activity.sendBroadcast(intent);
         Log.e(TAG, "Exception", e);
       }

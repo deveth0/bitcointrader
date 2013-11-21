@@ -3,6 +3,7 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.OrderListAdapter;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;

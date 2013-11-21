@@ -27,8 +27,6 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
     broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
-    
-    
   }
 
   @Override
@@ -70,6 +68,9 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         break;
       case R.id.bitcointrader_options_preferences:
         startActivity(new Intent(this, PreferencesActivity.class));
+        break;
+      case R.id.bitcointrader_options_exchange_configuration:
+        startActivity(new Intent(this, ExchangeConfigurationActivity.class));
         break;
       case R.id.bitcointrader_options_donate:
         BitcoinIntegration.request(this, Constants.DONATION_ADDRESS);

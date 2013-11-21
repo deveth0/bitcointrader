@@ -1,16 +1,14 @@
 //$URL$
 //$Id$
-package de.dev.eth0.bitcointrader.ui.fragments;
+package de.dev.eth0.bitcointrader.ui.fragments.listAdapter;
 
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.TextView;
-import com.xeiam.xchange.currency.MoneyUtils;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import org.joda.money.BigMoney;
 
 /**
  * @author Alexander Muthmann
@@ -25,7 +23,7 @@ public class WalletHistoryListAdapter extends AbstractListAdapter<ExchangeWallet
   public int getRowLayout() {
     return R.layout.wallet_history_row_extended;
   }
-  
+
   public void bindView(View row, ExchangeWalletHistoryEntry entry) {
     // type (out, fee, earned)
     TextView rowType = (TextView) row.findViewById(R.id.wallet_history_row_type);

@@ -34,6 +34,16 @@
   <string name="initial_setup_failed_key_invalid">Key invalid.</string>
   <string name="initial_setup_failed_not_enough_permissions">Not enough permissions.</string>
   
+  <string name="exchange_configuration_title">Exchange Configurations</string>
+  <string name="exchange_configuration_empty_text">No exchanges configured</string>
+  <string name="exchange_configuration_add">Add new exchange</string>
+  <string name="exchange_configuration_edit">Edit exchange</string>
+  <string name="exchange_configuration_delete">Delete exchange</string>
+  
+  <string name="add_exchange_configuration_title">Add exchange</string>
+  
+  <string name="mtgox_setup_activity_title">Add mtGox Account</string>
+  
   <string name="wallet_history_title">Wallet History</string>
   <string name="wallet_history_currency_spinner_label">Select Currency:</string>
   <string name="wallet_history_out">Out</string>

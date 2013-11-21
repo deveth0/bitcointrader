@@ -14,6 +14,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 
@@ -28,6 +29,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private boolean serviceBound = false;
   private ExchangeService exchangeService;
   private Cache cache;
+  private ObjectMapper mapper;
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName name, IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder) binder).getService();
@@ -122,4 +124,12 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   public String getCurrency() {
     return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, "USD");
   }
+
+  public ObjectMapper getObjectMapper() {
+    if (mapper == null) {
+      mapper = new ObjectMapper();
+    }
+    return mapper;
+  }
+
 }
