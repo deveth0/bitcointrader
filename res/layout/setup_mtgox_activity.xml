@@ -56,10 +56,28 @@
       android:text="@string/initial_setup_manual_info"
     />
     <TextView
-      android:id="@+id/setup_mtgox_activity_manual_key_label"
+      android:id="@+id/setup_mtgox_activity_name_label"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_below="@id/setup_mtgox_activity_manual_info"
+      android:layout_marginLeft="20dp"
+      android:layout_marginRight="20dp"
+      android:layout_marginTop="@dimen/default_padding"
+      android:text="@string/exchange_configuration_name"
+      android:textStyle="bold" />
+    <EditText
+      android:id="@+id/setup_mtgox_activity_name"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/setup_mtgox_activity_name_label"
+      android:inputType="text"
+      android:imeOptions="flagNoExtractUi"
+      android:textSize="@dimen/font_size_normal"/>
+    <TextView
+      android:id="@+id/setup_mtgox_activity_manual_key_label"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@id/setup_mtgox_activity_name"
       android:layout_marginLeft="20dp"
       android:layout_marginRight="20dp"
       android:layout_marginTop="@dimen/default_padding"

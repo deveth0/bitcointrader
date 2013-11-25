@@ -39,6 +39,7 @@
   <string name="exchange_configuration_add">Add new exchange</string>
   <string name="exchange_configuration_edit">Edit exchange</string>
   <string name="exchange_configuration_delete">Delete exchange</string>
+  <string name="exchange_configuration_name">Name</string>
   
   <string name="add_exchange_configuration_title">Add exchange</string>
   

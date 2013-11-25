@@ -13,7 +13,6 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
  */
 public class ExchangeConfigurationListAdapter extends AbstractListAdapter<ExchangeConfiguration> {
 
-
   public ExchangeConfigurationListAdapter(AbstractBitcoinTraderActivity activity) {
     super(activity);
   }
@@ -24,9 +23,10 @@ public class ExchangeConfigurationListAdapter extends AbstractListAdapter<Exchan
   }
 
   public void bindView(View row, ExchangeConfiguration entry) {
-    // type (out, fee, earned)
-    TextView rowType = (TextView) row.findViewById(R.id.exchange_configuration_row_type);
+    TextView rowType = (TextView)row.findViewById(R.id.exchange_configuration_row_type);
+    TextView rowName = (TextView)row.findViewById(R.id.exchange_configuration_row_name);
     rowType.setText(entry.getConnectionSettings().toString());
+    rowName.setText(entry.getName());
   }
 
 }

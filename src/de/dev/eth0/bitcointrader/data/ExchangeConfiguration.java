@@ -14,7 +14,7 @@ public class ExchangeConfiguration {
 
   public enum EXCHANGE_CONNECTION_SETTING {
 
-    MTGOX(Constants.MTGOX_SSL_URI, Constants.MTGOX_PLAIN_WEBSOCKET_URI, Constants.MTGOX_SSL_WEBSOCKET_URI ),
+    MTGOX(Constants.MTGOX_SSL_URI, Constants.MTGOX_PLAIN_WEBSOCKET_URI, Constants.MTGOX_SSL_WEBSOCKET_URI),
     BTCN(Constants.MTGOX_SSL_URI, Constants.MTGOX_PLAIN_WEBSOCKET_URI, Constants.MTGOX_SSL_WEBSOCKET_URI);
 
     private final String sslUri;
@@ -40,16 +40,22 @@ public class ExchangeConfiguration {
     }
   }
 
+  private final String name;
   private final String apiKey;
   private final String secretKey;
   private final EXCHANGE_CONNECTION_SETTING connectionSettings;
 
-  public ExchangeConfiguration(@JsonProperty("apiKey") String apiKey,
+  public ExchangeConfiguration(@JsonProperty("name") String name, @JsonProperty("apiKey") String apiKey,
           @JsonProperty("secretKey") String secretKey,
           @JsonProperty("connectionSettings") EXCHANGE_CONNECTION_SETTING connectionSettings) {
+    this.name = name;
     this.apiKey = apiKey;
     this.secretKey = secretKey;
     this.connectionSettings = connectionSettings;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public String getApiKey() {
