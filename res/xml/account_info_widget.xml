@@ -3,5 +3,5 @@
                     android:initialLayout="@layout/account_info_widget_content"
                     android:resizeMode="horizontal|vertical"
                     android:minHeight="@dimen/cell_size_1"
-                    android:minWidth="@dimen/cell_size_3"
+                    android:minWidth="@dimen/cell_size_4"
 />
