@@ -19,16 +19,16 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.bitcoincharts.BitcoinChartsFactory;
 import com.xeiam.xchange.bitcoincharts.dto.marketdata.BitcoinChartsTicker;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
 import de.dev.eth0.bitcointrader.ui.PriceChartDetailActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
-import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
+import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -153,6 +153,7 @@ public class PriceChartFragment extends SherlockListFragment {
       toast.setView(infoToastLayout);
       toast.show();
 
+      //TODO: Disabled due to #179
       Object o = activity.getSupportFragmentManager().findFragmentById(R.id.price_chart_detail_fragment);
       if (o != null) {
         PriceChartDetailFragment pcdf = (PriceChartDetailFragment)o;
