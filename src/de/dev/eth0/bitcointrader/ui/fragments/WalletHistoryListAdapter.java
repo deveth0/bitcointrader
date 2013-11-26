@@ -79,6 +79,7 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<MtGo
       }
       viewHolder.balanceView = (CurrencyTextView)childView.findViewById(R.id.wallet_history_row_balance);
       viewHolder.dateView = (TextView)childView.findViewById(R.id.wallet_history_row_date);
+      viewHolder.infoView = (TextView)childView.findViewById(R.id.wallet_history_row_info);
       childView.setTag(viewHolder);
     }
     else {
@@ -97,6 +98,22 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<MtGo
 
     // date
     viewHolder.dateView.setText(DateUtils.getRelativeDateTimeString(activity, Long.parseLong(entry.getDate()) * 1000, DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+
+    String[] substrings = entry.getInfo().split(" ");
+    if (substrings.length >= 5) {
+      if (entry.getInfo().contains("bought")) {
+        viewHolder.infoView.setText(activity.getString(R.string.wallet_history_info_bought, substrings[3], substrings[5]));
+      }
+      else if (entry.getInfo().contains("sold")) {
+        viewHolder.infoView.setText(activity.getString(R.string.wallet_history_info_sold, substrings[3], substrings[5]));
+      }
+      else {
+        viewHolder.infoView.setText("");
+      }
+    }
+    else {
+      viewHolder.infoView.setText("");
+    }
     return childView;
   }
 
@@ -155,5 +172,7 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<MtGo
     protected CurrencyTextView balanceView;
     protected TextView dateView;
     protected TextView priceView;
+    protected TextView infoView;
+
   }
 }
