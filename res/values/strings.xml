@@ -47,8 +47,7 @@
   <string name="wallet_history_amount">Amount:</string>
   <string name="wallet_history_balance">Balance:</string>
   <string name="wallet_history_date">Date:</string>
-  <string name="wallet_history_info_bought">BTC bought: %1$s at %2$s</string>
-  <string name="wallet_history_info_sold">BTC sold: %1$s at %2$s</string>
+  <string name="wallet_history_price">Price:</string>
   <string name="wallet_history_empty_text">No wallet history for the current currency available</string>
 
   <string name="price_chart_title">Price Chart</string>

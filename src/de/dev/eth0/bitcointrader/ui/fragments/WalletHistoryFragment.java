@@ -16,16 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.xeiam.xchange.currency.MoneyUtils;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWallet;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
@@ -33,23 +29,22 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
-import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.joda.money.BigMoney;
 
 /**
  * @author Alexander Muthmann
  */
-public class WalletHistoryFragment extends SherlockListFragment {
+public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = WalletHistoryFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
@@ -57,30 +52,15 @@ public class WalletHistoryFragment extends SherlockListFragment {
   private WalletHistoryListAdapter adapter;
   private ProgressDialog mDialog;
   private Spinner historyCurrencySpinner;
-  private View infoToastLayout;
-  private TextView typeView;
-  private TextView infoView;
-  private CurrencyTextView amountView;
-  private CurrencyTextView balanceView;
-  private TextView dateView;
-  private String mDialogLoadingString;
-  private Toast mInfoToast;
+  private ExpandableListView expandableList;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
           Bundle savedInstanceState) {
-    View layout = super.onCreateView(inflater, container,
-            savedInstanceState);
-    ListView lv = (ListView) layout.findViewById(android.R.id.list);
-    ViewGroup parent = (ViewGroup) lv.getParent();
-
-    // Remove ListView and add CustomView  in its place
-    int lvIndex = parent.indexOfChild(lv);
-    parent.removeViewAt(lvIndex);
     View view = inflater.inflate(
             R.layout.wallet_history_fragment, container, false);
-    parent.addView(view, lvIndex, lv.getLayoutParams());
-
+    expandableList = (ExpandableListView)view.findViewById(R.id.wallet_history_expandable_list);
+    expandableList.setAdapter(adapter);
     historyCurrencySpinner = (Spinner) view.findViewById(R.id.wallet_history_currency_spinner);
     ExchangeService exchangeService = application.getExchangeService();
     Set<String> currencies = new HashSet<String>();
@@ -106,7 +86,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
       }
     });
 
-    return layout;
+    return view;
   }
 
   @Override
@@ -131,7 +111,6 @@ public class WalletHistoryFragment extends SherlockListFragment {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
     adapter = new WalletHistoryListAdapter(activity);
-    setListAdapter(adapter);
     setHasOptionsMenu(true);
   }
 
@@ -142,63 +121,17 @@ public class WalletHistoryFragment extends SherlockListFragment {
     SpannableStringBuilder emptyText = new SpannableStringBuilder(
             getString(text));
     emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
-    setEmptyText(emptyText);
-    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.wallet_history_row_info_toast, (ViewGroup) getView().findViewById(R.id.history_row_info_toast));
-    typeView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_type);
-    infoView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_info);
-    amountView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_amount);
-    balanceView = (CurrencyTextView) infoToastLayout.findViewById(R.id.history_row_info_toast_balance);
-    dateView = (TextView) infoToastLayout.findViewById(R.id.history_row_info_toast_date);
-    amountView.setPrecision(8);
-    balanceView.setPrecision(8);
+    // expandableList.setEmptyTexte(mptyText);
+
   }
 
-  @Override
-  public void onListItemClick(ListView l, View v, int position, long id) {
-    MtGoxWalletHistoryEntry entry = adapter.getItem(position);
-    if (entry != null) {
-      if (mInfoToast != null) {
-        mInfoToast.cancel();
-      }
-      if (entry.getType().equals("out")) {
-        typeView.setText(R.string.wallet_history_out);
-      } else if (entry.getType().equals("fee")) {
-        typeView.setText(R.string.wallet_history_fee);
-      } else if (entry.getType().equals("in")) {
-        typeView.setText(R.string.wallet_history_in);
-      } else if (entry.getType().equals("spent")) {
-        typeView.setText(R.string.wallet_history_spent);
-      } else if (entry.getType().equals("earned")) {
-        typeView.setText(R.string.wallet_history_earned);
-      } else if (entry.getType().equals("withdraw")) {
-        typeView.setText(R.string.wallet_history_withdraw);
-      } else if (entry.getType().equals("deposit")) {
-        typeView.setText(R.string.wallet_history_deposit);
-      }
-      infoView.setText(entry.getInfo());
-      if (entry.getInfo().contains("bought")) {
-        String[] substrings = entry.getInfo().split(" ");
-        if (substrings.length >= 5) {
-          infoView.setText(getResources().getString(R.string.wallet_history_info_bought, substrings[3], substrings[5]));
-        }
-      } else if (entry.getInfo().contains("sold")) {
-        String[] substrings = entry.getInfo().split(" ");
-        if (substrings.length >= 5) {
-          infoView.setText(getResources().getString(R.string.wallet_history_info_sold, substrings[3], substrings[5]));
-        }
-      }
-      BigMoney amount = MoneyUtils.parse(entry.getValue().getCurrency() + " " + entry.getValue().getValue());
-      amountView.setAmount(amount);
-      BigMoney balance = MoneyUtils.parse(entry.getBalance().getCurrency() + " " + entry.getBalance().getValue());
-      balanceView.setAmount(balance);
-      dateView.setText(entry.getDate());
-
-      mInfoToast = new Toast(getActivity());
-      mInfoToast.setDuration(Toast.LENGTH_SHORT);
-      mInfoToast.setView(infoToastLayout);
-      mInfoToast.show();
-    }
-  }
+//  @Override
+//  public void onListItemClick(ListView l, View v, int position, long id) {
+//    MtGoxWalletHistoryEntry entry = adapter.getItem(position);
+//    if (entry != null) {
+//
+//    }
+//  }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
@@ -244,7 +177,11 @@ public class WalletHistoryFragment extends SherlockListFragment {
       }
     });
 
-    adapter.replace(entries);
+    Map<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>> foo = new HashMap<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>>();
+    for (MtGoxWalletHistoryEntry mgwhe : entries) {
+      foo.put(mgwhe, Arrays.asList(mgwhe));
+    }
+    adapter.replace(foo);
   }
 
   private class GetMtGoxWalletHistoryTask extends ICSAsyncTask<Boolean, Void, List<MtGoxWalletHistory>> {
@@ -287,7 +224,7 @@ public class WalletHistoryFragment extends SherlockListFragment {
 
   public static class HistoryCurrencySpinnerAdapter extends ArrayAdapter<String> {
 
-    private String[] entries;
+    private final String[] entries;
 
     public HistoryCurrencySpinnerAdapter(Context context, int textViewResourceId, String[] objects) {
       super(context, textViewResourceId, objects);
