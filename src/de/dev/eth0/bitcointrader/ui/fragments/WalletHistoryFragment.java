@@ -35,8 +35,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -177,7 +177,7 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
       }
     });
 
-    Map<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>> foo = new HashMap<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>>();
+    Map<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>> foo = new LinkedHashMap<MtGoxWalletHistoryEntry, List<MtGoxWalletHistoryEntry>>();
     for (MtGoxWalletHistoryEntry mgwhe : entries) {
       foo.put(mgwhe, Arrays.asList(mgwhe));
     }
