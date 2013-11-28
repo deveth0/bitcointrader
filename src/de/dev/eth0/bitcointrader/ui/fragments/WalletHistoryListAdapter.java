@@ -16,7 +16,7 @@ import org.joda.money.BigMoney;
 /**
  * @author Alexander Muthmann
  */
-public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<MtGoxWalletHistoryEntry> {
+public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<MtGoxWalletHistoryEntry, MtGoxWalletHistoryEntry> {
 
   private static final int TYPE_WITH_PRICE = 0;
   private static final int TYPE_WITHOUT_PRICE = 1;

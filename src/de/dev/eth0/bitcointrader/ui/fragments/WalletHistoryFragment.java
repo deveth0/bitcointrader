@@ -5,11 +5,8 @@ package de.dev.eth0.bitcointrader.ui.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,15 +61,22 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
     historyCurrencySpinner = (Spinner) view.findViewById(R.id.wallet_history_currency_spinner);
     ExchangeService exchangeService = application.getExchangeService();
     Set<String> currencies = new HashSet<String>();
+    int idxCurrentCurrency = Integer.MIN_VALUE;
+    int counter = 0;
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
       for (MtGoxWallet wallet : exchangeService.getAccountInfo().getWallets().getMtGoxWallets()) {
         if (wallet != null && wallet.getBalance() != null && !TextUtils.isEmpty(wallet.getBalance().getCurrency())) {
+          if (exchangeService.getCurrency().equalsIgnoreCase(wallet.getBalance().getCurrency())) {
+            idxCurrentCurrency = counter;
+          }
           currencies.add(wallet.getBalance().getCurrency());
+          counter++;
         }
       }
     }
     HistoryCurrencySpinnerAdapter spinneradapter = new HistoryCurrencySpinnerAdapter(activity,
-            R.layout.spinner_item, currencies.toArray(new String[0]));
+            R.layout.spinner_item, currencies.toArray(new String[currencies.size()]));
+
     spinneradapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
     historyCurrencySpinner.setAdapter(spinneradapter);
@@ -85,7 +89,9 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
       public void onNothingSelected(AdapterView<?> parent) {
       }
     });
-
+    if (idxCurrentCurrency != Integer.MIN_VALUE) {
+      historyCurrencySpinner.setSelection(idxCurrentCurrency);
+    }
     return view;
   }
 
@@ -113,25 +119,6 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
     adapter = new WalletHistoryListAdapter(activity);
     setHasOptionsMenu(true);
   }
-
-  @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-    int text = R.string.wallet_history_empty_text;
-    SpannableStringBuilder emptyText = new SpannableStringBuilder(
-            getString(text));
-    emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
-    // expandableList.setEmptyTexte(mptyText);
-
-  }
-
-//  @Override
-//  public void onListItemClick(ListView l, View v, int position, long id) {
-//    MtGoxWalletHistoryEntry entry = adapter.getItem(position);
-//    if (entry != null) {
-//
-//    }
-//  }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {

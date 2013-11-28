@@ -16,13 +16,13 @@ import java.util.Map;
 /**
  * @author Alexander Muthmann
  */
-public abstract class AbstractExpandableListAdapter<T> extends BaseExpandableListAdapter {
+public abstract class AbstractExpandableListAdapter<T, U> extends BaseExpandableListAdapter {
 
   protected final AbstractBitcoinTraderActivity activity;
   protected final BitcoinTraderApplication application;
   protected final LayoutInflater inflater;
   private final List<T> listDataHeader = new ArrayList<T>();
-  private final Map<T, List<T>> listData = new HashMap<T, List<T>>();
+  private final Map<T, List<U>> listData = new HashMap<T, List<U>>();
   private boolean showEmptyText = false;
 
   public AbstractExpandableListAdapter(AbstractBitcoinTraderActivity activity) {
@@ -37,7 +37,7 @@ public abstract class AbstractExpandableListAdapter<T> extends BaseExpandableLis
     notifyDataSetChanged();
   }
 
-  public void replace(Map<T, List<T>> orders) {
+  public void replace(Map<T, List<U>> orders) {
     this.listDataHeader.clear();
     this.listDataHeader.addAll(orders.keySet());
     this.listData.clear();
@@ -62,7 +62,7 @@ public abstract class AbstractExpandableListAdapter<T> extends BaseExpandableLis
   }
 
   @Override
-  public T getChild(int groupPosition, int childPosititon) {
+  public U getChild(int groupPosition, int childPosititon) {
     return listData.get(listDataHeader.get(groupPosition)).get(childPosititon);
   }
 
@@ -106,7 +106,7 @@ public abstract class AbstractExpandableListAdapter<T> extends BaseExpandableLis
     if (childView == null) {
       childView = inflater.inflate(getChildLayout(), null);
     }
-    T tx = getChild(groupPosition, childPosition);
+    U tx = getChild(groupPosition, childPosition);
     bindChildView(childView, tx);
     return childView;
   }
@@ -117,6 +117,6 @@ public abstract class AbstractExpandableListAdapter<T> extends BaseExpandableLis
 
   public abstract void bindGroupView(View group, final T entry);
 
-  public abstract void bindChildView(View child, final T entry);
+  public abstract void bindChildView(View child, final U entry);
 
 }
