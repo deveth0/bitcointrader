@@ -32,8 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +60,7 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
     expandableList.setAdapter(adapter);
     historyCurrencySpinner = (Spinner) view.findViewById(R.id.wallet_history_currency_spinner);
     ExchangeService exchangeService = application.getExchangeService();
-    Set<String> currencies = new HashSet<String>();
+    Set<String> currencies = new LinkedHashSet<String>();
     int idxCurrentCurrency = Integer.MIN_VALUE;
     int counter = 0;
     if (exchangeService != null && exchangeService.getAccountInfo() != null) {
