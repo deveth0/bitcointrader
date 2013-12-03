@@ -387,15 +387,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         lastUpdate = new Date();
         broadcastUpdateSuccess();
       } catch (ExchangeException ee) {
-        Log.i(TAG, "ExchangeException", ee);
+        Log.i(TAG, Log.getStackTraceString(ee), ee);
         broadcastUpdateFailure(ee);
         return false;
       } catch (IOException ioe) {
-        Log.e(TAG, "IOException", ioe);
+        Log.e(TAG, Log.getStackTraceString(ioe), ioe);
         broadcastUpdateFailure(ioe);
         return false;
       } catch (RuntimeException iae) {
-        Log.e(TAG, "RuntimeException", iae);
+        Log.e(TAG, Log.getStackTraceString(iae), iae);
         broadcastUpdateFailure(iae);
         return false;
       }
@@ -497,10 +497,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           return ret;
         }
       } catch (ExchangeException ee) {
-        Log.i(TAG, "ExchangeException", ee);
+        Log.i(TAG, Log.getStackTraceString(ee), ee);
         broadcastUpdateFailure(ee);
       } catch (IOException ioe) {
-        Log.e(TAG, "IOException", ioe);
+        Log.e(TAG, Log.getStackTraceString(ioe), ioe);
         broadcastUpdateFailure(ioe);
         return false;
       }

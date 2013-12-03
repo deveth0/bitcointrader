@@ -6,6 +6,7 @@ import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistoryEntry;
 import de.dev.eth0.bitcointrader.R;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.joda.money.BigMoney;
 import org.joda.money.CurrencyUnit;
 
@@ -28,7 +29,7 @@ public class ExchangeWalletHistoryEntry {
             entry.getInfo(),
             BigMoney.of(CurrencyUnit.of(entry.getValue().getCurrency()), entry.getValue().getValue()),
             BigMoney.of(CurrencyUnit.of(entry.getBalance().getCurrency()), entry.getBalance().getValue()),
-            HISTORY_ENTRY_TYPE.valueOf(entry.getType().toUpperCase()));
+            HISTORY_ENTRY_TYPE.valueOf(entry.getType().toUpperCase(Locale.US)));
   }
 
   //TODO: can this be changed to Date?

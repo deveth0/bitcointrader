@@ -5,6 +5,7 @@
               android:orientation="vertical" >
 
   <fragment
+    android:id="@+id/exchange_configuration_fragment"
     android:name="de.dev.eth0.bitcointrader.ui.fragments.ExchangeConfigurationFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

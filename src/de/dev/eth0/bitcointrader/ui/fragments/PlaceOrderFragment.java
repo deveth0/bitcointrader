@@ -29,14 +29,13 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
@@ -285,7 +284,17 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
     Editable amount = amountViewText.getEditableText();
     Editable price = priceViewText.getEditableText();
     boolean marketOrder = marketOrderCheckbox.isChecked();
-    return !TextUtils.isEmpty(amount) && (!TextUtils.isEmpty(price) || marketOrder);
+    if (!TextUtils.isEmpty(amount) && (!TextUtils.isEmpty(price) || marketOrder)) {
+      try {
+        Double.parseDouble(amountViewText.getEditableText().toString());
+        Double.parseDouble(priceViewText.getEditableText().toString());
+      } catch (NumberFormatException nfe) {
+        Log.d(TAG, "Could not parse input: amount: " + amount + ", price: " + price, nfe);
+        return false;
+      }
+      return true;
+    }
+    return false;
   }
 
   public void update(Order.OrderType ordertype) {

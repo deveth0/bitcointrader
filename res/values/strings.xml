@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">Bitcoin Trader</string>
+  <string name="empty"></string>
 
   <string name="loading_info">Loading&#8230;</string>
   <string name="connecting_info">Connecting&#8230;</string>
@@ -54,12 +55,11 @@
   <string name="wallet_history_spent">Spent</string>
   <string name="wallet_history_withdraw">Withdraw</string>
   <string name="wallet_history_deposit">Deposit</string>
-  <string name="wallet_history_amount">Amount:</string>
   <string name="wallet_history_balance">Balance:</string>
   <string name="wallet_history_date">Date:</string>
+  <string name="wallet_history_price">Price:</string>
   <string name="wallet_history_info_bought">BTC bought: %1$s at %2$s</string>
   <string name="wallet_history_info_sold">BTC sold: %1$s at %2$s</string>
-  <string name="wallet_history_empty_text">No wallet history for the current currency available</string>
 
   <string name="price_chart_title">Price Chart</string>
   <string name="price_chart_symbol">Symbol</string>
@@ -83,7 +83,7 @@
   <string name="refresh_title">Refresh</string>
 
   <string name="price_chart_detail_title">Price Chart Details</string>
-  <string name="price_chart_detail_period_description">Show last:</string>
+  <string name="price_chart_detail_open_in_new_window">Open in Browser</string>
 
   <string name="select_currency_title">Select currency</string>
 
@@ -122,7 +122,7 @@
   <string name="about_credits_zxing_title">"This app is using 'zxing'"</string>
   <string name="about_credits_graphview_title">"This app is using 'graphview'"</string>
     
-  <string name="preferences_title">Preferences</string>
+  <string name="preferences_title">Settings</string>
   <string name="preferences_category_mtgox">MtGox</string>
   <string name="preferences_mtgox_api_key_summary">Your MtGox API key</string>
   <string name="preferences_mtgox_api_key_title">API key</string>
