@@ -15,10 +15,10 @@ public class ExchangeWalletHistory {
 
   public final List<ExchangeWalletHistoryEntry> entries;
 
-  public static ExchangeWalletHistory fromMtGoxWalletHistory(List<MtGoxWalletHistory> pages) {
+  public static ExchangeWalletHistory from(List<MtGoxWalletHistory> pages) {
     List<ExchangeWalletHistoryEntry> entries = new ArrayList<ExchangeWalletHistoryEntry>();
     for (MtGoxWalletHistory page : pages) {
-      entries.addAll(ExchangeWalletHistoryEntry.fromMtGoxWalletHistoryEntries(page.getMtGoxWalletHistoryEntries()));
+      entries.addAll(ExchangeWalletHistoryEntry.from(page.getMtGoxWalletHistoryEntries()));
     }
     return new ExchangeWalletHistory(entries);
   }

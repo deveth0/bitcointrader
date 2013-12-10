@@ -3,7 +3,8 @@
 package de.dev.eth0.bitcointrader.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.dev.eth0.bitcointrader.Constants;
+import com.xeiam.xchange.bitstamp.BitstampExchange;
+import de.dev.eth0.bitcointrader.exchanges.extensions.ExtendedMtGoxExchange;
 
 /**
  * A serializable ExchangeConfiguration
@@ -14,41 +15,33 @@ public class ExchangeConfiguration {
 
   public enum EXCHANGE_CONNECTION_SETTING {
 
-    MTGOX(Constants.MTGOX_SSL_URI, Constants.MTGOX_PLAIN_WEBSOCKET_URI, Constants.MTGOX_SSL_WEBSOCKET_URI),
-    BTCN(Constants.MTGOX_SSL_URI, Constants.MTGOX_PLAIN_WEBSOCKET_URI, Constants.MTGOX_SSL_WEBSOCKET_URI);
+    MTGOX(ExtendedMtGoxExchange.class.getName()),
+    BITSTAMP(BitstampExchange.class.getName()),
+    BTCN(ExtendedMtGoxExchange.class.getName());
 
-    private final String sslUri;
-    private final String plainTextUriStreaming;
-    private final String sslUriStreaming;
+    private final String exchangeClassName;
 
-    private EXCHANGE_CONNECTION_SETTING(String sslUri, String plainTextUriStreaming, String sslUriStreaming) {
-      this.sslUri = sslUri;
-      this.plainTextUriStreaming = plainTextUriStreaming;
-      this.sslUriStreaming = sslUriStreaming;
+    private EXCHANGE_CONNECTION_SETTING(String exchangeClassName) {
+      this.exchangeClassName = exchangeClassName;
     }
 
-    public String getSslUri() {
-      return sslUri;
+    public String getExchangeClassName() {
+      return exchangeClassName;
     }
 
-    public String getPlainTextUriStreaming() {
-      return plainTextUriStreaming;
-    }
-
-    public String getSslUriStreaming() {
-      return sslUriStreaming;
-    }
   }
 
   private final String name;
+  private final String userName;
   private final String apiKey;
   private final String secretKey;
   private final EXCHANGE_CONNECTION_SETTING connectionSettings;
 
-  public ExchangeConfiguration(@JsonProperty("name") String name, @JsonProperty("apiKey") String apiKey,
+  public ExchangeConfiguration(@JsonProperty("name") String name, @JsonProperty("userName") String userName, @JsonProperty("apiKey") String apiKey,
           @JsonProperty("secretKey") String secretKey,
           @JsonProperty("connectionSettings") EXCHANGE_CONNECTION_SETTING connectionSettings) {
     this.name = name;
+    this.userName = userName;
     this.apiKey = apiKey;
     this.secretKey = secretKey;
     this.connectionSettings = connectionSettings;
@@ -56,6 +49,10 @@ public class ExchangeConfiguration {
 
   public String getName() {
     return name;
+  }
+
+  public String getUserName() {
+    return userName;
   }
 
   public String getApiKey() {

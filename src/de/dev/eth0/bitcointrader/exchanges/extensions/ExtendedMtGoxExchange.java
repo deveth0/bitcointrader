@@ -1,6 +1,6 @@
 //$URL$
 //$Id$
-package de.dev.eth0.bitcointrader.service;
+package de.dev.eth0.bitcointrader.exchanges.extensions;
 
 import android.util.Log;
 import com.xeiam.xchange.ExchangeException;
@@ -22,11 +22,13 @@ import java.io.IOException;
 import java.util.Locale;
 
 /**
+ * Extension of MtGoxExchange to use mtgox specific features like the WalletHistory
+ *
  * @author Alexander Muthmann
  */
-public class MtGoxExchangeWrapper extends MtGoxExchange {
+public class ExtendedMtGoxExchange extends MtGoxExchange {
 
-  private static final String TAG = MtGoxExchangeWrapper.class.getSimpleName();
+  private static final String TAG = ExtendedMtGoxExchange.class.getSimpleName();
 
   @Override
   public void applySpecification(ExchangeSpecification exchangeSpecification) {

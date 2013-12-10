@@ -18,12 +18,10 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.xeiam.xchange.dto.account.AccountInfo;
-import com.xeiam.xchange.mtgox.v2.MtGoxAdapters;
-import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxAccountInfo;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.schildbach.wallet.ui.HelpDialogFragment;
@@ -116,12 +114,9 @@ public class TrailingStopLossFragment extends AbstractBitcoinTraderFragment {
             BigMoney priceCurrency = BigMoney.parse(currency + " 0" + price.toString());
 
             // check if the entered price is higher than the current price (this would trigger a sell):
-            MtGoxAccountInfo mtgoxaccountInfo = getExchangeService().getAccountInfo();
-            if (mtgoxaccountInfo != null) {
-              AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(mtgoxaccountInfo);
-              if (accountInfo != null && priceCurrency.isGreaterThan(accountInfo.getBalance(priceCurrency.getCurrencyUnit()))) {
+            ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+            if (accountInfo != null && priceCurrency.isGreaterThan(accountInfo.getBalance(priceCurrency.getCurrencyUnit()))) {
                 throw new Exception();
-              }
             }
 
             SharedPreferences.Editor editor = prefs.edit();

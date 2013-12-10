@@ -16,15 +16,15 @@ import org.joda.money.CurrencyUnit;
  */
 public class ExchangeWalletHistoryEntry {
 
-  public static List<ExchangeWalletHistoryEntry> fromMtGoxWalletHistoryEntries(MtGoxWalletHistoryEntry[] mtGoxWalletHistoryEntries) {
+  public static List<ExchangeWalletHistoryEntry> from(MtGoxWalletHistoryEntry[] mtGoxWalletHistoryEntries) {
     List<ExchangeWalletHistoryEntry> ret = new ArrayList<ExchangeWalletHistoryEntry>();
     for (MtGoxWalletHistoryEntry entry : mtGoxWalletHistoryEntries) {
-      ret.add(ExchangeWalletHistoryEntry.fromMtGoxWalletHistoryEntry(entry));
+      ret.add(ExchangeWalletHistoryEntry.from(entry));
     }
     return ret;
   }
 
-  public static ExchangeWalletHistoryEntry fromMtGoxWalletHistoryEntry(MtGoxWalletHistoryEntry entry) {
+  public static ExchangeWalletHistoryEntry from(MtGoxWalletHistoryEntry entry) {
     return new ExchangeWalletHistoryEntry(entry.getDate(),
             entry.getInfo(),
             BigMoney.of(CurrencyUnit.of(entry.getValue().getCurrency()), entry.getValue().getValue()),

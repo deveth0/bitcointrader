@@ -105,6 +105,7 @@ public class AddExchangeConfigurationFragment extends SherlockListFragment {
     Log.d(TAG, ".updateView");
     List<AddExchangeConfigurationEntry> entries = new ArrayList<AddExchangeConfigurationEntry>();
     entries.add(AddExchangeConfigurationEntry.MTGOX);
+    entries.add(AddExchangeConfigurationEntry.BITSTAMP);
     entries.add(AddExchangeConfigurationEntry.BTCN);
     adapter.replace(entries);
   }

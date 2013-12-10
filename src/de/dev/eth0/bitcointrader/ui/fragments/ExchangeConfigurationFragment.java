@@ -91,6 +91,7 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   public void onListItemClick(ListView l, View v, int position, long id) {
     ExchangeConfiguration entry = adapter.getItem(position);
     if (entry != null) {
+      application.getExchangeService().setExchange(entry);
     }
     super.onListItemClick(l, v, position, id);
   }

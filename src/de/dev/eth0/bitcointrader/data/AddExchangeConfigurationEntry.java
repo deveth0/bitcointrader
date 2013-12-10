@@ -3,6 +3,7 @@
 package de.dev.eth0.bitcointrader.data;
 
 import de.dev.eth0.bitcointrader.ui.InitialSetupActivity;
+import de.dev.eth0.bitcointrader.ui.exchanges.BitstampSetupActivity;
 import de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity;
 
 /**
@@ -11,6 +12,7 @@ import de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity;
  */
 public class AddExchangeConfigurationEntry {
   public final static AddExchangeConfigurationEntry MTGOX = new AddExchangeConfigurationEntry("mtGox", MtGoxSetupActivity.class);
+  public final static AddExchangeConfigurationEntry BITSTAMP = new AddExchangeConfigurationEntry("bitstamp", BitstampSetupActivity.class);
   public final static AddExchangeConfigurationEntry BTCN = new AddExchangeConfigurationEntry("btcn", InitialSetupActivity.class);
 
   private final String name;

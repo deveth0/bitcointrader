@@ -88,6 +88,10 @@
       android:label="@string/mtgox_setup_activity_title"
     />
     <activity
+      android:name="de.dev.eth0.bitcointrader.ui.exchanges.BitstampSetupActivity"
+      android:label="@string/bitstamp_setup_activity_title"
+    />
+    <activity
       android:name="de.dev.eth0.bitcointrader.ui.PreferencesActivity"
       android:label="@string/preferences_title"
       android:screenOrientation="behind" />

@@ -45,6 +45,7 @@
   <string name="add_exchange_configuration_title">Add exchange</string>
   
   <string name="mtgox_setup_activity_title">Add mtGox Account</string>
+  <string name="bitstamp_setup_activity_title">Add bitstamp Account</string>
   
   <string name="wallet_history_title">Wallet History</string>
   <string name="wallet_history_currency_spinner_label">Select Currency:</string>

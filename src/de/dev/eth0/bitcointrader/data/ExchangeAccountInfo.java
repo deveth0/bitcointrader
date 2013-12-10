@@ -22,11 +22,11 @@ public class ExchangeAccountInfo {
   private final List<Wallet> wallets;
   private final BigDecimal tradeFee;
 
-  public static ExchangeAccountInfo fromAccountInfo(AccountInfo pAccountInfo) {
+  public static ExchangeAccountInfo from(AccountInfo pAccountInfo) {
     return new ExchangeAccountInfo(pAccountInfo.getUsername(), pAccountInfo.getWallets());
   }
 
-  public static ExchangeAccountInfo fromAccountInfo(MtGoxAccountInfo pAccountInfo) {
+  public static ExchangeAccountInfo from(MtGoxAccountInfo pAccountInfo) {
     return new ExchangeAccountInfo(pAccountInfo.getLogin(), MtGoxAdapters.adaptWallets(pAccountInfo.getWallets()), pAccountInfo.getTradeFee());
   }
 
