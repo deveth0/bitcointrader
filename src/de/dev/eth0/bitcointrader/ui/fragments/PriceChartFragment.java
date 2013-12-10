@@ -61,8 +61,8 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity)activity;
-    this.application = (BitcoinTraderApplication)activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity) activity;
+    this.application = (BitcoinTraderApplication) activity.getApplication();
     this.mDialogString = activity.getString(R.string.loading_info);
   }
 
@@ -98,15 +98,15 @@ public class PriceChartFragment extends SherlockListFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup)getView().findViewById(R.id.chart_row_info_toast));
-    symbolView = (TextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
-    lastView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
-    avgView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
-    volView = (AmountTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
-    lowView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_low);
-    highView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_high);
-    bidView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
-    askView = (CurrencyTextView)infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
+    infoToastLayout = activity.getLayoutInflater().inflate(R.layout.price_chart_row_info_toast, (ViewGroup) getView().findViewById(R.id.chart_row_info_toast));
+    symbolView = (TextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_symbol);
+    lastView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_last);
+    avgView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_avg);
+    volView = (AmountTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_vol);
+    lowView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_low);
+    highView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_high);
+    bidView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_bid);
+    askView = (CurrencyTextView) infoToastLayout.findViewById(R.id.chart_row_info_toast_ask);
 
     lastView.setDisplayMode(DISPLAY_MODE.NO_CURRENCY_CODE);
     lastView.setPrecision(Constants.PRECISION_CURRENCY);
@@ -154,13 +154,11 @@ public class PriceChartFragment extends SherlockListFragment {
       toast.setView(infoToastLayout);
       toast.show();
 
-      //TODO: Disabled due to #179
       Object o = activity.getSupportFragmentManager().findFragmentById(R.id.price_chart_detail_fragment);
       if (o != null) {
-        PriceChartDetailFragment pcdf = (PriceChartDetailFragment)o;
+        PriceChartDetailFragment pcdf = (PriceChartDetailFragment) o;
         pcdf.update(entry.getSymbol());
-      }
-      else {
+      } else {
         Intent detailsActivity = new Intent(activity, PriceChartDetailActivity.class);
         detailsActivity.putExtra(PriceChartDetailActivity.INTENT_EXTRA_EXCHANGE, entry.getSymbol());
         startActivity(detailsActivity);
@@ -206,8 +204,7 @@ public class PriceChartFragment extends SherlockListFragment {
         }
       }
       adapter.replace(tickers);
-    }
-    else {
+    } else {
       Toast.makeText(activity, R.string.price_chart_failed, Toast.LENGTH_LONG).show();
     }
   }
@@ -253,10 +250,9 @@ public class PriceChartFragment extends SherlockListFragment {
       try {
         BitcoinChartsTicker[] ticker = BitcoinChartsFactory.createInstance().getMarketData();
         return ticker == null ? new BitcoinChartsTicker[0] : ticker;
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         Intent intent = new Intent(Constants.UPDATE_FAILED);
-        intent.putExtra(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
+        intent.putExtra(Constants.EXTRA_MESSAGE, Log.getStackTraceString(e));
         activity.sendBroadcast(intent);
         Log.e(TAG, Log.getStackTraceString(e), e);
       }
