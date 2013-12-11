@@ -9,15 +9,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Window;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 
 /**
  * @author Alexander Muthmann
@@ -43,10 +41,14 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
     super.onResume();
     // Only do something, if there has been no error before. otherwise wait till crashreport has been finished
     if (!hadErrors) {
-      // if there has been no initial setup (or no mtgox keys are set, we need to start the initalSetupActivity
-      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBitcoinTraderApplication());
-      if (!prefs.getBoolean(Constants.PREFS_KEY_DEMO, false) && (TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null))
-              || TextUtils.isEmpty(prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null)))) {
+      // if there has been no initial setup, we need to start the initalSetupActivity
+      boolean setupCompleted = false;
+      try {
+        setupCompleted = !getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfigurations().isEmpty();
+      } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+        Log.w(TAG, Log.getStackTraceString(ece));
+      }
+      if (!setupCompleted) {
         startActivity(new Intent(this, InitialSetupActivity.class));
       } else {
         // otherwise we can connect the exchangeservice and start

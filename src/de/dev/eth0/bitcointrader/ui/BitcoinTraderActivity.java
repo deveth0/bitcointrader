@@ -9,51 +9,45 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.xeiam.xchange.dto.trade.Wallet;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Alexander Muthmann
  */
 public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
-  private LocalBroadcastManager mBroadcastManager;
+  private static final String TAG = BitcoinTraderActivity.class.getName();
   private Menu mSelectCurrencyItem;
   private ListView mDrawerList;
   private DrawerLayout mDrawerLayout;
   private ActionBarDrawerToggle mDrawerToggle;
   private CharSequence mDrawerTitle;
-  private CharSequence mTitle;
+  private ExchangeConfigurationListAdapter adapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
-    mBroadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
 
-    mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
-    mDrawerList = (ListView)findViewById(R.id.bitcointrader_exchange_drawer);
+
+    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    mDrawerList = (ListView) findViewById(R.id.bitcointrader_exchange_drawer);
     getSupportActionBar().setHomeButtonEnabled(true);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-    mTitle = getTitle();
     mDrawerTitle = getString(R.string.exchange_drawer_title);
     mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
             R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
@@ -66,21 +60,20 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
-      /**
-       * Called when a drawer has settled in a completely open state.
-       */
-      @Override
-      public void onDrawerOpened(View drawerView) {
-        getActionBar().setTitle(mDrawerTitle);
-        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-      }
-    };
+              /**
+               * Called when a drawer has settled in a completely open state.
+               */
+              @Override
+              public void onDrawerOpened(View drawerView) {
+                getActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+              }
+            };
 
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-
-    final ExchangeConfigurationListAdapter adapter = new ExchangeConfigurationListAdapter(this);
+    adapter = new ExchangeConfigurationListAdapter(this);
     mDrawerList.setAdapter(adapter);
     mDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,18 +84,15 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         }
       }
     });
-    FileInputStream fis;
-    try {
-      fis = getApplication().openFileInput("exchangeConfigurationTest");
-      List<ExchangeConfiguration> list = getBitcoinTraderApplication().getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
-      });
-      adapter.replace(list);
-    }
-    catch (FileNotFoundException ex) {
-    }
-    catch (IOException ioe) {
-    }
+    updateExchangeDrawer();
+  }
 
+  private void updateExchangeDrawer() {
+    try {
+      adapter.replace(getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfigurations());
+    } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+      Log.w(TAG, "Could not load exchange configurations", ece);
+    }
   }
 
   @Override
@@ -120,8 +110,9 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
   @Override
   protected void onResume() {
-    super.onResume();
     getBitcoinTraderApplication().startExchangeService();
+    updateExchangeDrawer();
+    super.onResume();
   }
 
   @Override
@@ -149,8 +140,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       case android.R.id.home:
         if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
           mDrawerLayout.closeDrawer(mDrawerList);
-        }
-        else {
+        } else {
           mDrawerLayout.openDrawer(mDrawerList);
         }
         return true;
@@ -167,7 +157,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         startActivity(new Intent(this, MarketDepthActivity.class));
         break;
       case R.id.bitcointrader_options_refresh:
-        mBroadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+        LocalBroadcastManager.getInstance(getBitcoinTraderApplication()).sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
         break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
@@ -200,7 +190,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
             mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
               public boolean onMenuItemClick(MenuItem item) {
                 getExchangeService().setCurrency(item.getTitle().toString());
-                mBroadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+                LocalBroadcastManager.getInstance(getBitcoinTraderApplication()).sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
                 return true;
               }
             });

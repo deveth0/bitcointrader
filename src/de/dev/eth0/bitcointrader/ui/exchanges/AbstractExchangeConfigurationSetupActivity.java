@@ -2,7 +2,6 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui.exchanges;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,16 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.fasterxml.jackson.core.type.TypeReference;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Alexander Muthmann
@@ -35,21 +29,15 @@ public abstract class AbstractExchangeConfigurationSetupActivity extends Abstrac
 
 
   protected final void saveExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) {
+    Intent returnIntent = new Intent();
     try {
-      FileInputStream fis = openFileInput("exchangeConfigurationTest");
-      List<ExchangeConfiguration> list = getBitcoinTraderApplication().getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
-      });
-      list.add(exchangeConfiguration);
-      FileOutputStream fos = openFileOutput("exchangeConfigurationTest", Context.MODE_PRIVATE);
-      getBitcoinTraderApplication().getObjectMapper().writeValue(fos, list);
-      Intent returnIntent = new Intent();
+      getBitcoinTraderApplication().getExchangeConfigurationDAO().addExchangeConfiguration(exchangeConfiguration);
       setResult(RESULT_OK, returnIntent);
-      finish();
-    } catch (FileNotFoundException ex) {
-      Log.e(TAG, "FileNotFoundException", ex);
-    } catch (IOException ioe) {
-      Log.e(TAG, "IOException", ioe);
+    } catch (ExchangeConfigurationException ex) {
+      Log.e(TAG, Log.getStackTraceString(ex), ex);
+      setResult(RESULT_CANCELED, returnIntent);
     }
+    finish();
   }
 
 

@@ -70,10 +70,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     @Override
     public void onReceive(Context context, Intent intent) {
       Log.d(TAG, ".onReceive()");
-      // only run if currently no running task
+       // only run if currently no running task
       if (exchange != null) {
         executeTask(new UpdateTask(), (Void) null);
-      }
+        }
     }
   };
   private LocalBroadcastManager broadcastManager;
@@ -124,31 +124,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       } else {
         trailingStopValue = null;
       }
-      createExchange(prefs);
       hasStarted = true;
     }
     return Service.START_STICKY;
   }
 
-  private void createExchange(SharedPreferences prefs) {
-    String mtGoxAPIKey, mtGoxSecretKey;
-    if (prefs.getBoolean(Constants.PREFS_KEY_DEMO, false)) {
-      mtGoxAPIKey = Constants.MTGOX_DEMO_ACCOUNT_APIKEY;
-      mtGoxSecretKey = Constants.MTGOX_DEMO_ACCOUNT_SECRETKEY;
-    } else {
-      mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
-      mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
-    }
-    if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
-      ExchangeConfiguration exchangeConfig = new ExchangeConfiguration(
-              "mtgox", null, mtGoxAPIKey, mtGoxSecretKey, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX);
-      setExchange(exchangeConfig);
-    }
-  }
-
   public void setExchange(ExchangeConfiguration config) {
     Log.d(TAG, "Setting exchange to " + config.getName());
     exchange = ExchangeWrapperFactory.forExchangeConfiguration(config);
+    accountInfo = null;
     broadcastUpdate();
   }
 
@@ -157,9 +141,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-    if (key.equals(Constants.PREFS_KEY_MTGOX_APIKEY) || key.equals(Constants.PREFS_KEY_MTGOX_SECRETKEY)) {
-      createExchange(sharedPreferences);
-    } else if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
+    if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
       notifyOnUpdate = sharedPreferences.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
     } else if (key.equals(Constants.PREFS_KEY_GENERAL_UPDATE)) {
       updateInterval = Integer.parseInt(sharedPreferences.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));

@@ -72,4 +72,35 @@ public class ExchangeConfiguration {
     return "ExchangeConfiguration{" + "apiKey=" + apiKey + ", secretKey=" + secretKey + ", connectionSettings=" + connectionSettings + '}';
   }
 
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 43 * hash + (this.apiKey != null ? this.apiKey.hashCode() : 0);
+    hash = 43 * hash + (this.secretKey != null ? this.secretKey.hashCode() : 0);
+    hash = 43 * hash + (this.connectionSettings != null ? this.connectionSettings.hashCode() : 0);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final ExchangeConfiguration other = (ExchangeConfiguration) obj;
+    if ((this.apiKey == null) ? (other.apiKey != null) : !this.apiKey.equals(other.apiKey)) {
+      return false;
+    }
+    if ((this.secretKey == null) ? (other.secretKey != null) : !this.secretKey.equals(other.secretKey)) {
+      return false;
+    }
+    if (this.connectionSettings != other.connectionSettings) {
+      return false;
+    }
+    return true;
+  }
+
+
 }

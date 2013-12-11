@@ -13,10 +13,13 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
+import java.util.List;
 
 /**
  * @author Alexander Muthmann
@@ -29,10 +32,19 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private boolean serviceBound = false;
   private ExchangeService exchangeService;
   private Cache cache;
-  private ObjectMapper mapper;
+  private ExchangeConfigurationDAO mExchangeConfigurationDAO;
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName name, IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder) binder).getService();
+      List<ExchangeConfiguration> configs;
+      try {
+        configs = getExchangeConfigurationDAO().getExchangeConfigurations();
+        if (!configs.isEmpty()) {
+          exchangeService.setExchange(configs.get(0));
+        }
+      } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ex) {
+        Log.e(TAG, Log.getStackTraceString(ex));
+      }
       createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));
       BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
     }
@@ -47,6 +59,23 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     CrashReporter.init(getCacheDir());
     Log.d(TAG, ".onCreate()");
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+    // we need to check, if the user has configured an mtgox exchange in the shared preferences. if so, we need to move this config into the config file
+    String mtGoxAPIKey = prefs.getString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
+    String mtGoxSecretKey = prefs.getString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
+    if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
+      try {
+        Log.i(TAG, "Creating exchangeconfiguration for the old config");
+        getExchangeConfigurationDAO().addExchangeConfiguration(
+                new ExchangeConfiguration("mtGox", null, mtGoxAPIKey, mtGoxSecretKey, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
+        edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);
+        edit.commit();
+      } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+        Log.e(TAG, Log.getStackTraceString(ece));
+      }
+    }
+
     prefs.registerOnSharedPreferenceChangeListener(this);
     cache = new Cache();
     updateServiceActionIntent = PendingIntent.getBroadcast(this, 0, new Intent(Constants.UPDATE_SERVICE_ACTION), 0);
@@ -125,11 +154,11 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, "USD");
   }
 
-  public ObjectMapper getObjectMapper() {
-    if (mapper == null) {
-      mapper = new ObjectMapper();
+  public ExchangeConfigurationDAO getExchangeConfigurationDAO() {
+    if (mExchangeConfigurationDAO == null) {
+      mExchangeConfigurationDAO = new ExchangeConfigurationDAO(this);
     }
-    return mapper;
+    return mExchangeConfigurationDAO;
   }
 
 }

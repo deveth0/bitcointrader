@@ -3,7 +3,6 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -21,20 +20,14 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.fasterxml.jackson.core.type.TypeReference;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.AddExchangeConfigurationActivity;
 import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
 import de.schildbach.wallet.ui.HelpDialogFragment;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Alexander Muthmann
@@ -121,7 +114,12 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
       case R.id.exchange_configuration_context_delete:
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         ExchangeConfiguration selectedConfig = adapter.getItem(info.position);
-        deleteExchangeConfiguration(selectedConfig);
+        try {
+          application.getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
+        } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+          Log.w(TAG, Log.getStackTraceString(ece));
+        }
+        updateView();
         return true;
       case R.id.exchange_configuration_context_edit:
         return true;
@@ -144,33 +142,9 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   protected void updateView() {
     Log.d(TAG, ".updateView");
     try {
-      FileInputStream fis = application.openFileInput("exchangeConfigurationTest");
-      List<ExchangeConfiguration> list = application.getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
-      });
-      adapter.replace(list);
-    } catch (FileNotFoundException ex) {
-      Log.e(TAG, "FileNotFoundException", ex);
-    } catch (IOException ioe) {
-      Log.e(TAG, "IOException", ioe);
+      adapter.replace(application.getExchangeConfigurationDAO().getExchangeConfigurations());
+    } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+      Log.w(TAG, Log.getStackTraceString(ece));
     }
   }
-
-  private void deleteExchangeConfiguration(ExchangeConfiguration selectedConfig) {
-    List<ExchangeConfiguration> configs = new ArrayList<ExchangeConfiguration>(adapter.getEntries());
-    configs.remove(selectedConfig);
-    writeOutExchangeConfigurations(configs);
-  }
-
-  private void writeOutExchangeConfigurations(List<ExchangeConfiguration> configs) {
-    try {
-      FileOutputStream fos = application.openFileOutput("exchangeConfigurationTest", Context.MODE_PRIVATE);
-      application.getObjectMapper().writeValue(fos, configs);
-      adapter.replace(configs);
-    } catch (FileNotFoundException ex) {
-      Log.e(TAG, "FileNotFoundException", ex);
-    } catch (IOException ioe) {
-      Log.e(TAG, "IOException", ioe);
-    }
-  }
-
 }
