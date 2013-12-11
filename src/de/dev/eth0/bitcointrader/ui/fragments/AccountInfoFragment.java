@@ -14,10 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.WalletHistoryActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -100,12 +100,12 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   public void updateView() {
     Log.d(TAG, ".updateView");
     if (getExchangeService() != null) {
-      ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+      AccountInfo accountInfo = getExchangeService().getAccountInfo();
       if (accountInfo != null) {
         viewName.setText(accountInfo.getUsername());
         viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.of(application.getCurrency())));
         viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
-        viewTradeFee.setAmount(accountInfo.getTradeFee());
+        viewTradeFee.setAmount(accountInfo.getTradingFee());
       }
     }
   }

@@ -18,10 +18,10 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.schildbach.wallet.ui.HelpDialogFragment;
@@ -114,7 +114,7 @@ public class TrailingStopLossFragment extends AbstractBitcoinTraderFragment {
             BigMoney priceCurrency = BigMoney.parse(currency + " 0" + price.toString());
 
             // check if the entered price is higher than the current price (this would trigger a sell):
-            ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+            AccountInfo accountInfo = getExchangeService().getAccountInfo();
             if (accountInfo != null && priceCurrency.isGreaterThan(accountInfo.getBalance(priceCurrency.getCurrencyUnit()))) {
                 throw new Exception();
             }

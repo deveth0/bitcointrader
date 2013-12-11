@@ -6,6 +6,9 @@
   <string name="loading_info">Loading&#8230;</string>
   <string name="connecting_info">Connecting&#8230;</string>
   <string name="connection_failed">Could not connect. Please check your internet connection and try again.</string>
+  <string name="drawer_open">Open drawer</string>
+  <string name="drawer_close">Close drawer</string>
+  <string name="exchange_drawer_title">Choose exchange</string>
   <string name="bitcoin_order_fragment_empty_text">No Open Orders.</string>
   <string name="bitcoin_action_buy">Buy</string>
   <string name="bitcoin_action_sell">Sell</string>

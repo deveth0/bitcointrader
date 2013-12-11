@@ -18,8 +18,8 @@ import java.util.List;
  */
 public class MtGoxExchangeWrapper extends AbstractExchangeWrapper<ExtendedMtGoxExchange> {
 
-  public MtGoxExchangeWrapper(Exchange exchange) {
-    super((ExtendedMtGoxExchange) exchange);
+  public MtGoxExchangeWrapper(String name, Exchange exchange) {
+    super(name, (ExtendedMtGoxExchange)exchange);
   }
 
   @Override

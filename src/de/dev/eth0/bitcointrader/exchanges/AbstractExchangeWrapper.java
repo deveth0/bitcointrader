@@ -5,12 +5,12 @@ package de.dev.eth0.bitcointrader.exchanges;
 import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.currency.Currencies;
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.OrderBook;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import java.io.IOException;
@@ -23,15 +23,22 @@ import java.util.List;
  */
 public abstract class AbstractExchangeWrapper<T extends Exchange> implements ExchangeWrapper {
 
+  private final String name;
   protected final T exchange;
 
-  public AbstractExchangeWrapper(T exchange) {
+  public AbstractExchangeWrapper(String name, T exchange) {
+    this.name = name;
     this.exchange = exchange;
   }
 
   @Override
-  public OrderBook getPartialOrderBook(String currency) throws IOException {
-    return exchange.getPollingMarketDataService().getPartialOrderBook(Currencies.BTC, currency);
+  public String getName() {
+    return name;
+  }
+
+  @Override
+  public OrderBook getOrderBook(String currency) throws IOException {
+    return exchange.getPollingMarketDataService().getOrderBook(Currencies.BTC, currency);
   }
 
   public String placeLimitOrder(LimitOrder lo) throws IOException {
@@ -54,8 +61,8 @@ public abstract class AbstractExchangeWrapper<T extends Exchange> implements Exc
     return exchange.getPollingMarketDataService().getTicker(Currencies.BTC, currency);
   }
 
-  public ExchangeAccountInfo getAccountInfo() throws IOException {
-    return ExchangeAccountInfo.from(exchange.getPollingAccountService().getAccountInfo());
+  public AccountInfo getAccountInfo() throws IOException {
+    return exchange.getPollingAccountService().getAccountInfo();
   }
 
 

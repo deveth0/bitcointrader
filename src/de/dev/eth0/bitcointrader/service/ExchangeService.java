@@ -28,6 +28,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.xeiam.xchange.ExchangeException;
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.OrderBook;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
@@ -35,7 +36,6 @@ import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
@@ -86,7 +86,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
   private ExchangeWrapper exchange;
   private final Binder binder = new LocalBinder();
-  private ExchangeAccountInfo accountInfo;
+  private AccountInfo accountInfo;
   private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
   private Float trailingStopThreadhold;
   private BigDecimal trailingStopValue;
@@ -150,6 +150,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     Log.d(TAG, "Setting exchange to " + config.getName());
     exchange = ExchangeWrapperFactory.forExchangeConfiguration(config);
     broadcastUpdate();
+  }
+
+  public String getExchangeName() {
+    return exchange == null ? "" : exchange.getName();
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -218,7 +222,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   }
 
   public OrderBook getOrderBook() throws IOException {
-    return getExchange().getPartialOrderBook(getCurrency());
+    return getExchange().getOrderBook(getCurrency());
   }
 
   /**
@@ -257,7 +261,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     return exchange.getTrades(getCurrency());
   }
 
-  public ExchangeAccountInfo getAccountInfo() {
+  public AccountInfo getAccountInfo() {
     return accountInfo;
   }
 

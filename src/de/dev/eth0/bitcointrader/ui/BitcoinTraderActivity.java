@@ -3,30 +3,119 @@
 package de.dev.eth0.bitcointrader.ui;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.xeiam.xchange.dto.trade.Wallet;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 import de.schildbach.wallet.ui.HelpDialogFragment;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * @author Alexander Muthmann
  */
 public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
-  private LocalBroadcastManager broadcastManager;
-  private Menu selectCurrencyItem;
+  private LocalBroadcastManager mBroadcastManager;
+  private Menu mSelectCurrencyItem;
+  private ListView mDrawerList;
+  private DrawerLayout mDrawerLayout;
+  private ActionBarDrawerToggle mDrawerToggle;
+  private CharSequence mDrawerTitle;
+  private CharSequence mTitle;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
-    broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
+    mBroadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
+
+    mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+    mDrawerList = (ListView)findViewById(R.id.bitcointrader_exchange_drawer);
+    getSupportActionBar().setHomeButtonEnabled(true);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+    mTitle = getTitle();
+    mDrawerTitle = getString(R.string.exchange_drawer_title);
+    mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+            R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close) {
+      /**
+       * Called when a drawer has settled in a completely closed state.
+       */
+      @Override
+      public void onDrawerClosed(View view) {
+        getActionBar().setTitle(getExchangeService().getExchangeName());
+        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+      }
+
+      /**
+       * Called when a drawer has settled in a completely open state.
+       */
+      @Override
+      public void onDrawerOpened(View drawerView) {
+        getActionBar().setTitle(mDrawerTitle);
+        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+      }
+    };
+
+    // Set the drawer toggle as the DrawerListener
+    mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
+    final ExchangeConfigurationListAdapter adapter = new ExchangeConfigurationListAdapter(this);
+    mDrawerList.setAdapter(adapter);
+    mDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ExchangeConfiguration config = adapter.getItem(position);
+        if (config != null) {
+          getExchangeService().setExchange(config);
+          mDrawerLayout.closeDrawer(mDrawerList);
+        }
+      }
+    });
+    FileInputStream fis;
+    try {
+      fis = getApplication().openFileInput("exchangeConfigurationTest");
+      List<ExchangeConfiguration> list = getBitcoinTraderApplication().getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
+      });
+      adapter.replace(list);
+    }
+    catch (FileNotFoundException ex) {
+    }
+    catch (IOException ioe) {
+    }
+
+  }
+
+  @Override
+  protected void onPostCreate(Bundle savedInstanceState) {
+    super.onPostCreate(savedInstanceState);
+    // Sync the toggle state after onRestoreInstanceState has occurred.
+    mDrawerToggle.syncState();
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    mDrawerToggle.onConfigurationChanged(newConfig);
   }
 
   @Override
@@ -40,14 +129,31 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);
 
-    selectCurrencyItem = menu.findItem(R.id.bitcointrader_options_select_currency).getSubMenu();
-    selectCurrencyItem.clear();
+    mSelectCurrencyItem = menu.findItem(R.id.bitcointrader_options_select_currency).getSubMenu();
+    mSelectCurrencyItem.clear();
     return true;
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    // If the nav drawer is open, hide action items related to the content view
+    boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+    menu.findItem(R.id.bitcointrader_options_select_currency).setVisible(!drawerOpen);
+    menu.findItem(R.id.bitcointrader_options_refresh).setVisible(!drawerOpen);
+    return super.onPrepareOptionsMenu(menu);
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
+      case android.R.id.home:
+        if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+          mDrawerLayout.closeDrawer(mDrawerList);
+        }
+        else {
+          mDrawerLayout.openDrawer(mDrawerList);
+        }
+        return true;
       case R.id.bitcointrader_options_select_currency:
         showSelectCurrencyPopup();
         break;
@@ -61,7 +167,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         startActivity(new Intent(this, MarketDepthActivity.class));
         break;
       case R.id.bitcointrader_options_refresh:
-        broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+        mBroadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
         break;
       case R.id.bitcointrader_options_about:
         startActivity(new Intent(this, AboutActivity.class));
@@ -83,18 +189,18 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   private void showSelectCurrencyPopup() {
-    if (selectCurrencyItem.size() == 0) {
+    if (mSelectCurrencyItem.size() == 0) {
       int idx = 0;
       if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
         for (Wallet wallet : getExchangeService().getAccountInfo().getWallets()) {
           if (wallet != null && wallet.getBalance() != null
                   && !TextUtils.isEmpty(wallet.getCurrency())
                   && !wallet.getCurrency().equals(Constants.CURRENCY_CODE_BITCOIN)) {
-            MenuItem mi = selectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getCurrency());
+            MenuItem mi = mSelectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getCurrency());
             mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
               public boolean onMenuItemClick(MenuItem item) {
                 getExchangeService().setCurrency(item.getTitle().toString());
-                broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
+                mBroadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
                 return true;
               }
             });

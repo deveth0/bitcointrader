@@ -30,13 +30,13 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
@@ -218,14 +218,14 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       BigMoney totalSpend = amountUSD.multipliedBy(amountBTC.getAmount());
       totalView.setAmount(totalSpend);
       if (getExchangeService() != null) {
-        ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+        AccountInfo accountInfo = getExchangeService().getAccountInfo();
         if (accountInfo != null) {
           if (type.equals(Order.OrderType.ASK)) {
             estimatedFeeView.setPrecision(Constants.PRECISION_CURRENCY);
-            estimatedFeeView.setAmount(totalSpend.multipliedBy(accountInfo.getTradeFee().scaleByPowerOfTen(-2)));
+            estimatedFeeView.setAmount(totalSpend.multipliedBy(accountInfo.getTradingFee().scaleByPowerOfTen(-2)));
           }
           else {
-            BigMoney fee = amountBTC.multipliedBy(accountInfo.getTradeFee().scaleByPowerOfTen(-2));
+            BigMoney fee = amountBTC.multipliedBy(accountInfo.getTradingFee().scaleByPowerOfTen(-2));
             estimatedFeeView.setPrecision(Constants.PRECISION_BITCOIN);
             estimatedFeeView.setAmount(fee);
           }
@@ -237,7 +237,7 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
   private void enableAmountViewContextButton() {
     amountView.setContextButton(R.drawable.ic_input_calculator, new OnClickListener() {
       public void onClick(View v) {
-        ExchangeAccountInfo accountInfo = getExchangeService().getAccountInfo();
+        AccountInfo accountInfo = getExchangeService().getAccountInfo();
         if (accountInfo != null) {
             amountView.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")).getAmount());
           }

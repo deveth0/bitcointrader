@@ -3,12 +3,12 @@
 package de.dev.eth0.bitcointrader.exchanges;
 
 import com.xeiam.xchange.dto.Order;
+import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.OrderBook;
 import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
-import de.dev.eth0.bitcointrader.data.ExchangeAccountInfo;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import java.io.IOException;
@@ -19,6 +19,13 @@ import java.util.List;
  * @author deveth0
  */
 public interface ExchangeWrapper {
+
+  /**
+   * Returns name for the exchange
+   *
+   * @return name
+   */
+  public String getName();
 
   /**
    * Returns the wallet history for the given currency
@@ -35,7 +42,7 @@ public interface ExchangeWrapper {
    * @return
    * @throws java.io.IOException
    */
-  public ExchangeAccountInfo getAccountInfo() throws IOException;
+  public AccountInfo getAccountInfo() throws IOException;
 
 
   /**
@@ -81,7 +88,7 @@ public interface ExchangeWrapper {
    * @throws IOException
    * @return
    */
-  public OrderBook getPartialOrderBook(String currency) throws IOException;
+  public OrderBook getOrderBook(String currency) throws IOException;
 
   /**
    * cancels the given order

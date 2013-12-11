@@ -31,9 +31,9 @@ public class ExchangeWrapperFactory {
 
     switch (config.getConnectionSettings()) {
       case MTGOX:
-        return new MtGoxExchangeWrapper(exchange);
+        return new MtGoxExchangeWrapper(config.getName(), exchange);
       case BITSTAMP:
-        return new BitstampExchangeWrapper(exchange);
+        return new BitstampExchangeWrapper(config.getName(), exchange);
       case BTCN:
 
     }
