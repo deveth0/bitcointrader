@@ -43,8 +43,6 @@ public class DemoNotificationFragment extends Fragment {
     demoInfoView.setOnClickListener(new OnClickListener() {
       public void onClick(final View v) {
         Editor editor = prefs.edit();
-        editor.putString(Constants.PREFS_KEY_MTGOX_APIKEY, null);
-        editor.putString(Constants.PREFS_KEY_MTGOX_SECRETKEY, null);
         editor.putBoolean(Constants.PREFS_KEY_DEMO, false);
         editor.commit();
         startActivity(new Intent(activity, StartScreenActivity.class));

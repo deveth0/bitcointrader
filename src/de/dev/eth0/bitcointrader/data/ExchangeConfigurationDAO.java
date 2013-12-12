@@ -1,10 +1,5 @@
 //$URL$
 //$Id$
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dev.eth0.bitcointrader.data;
 
 import android.app.Application;
@@ -39,19 +34,15 @@ public class ExchangeConfigurationDAO {
   /**
    * Returns a list with all exchangeconfigurations. if Demo mode is activated, this returns a list with the demo account
    *
+   * @throws ExchangeConfigurationException
    * @return
    */
   public List<ExchangeConfiguration> getExchangeConfigurations() throws ExchangeConfigurationException {
     List<ExchangeConfiguration> list;
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
-    String mtGoxAPIKey, mtGoxSecretKey;
     if (prefs.getBoolean(Constants.PREFS_KEY_DEMO, false)) {
-      mtGoxAPIKey = Constants.MTGOX_DEMO_ACCOUNT_APIKEY;
-      mtGoxSecretKey = Constants.MTGOX_DEMO_ACCOUNT_SECRETKEY;
-      ExchangeConfiguration exchangeConfig = new ExchangeConfiguration(
-              "mtgox", null, mtGoxAPIKey, mtGoxSecretKey, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX);
       list = new ArrayList<ExchangeConfiguration>();
-      list.add(exchangeConfig);
+      list.add(new ExchangeConfiguration(null, null, null, null, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO));
       return list;
     }
     try {
@@ -75,12 +66,24 @@ public class ExchangeConfigurationDAO {
     return mMapper;
   }
 
+  /**
+   * Retmoves the given exchangeConfiguration from the exchangeConfigurationFile
+   *
+   * @param exchangeConfiguration
+   * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
+   */
   public void removeExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) throws ExchangeConfigurationException {
     List<ExchangeConfiguration> configs = getExchangeConfigurations();
     configs.remove(exchangeConfiguration);
     writeExchangeConfiguration(configs);
   }
 
+  /**
+   * Writes the given exchangeConfiguration into the exchangeConfigurationFile
+   *
+   * @param exchangeConfiguration
+   * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
+   */
   public void addExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) throws ExchangeConfigurationException {
     List<ExchangeConfiguration> configs = getExchangeConfigurations();
     configs.add(exchangeConfiguration);

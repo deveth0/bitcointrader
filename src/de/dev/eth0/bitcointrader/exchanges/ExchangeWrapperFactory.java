@@ -13,6 +13,7 @@ import com.xeiam.xchange.ExchangeFactory;
 import com.xeiam.xchange.ExchangeSpecification;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.exchanges.wrappers.BitstampExchangeWrapper;
+import de.dev.eth0.bitcointrader.exchanges.wrappers.DemoExchangeWrapper;
 import de.dev.eth0.bitcointrader.exchanges.wrappers.MtGoxExchangeWrapper;
 
 /**
@@ -22,6 +23,9 @@ import de.dev.eth0.bitcointrader.exchanges.wrappers.MtGoxExchangeWrapper;
 public class ExchangeWrapperFactory {
 
   public static ExchangeWrapper forExchangeConfiguration(ExchangeConfiguration config) {
+    if (config.getConnectionSettings() == ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO) {
+      return new DemoExchangeWrapper();
+    }
     Exchange exchange = ExchangeFactory.INSTANCE.createExchange(config.getConnectionSettings().getExchangeClassName());
     ExchangeSpecification exchangeSpec = exchange.getDefaultExchangeSpecification();
     exchangeSpec.setApiKey(config.getApiKey());
@@ -35,7 +39,6 @@ public class ExchangeWrapperFactory {
       case BITSTAMP:
         return new BitstampExchangeWrapper(config.getName(), exchange);
       case BTCN:
-
     }
     return null;
   }

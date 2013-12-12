@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-  <PreferenceCategory android:title="@string/preferences_category_mtgox" >
-    <EditTextPreference
-      android:key="mtgox_apikey"
-      android:title="@string/preferences_mtgox_api_key_title" />
-    />
-    <EditTextPreference
-      android:key="mtgox_secretkey"
-      android:title="@string/preferences_mtgox_secret_key_title"
-      android:summary="@string/preferences_mtgox_secret_key_summary"
-    />
-  </PreferenceCategory>
-
   <PreferenceCategory android:title="@string/preferences_category_general">
     <ListPreference
       android:title="@string/preferences_general_update_title"
@@ -35,10 +23,6 @@
         android:defaultValue="false"
         android:summary="@string/preferences_general_sound_summary"
         android:key="general_sound" />
-      <Preference
-      android:key="delete_account"
-      android:title="@string/preferences_delete_account_title"
-      android:summary="@string/preferences_delete_account_summary"/>
   </PreferenceCategory>
   
   <PreferenceCategory android:title="@string/preferences_category_labs" >
