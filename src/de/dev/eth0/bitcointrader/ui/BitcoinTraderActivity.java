@@ -2,13 +2,21 @@
 //$Id$
 package de.dev.eth0.bitcointrader.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.widget.TextView;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -85,6 +93,44 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       }
     });
     updateExchangeDrawer();
+    init();
+  }
+
+  private void init() {
+    SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    int currentVersionNumber = getBitcoinTraderApplication().applicationVersionCode();
+
+    int savedVersionNumber = sharedPref.getInt(Constants.PREFS_KEY_LAST_VERSION_KEY, 0);
+
+    if (true) {
+      //if (currentVersionNumber > savedVersionNumber) {
+      showWhatsNewDialog();
+
+      Editor editor = sharedPref.edit();
+
+      editor.putInt(Constants.PREFS_KEY_LAST_VERSION_KEY, currentVersionNumber);
+      editor.commit();
+    }
+  }
+
+  private void showWhatsNewDialog() {
+    LayoutInflater inflater = LayoutInflater.from(this);
+
+    View view = inflater.inflate(R.layout.dialog_whatsnew, null);
+
+    ((TextView)view.findViewById(R.id.dialog_whatsnew_version)).setText(getBitcoinTraderApplication().applicationVersionName());
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+    builder.setView(view).setTitle(R.string.whats_new_title)
+            .setPositiveButton(R.string.whats_new_ok, new DialogInterface.OnClickListener() {
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+              }
+            });
+
+    AlertDialog dialog = builder.create();
+    dialog.show();
   }
 
   private void updateExchangeDrawer() {

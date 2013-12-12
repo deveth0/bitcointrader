@@ -14,7 +14,7 @@ import de.dev.eth0.bitcointrader.exchanges.extensions.ExtendedMtGoxExchange;
 public class ExchangeConfiguration {
 
   public enum EXCHANGE_CONNECTION_SETTING {
-
+    DEMO("Demo Exchange"),
     MTGOX(ExtendedMtGoxExchange.class.getName()),
     BITSTAMP(BitstampExchange.class.getName()),
     BTCN(ExtendedMtGoxExchange.class.getName());

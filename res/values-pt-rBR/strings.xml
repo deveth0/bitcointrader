@@ -95,7 +95,6 @@
   <string name="place_order_invalid">Por favor valide sua entrada</string>
   <string name="place_order_success">Ordem criada</string>
   <string name="place_order_failed">Ordem não pôde ser criada</string>
-  <string name="place_order_failed_demo">Você não pode criar ordens no modo demonstração.</string>
 
   <string name="market_depth_title">Profundidade de Mercado</string>
   <string name="market_depth_asks_graph_title">Venda</string>

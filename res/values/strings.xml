@@ -110,7 +110,6 @@
   <string name="place_order_invalid">Please validate your input</string>
   <string name="place_order_success">Order created</string>
   <string name="place_order_failed">Could not create order</string>
-  <string name="place_order_failed_demo">You cannot create orders in demo mode.</string>
 
 
   <string name="market_depth_title">Market Depth</string>
@@ -186,5 +185,10 @@
   <string name="developed_by">Developed by</string>
   <string name="version">Version</string>
   <string name="contribution">Contribution</string>
+
+  <string name="whats_new_title">What\'s new</string>
+  <string name="whats_new_text">- Support for the following exchanges:\n** MtGox\n** Bitstamp\n** BTC-China\n- Multiple bugfixes</string>
+  <string name="whats_new_ok">OK</string>
+
   
 </resources>

@@ -31,7 +31,6 @@ import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import com.xeiam.xchange.dto.marketdata.OrderBook;
 import com.xeiam.xchange.dto.marketdata.Ticker;
-import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.Constants;
@@ -70,10 +69,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     @Override
     public void onReceive(Context context, Intent intent) {
       Log.d(TAG, ".onReceive()");
-       // only run if currently no running task
+      // only run if currently no running task
       if (exchange != null) {
-        executeTask(new UpdateTask(), (Void) null);
-        }
+        executeTask(new UpdateTask(), (Void)null);
+      }
     }
   };
   private LocalBroadcastManager broadcastManager;
@@ -121,7 +120,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       String tvalue = prefs.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
       if (!TextUtils.isEmpty(tvalue)) {
         trailingStopValue = new BigDecimal(tvalue);
-      } else {
+      }
+      else {
         trailingStopValue = null;
       }
       hasStarted = true;
@@ -143,21 +143,26 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
       notifyOnUpdate = sharedPreferences.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
-    } else if (key.equals(Constants.PREFS_KEY_GENERAL_UPDATE)) {
+    }
+    else if (key.equals(Constants.PREFS_KEY_GENERAL_UPDATE)) {
       updateInterval = Integer.parseInt(sharedPreferences.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
-    } else if (key.equals(Constants.PREFS_TRAILING_STOP_THREASHOLD)) {
+    }
+    else if (key.equals(Constants.PREFS_TRAILING_STOP_THREASHOLD)) {
       float th = sharedPreferences.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
       if (th != Float.MIN_VALUE) {
         trailingStopThreadhold = th;
       }
-    } else if (key.equals(Constants.PREFS_TRAILING_STOP_VALUE)) {
+    }
+    else if (key.equals(Constants.PREFS_TRAILING_STOP_VALUE)) {
       String tvalue = sharedPreferences.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
       if (!TextUtils.isEmpty(tvalue)) {
         trailingStopValue = new BigDecimal(tvalue);
-      } else {
+      }
+      else {
         trailingStopValue = null;
       }
-    } else if (key.equals(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES)) {
+    }
+    else if (key.equals(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES)) {
       int updates = sharedPreferences.getInt(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES, 1);
       trailingStopChecks = new BigDecimal[updates];
     }
@@ -231,16 +236,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     try {
       ret = exchange.getWalletHistory(currency);
       walletHistoryCache.put(currency, ret);
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       Log.i(TAG, Log.getStackTraceString(ex), ex);
       broadcastUpdateFailure(ex);
     }
     lastUpdateWalletHistory = new Date();
     return ret;
-  }
-
-  public Trades getTrades() throws IOException {
-    return exchange.getTrades(getCurrency());
   }
 
   public AccountInfo getAccountInfo() {
@@ -320,7 +322,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
                   FormatHelper.DISPLAY_MODE.CURRENCY_CODE, result.getTotalSpent(), Constants.PRECISION_CURRENCY).toString());
           extras.add(bundle);
         }
-      } catch (Exception ee) {
+      }
+      catch (Exception ee) {
         Log.d(TAG, "getting OrderResult failed", ee);
       }
     }
@@ -353,15 +356,18 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         openOrders = orders;
         lastUpdate = new Date();
         broadcastUpdateSuccess();
-      } catch (IOException ex) {
+      }
+      catch (IOException ex) {
         Log.i(TAG, Log.getStackTraceString(ex), ex);
         broadcastUpdateFailure(ex);
         return false;
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, Log.getStackTraceString(ee), ee);
         broadcastUpdateFailure(ee);
         return false;
-      } catch (RuntimeException iae) {
+      }
+      catch (RuntimeException iae) {
         Log.e(TAG, Log.getStackTraceString(iae), iae);
         broadcastUpdateFailure(iae);
         return false;
@@ -441,10 +447,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
           mBuilder.setContentIntent(resultPendingIntent);
           mBuilder.setAutoCancel(true);
-          NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+          NotificationManager mNotificationManager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
           mNotificationManager.notify(1234, mBuilder.build());
         }
-      } else if (!success) {
+      }
+      else if (!success) {
         Toast.makeText(ExchangeService.this,
                 R.string.notify_update_failed_title, Toast.LENGTH_LONG).show();
       }
@@ -463,10 +470,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           broadcastUpdate();
           return ret;
         }
-      } catch (IOException ex) {
+      }
+      catch (IOException ex) {
         Log.i(TAG, Log.getStackTraceString(ex), ex);
         broadcastUpdateFailure(ex);
-      } catch (ExchangeException ee) {
+      }
+      catch (ExchangeException ee) {
         Log.i(TAG, Log.getStackTraceString(ee), ee);
         broadcastUpdateFailure(ee);
       }
@@ -483,7 +492,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
     private ProgressDialog mDialog;
     private final FragmentActivity activity;
-    private final boolean demoMode = PreferenceManager.getDefaultSharedPreferences(getApplication()).getBoolean(Constants.PREFS_KEY_DEMO, false);
 
     public PlaceOrderTask(FragmentActivity activity) {
       super();
@@ -507,18 +515,20 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         Toast.makeText(ExchangeService.this,
                 ExchangeService.this.getString(R.string.place_order_success), Toast.LENGTH_LONG).show();
         if (activity != null) {
-          PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment) activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
+          PlaceOrderFragment placeOrderFragment = (PlaceOrderFragment)activity.getSupportFragmentManager().findFragmentById(R.id.place_order_fragment);
           if (placeOrderFragment != null) {
             placeOrderFragment.resetValues();
           }
         }
-      } else {
-        Toast.makeText(ExchangeService.this, demoMode ? R.string.place_order_failed_demo : R.string.place_order_failed, Toast.LENGTH_LONG).show();
+      }
+      else {
+        Toast.makeText(ExchangeService.this, R.string.place_order_failed, Toast.LENGTH_LONG).show();
       }
       if (mDialog != null && mDialog.isShowing()) {
         try {
           mDialog.dismiss();
-        } catch (IllegalArgumentException iae) {
+        }
+        catch (IllegalArgumentException iae) {
           // not really nice, but works for this case. (#140)
           Log.w(TAG, iae);
         }
@@ -528,32 +538,33 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     @Override
     protected Boolean doInBackground(Order... params) {
       String orderId = null;
-      if (!demoMode) {
-        try {
-          if (params.length == 1) {
-            Order order = params[0];
-            if (order instanceof MarketOrder) {
-              MarketOrder mo = (MarketOrder) order;
-              orderId = exchange.placeMarketOrder(mo);
-              List<MarketOrder> list = new ArrayList<MarketOrder>();
-              list.add(mo);
-              broadcastOrderExecuted(list);
-            } else if (order instanceof LimitOrder) {
-              LimitOrder lo = (LimitOrder) order;
-              orderId = exchange.placeLimitOrder(lo);
-            }
-            lastUpdate = new Date();
-            broadcastUpdateSuccess();
+      try {
+        if (params.length == 1) {
+          Order order = params[0];
+          if (order instanceof MarketOrder) {
+            MarketOrder mo = (MarketOrder)order;
+            orderId = exchange.placeMarketOrder(mo);
+            List<MarketOrder> list = new ArrayList<MarketOrder>();
+            list.add(mo);
+            broadcastOrderExecuted(list);
           }
-        } catch (IOException ex) {
-          Log.i(TAG, Log.getStackTraceString(ex), ex);
-          broadcastUpdateFailure(ex);
-          return false;
-        } catch (ExchangeException ee) {
-          Log.e(TAG, Log.getStackTraceString(ee), ee);
-          broadcastUpdateFailure(ee);
-          return false;
+          else if (order instanceof LimitOrder) {
+            LimitOrder lo = (LimitOrder)order;
+            orderId = exchange.placeLimitOrder(lo);
+          }
+          lastUpdate = new Date();
+          broadcastUpdateSuccess();
         }
+      }
+      catch (IOException ex) {
+        Log.i(TAG, Log.getStackTraceString(ex), ex);
+        broadcastUpdateFailure(ex);
+        return false;
+      }
+      catch (ExchangeException ee) {
+        Log.e(TAG, Log.getStackTraceString(ee), ee);
+        broadcastUpdateFailure(ee);
+        return false;
       }
       // only finish activity if the order has been created in a PlaceOrderActivity
       if (activity != null && activity instanceof PlaceOrderActivity) {
