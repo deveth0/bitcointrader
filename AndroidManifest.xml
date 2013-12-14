@@ -80,10 +80,6 @@
       android:label="@string/exchange_configuration_title"
     />
     <activity
-      android:name="de.dev.eth0.bitcointrader.ui.AddExchangeConfigurationActivity"
-      android:label="@string/add_exchange_configuration_title"
-    />
-    <activity
       android:name="de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity"
       android:label="@string/mtgox_setup_activity_title"
     />

@@ -2,9 +2,13 @@
 //$Id$
 package de.dev.eth0.bitcointrader.data;
 
+import android.app.Activity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.xeiam.xchange.bitstamp.BitstampExchange;
 import de.dev.eth0.bitcointrader.exchanges.extensions.ExtendedMtGoxExchange;
+import de.dev.eth0.bitcointrader.ui.exchanges.BitstampSetupActivity;
+import de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity;
+import java.util.UUID;
 
 /**
  * A serializable ExchangeConfiguration
@@ -14,37 +18,55 @@ import de.dev.eth0.bitcointrader.exchanges.extensions.ExtendedMtGoxExchange;
 public class ExchangeConfiguration {
 
   public enum EXCHANGE_CONNECTION_SETTING {
-    DEMO("Demo Exchange"),
-    MTGOX(ExtendedMtGoxExchange.class.getName()),
-    BITSTAMP(BitstampExchange.class.getName()),
-    BTCN(ExtendedMtGoxExchange.class.getName());
+    DEMO("Demo", "Demo Exchange", null),
+    MTGOX("MtGox", ExtendedMtGoxExchange.class.getName(), MtGoxSetupActivity.class),
+    BITSTAMP("Bitstamp", BitstampExchange.class.getName(), BitstampSetupActivity.class),
+    BTCN("BTCN", ExtendedMtGoxExchange.class.getName(), BitstampSetupActivity.class);
 
+    private final String displayName;
     private final String exchangeClassName;
+    private final Class<? extends Activity> setupActivity;
 
-    private EXCHANGE_CONNECTION_SETTING(String exchangeClassName) {
+    private EXCHANGE_CONNECTION_SETTING(String displayName, String exchangeClassName, Class<? extends Activity> setupActivity) {
+      this.displayName = displayName;
       this.exchangeClassName = exchangeClassName;
+      this.setupActivity = setupActivity;
     }
 
     public String getExchangeClassName() {
       return exchangeClassName;
     }
 
-  }
+    public String getDisplayName() {
+      return displayName;
+    }
 
+    public Class<? extends Activity> getSetupActivity() {
+      return setupActivity;
+    }
+  }
+  private final String id;
   private final String name;
   private final String userName;
   private final String apiKey;
   private final String secretKey;
+  private boolean primary;
   private final EXCHANGE_CONNECTION_SETTING connectionSettings;
 
-  public ExchangeConfiguration(@JsonProperty("name") String name, @JsonProperty("userName") String userName, @JsonProperty("apiKey") String apiKey,
-          @JsonProperty("secretKey") String secretKey,
+  public ExchangeConfiguration(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("userName") String userName, @JsonProperty("apiKey") String apiKey,
+          @JsonProperty("secretKey") String secretKey, @JsonProperty("primary") Boolean primary,
           @JsonProperty("connectionSettings") EXCHANGE_CONNECTION_SETTING connectionSettings) {
+    this.id = id == null ? UUID.randomUUID().toString() : id;
+    this.primary = primary == null ? false : primary;
     this.name = name;
     this.userName = userName;
     this.apiKey = apiKey;
     this.secretKey = secretKey;
     this.connectionSettings = connectionSettings;
+  }
+
+  public String getId() {
+    return id;
   }
 
   public String getName() {
@@ -67,6 +89,14 @@ public class ExchangeConfiguration {
     return connectionSettings;
   }
 
+  public boolean isPrimary() {
+    return primary;
+  }
+
+  public void setPrimary(boolean primary) {
+    this.primary = primary;
+  }
+
   @Override
   public String toString() {
     return "ExchangeConfiguration{" + "apiKey=" + apiKey + ", secretKey=" + secretKey + ", connectionSettings=" + connectionSettings + '}';
@@ -75,9 +105,7 @@ public class ExchangeConfiguration {
   @Override
   public int hashCode() {
     int hash = 7;
-    hash = 43 * hash + (this.apiKey != null ? this.apiKey.hashCode() : 0);
-    hash = 43 * hash + (this.secretKey != null ? this.secretKey.hashCode() : 0);
-    hash = 43 * hash + (this.connectionSettings != null ? this.connectionSettings.hashCode() : 0);
+    hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
     return hash;
   }
 
@@ -89,18 +117,10 @@ public class ExchangeConfiguration {
     if (getClass() != obj.getClass()) {
       return false;
     }
-    final ExchangeConfiguration other = (ExchangeConfiguration) obj;
-    if ((this.apiKey == null) ? (other.apiKey != null) : !this.apiKey.equals(other.apiKey)) {
-      return false;
-    }
-    if ((this.secretKey == null) ? (other.secretKey != null) : !this.secretKey.equals(other.secretKey)) {
-      return false;
-    }
-    if (this.connectionSettings != other.connectionSettings) {
+    final ExchangeConfiguration other = (ExchangeConfiguration)obj;
+    if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
       return false;
     }
     return true;
   }
-
-
 }

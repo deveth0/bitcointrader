@@ -4,7 +4,11 @@
     android:id="@+id/exchange_configuration_add"
     android:icon="@drawable/ic_action_add"
     android:showAsAction="ifRoom"
-    android:title="@string/exchange_configuration_add"/>
+    android:title="@string/exchange_configuration_add">
+    <menu>
+      <item android:id="@+id/bitcointrader_options_add_exchange_submenu" android:title="@string/empty"></item>
+    </menu>
+  </item>
   <item
     android:id="@+id/bitcointrader_options_help"
     android:showAsAction="never"

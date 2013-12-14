@@ -66,7 +66,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
       try {
         Log.i(TAG, "Creating exchangeconfiguration for the old config");
         getExchangeConfigurationDAO().addExchangeConfiguration(
-                new ExchangeConfiguration("mtGox", null, mtGoxAPIKey, mtGoxSecretKey, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
+                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
         edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);

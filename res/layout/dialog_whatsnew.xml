@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:scrollbars="none" >
+  <LinearLayout 
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:padding="10dp"
     android:orientation="vertical" >
 
-  <TextView
-    android:id="@+id/dialog_whatsnew_version"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-    android:textStyle="bold"/>
+    <TextView
+      android:id="@+id/dialog_whatsnew_version"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:textStyle="bold"/>
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
       android:text="@string/whats_new_text" />
-    
-</LinearLayout>
+
+    <TextView
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="@dimen/list_entry_padding_horizontal"
+      android:textStyle="bold"
+      android:text="@string/whats_new_disclaimer_headline"/>
+      <TextView
+        android:text="@string/whats_new_disclaimer_text"
+        android:autoLink="email"
+        android:layout_width="fill_parent"
+      android:layout_height="fill_parent"/>
+  </LinearLayout>
+</ScrollView>

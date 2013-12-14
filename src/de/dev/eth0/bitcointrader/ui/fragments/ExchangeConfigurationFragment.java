@@ -21,11 +21,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
-import de.dev.eth0.bitcointrader.ui.AddExchangeConfigurationActivity;
 import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 
@@ -43,8 +43,8 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
           Bundle savedInstanceState) {
     View layout = super.onCreateView(inflater, container, savedInstanceState);
-    ListView lv = (ListView) layout.findViewById(android.R.id.list);
-    ViewGroup parent = (ViewGroup) lv.getParent();
+    ListView lv = (ListView)layout.findViewById(android.R.id.list);
+    ViewGroup parent = (ViewGroup)lv.getParent();
 
     // Remove ListView and add CustomView  in its place
     int lvIndex = parent.indexOfChild(lv);
@@ -57,8 +57,8 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   @Override
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
-    this.activity = (AbstractBitcoinTraderActivity) activity;
-    this.application = (BitcoinTraderApplication) activity.getApplication();
+    this.activity = (AbstractBitcoinTraderActivity)activity;
+    this.application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -95,9 +95,6 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
       case R.id.bitcointrader_options_help:
         HelpDialogFragment.page(activity.getSupportFragmentManager(), "help_exchange_configuration");
         return true;
-      case R.id.exchange_configuration_add:
-        startActivity(new Intent(activity, AddExchangeConfigurationActivity.class));
-        return true;
     }
     return super.onOptionsItemSelected(item);
   }
@@ -106,22 +103,49 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
     inflater.inflate(R.menu.exchangeconfiguration_options, menu);
+
+    Menu exchangeMenu = menu.findItem(R.id.exchange_configuration_add).getSubMenu();
+    exchangeMenu.clear();
+    int idx = 0;
+    for (final ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING exchange : ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.values()) {
+      if (exchange == ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO) {
+        continue;
+      }
+      MenuItem mi = exchangeMenu.add(Menu.NONE, idx++, Menu.NONE, exchange.getDisplayName());
+      mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        public boolean onMenuItemClick(MenuItem item) {
+          startActivity(new Intent(activity, exchange.getSetupActivity()));
+          return true;
+        }
+      });
+    }
   }
 
   @Override
   public boolean onContextItemSelected(android.view.MenuItem item) {
+    AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+    ExchangeConfiguration selectedConfig = adapter.getItem(info.position);
     switch (item.getItemId()) {
       case R.id.exchange_configuration_context_delete:
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        ExchangeConfiguration selectedConfig = adapter.getItem(info.position);
         try {
           application.getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
-        } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+        }
+        catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
           Log.w(TAG, Log.getStackTraceString(ece));
         }
         updateView();
         return true;
       case R.id.exchange_configuration_context_edit:
+        startActivity(new Intent(activity, selectedConfig.getConnectionSettings().getSetupActivity()).putExtra(Constants.EXTRA_EXCHANGE, selectedConfig.getId()));
+        return true;
+      case R.id.exchange_configuration_context_set_primary:
+        try {
+          application.getExchangeConfigurationDAO().setExchangeConfigurationPrimary(selectedConfig.getId());
+        }
+        catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+          Log.w(TAG, Log.getStackTraceString(ece));
+        }
+        updateView();
         return true;
     }
 
@@ -143,7 +167,8 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
     Log.d(TAG, ".updateView");
     try {
       adapter.replace(application.getExchangeConfigurationDAO().getExchangeConfigurations());
-    } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+    }
+    catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, Log.getStackTraceString(ece));
     }
   }

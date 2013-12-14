@@ -4,11 +4,15 @@ package de.dev.eth0.bitcointrader.ui.exchanges;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException;
@@ -21,38 +25,55 @@ import de.schildbach.wallet.ui.HelpDialogFragment;
 public abstract class AbstractExchangeConfigurationSetupActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = AbstractExchangeConfigurationSetupActivity.class.getSimpleName();
+  private ExchangeConfiguration currentConfig;
   private Button submitButton;
+  protected EditText nameEditText;
 
   protected abstract String getHelpPageName();
 
-  protected abstract ExchangeConfiguration buildExchangeConfiguration();
+  /**
+   * Sets all required parameter of a ExchangeConfig. If currentConfig is not null, this method has to use the same id as the one of currentConfig.
+   *
+   * @param currentConfig
+   * @return
+   */
+  protected abstract ExchangeConfiguration buildExchangeConfiguration(ExchangeConfiguration currentConfig);
 
+  protected abstract void setExchangeConfiguration(ExchangeConfiguration config);
 
   protected final void saveExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) {
     Intent returnIntent = new Intent();
     try {
       getBitcoinTraderApplication().getExchangeConfigurationDAO().addExchangeConfiguration(exchangeConfiguration);
       setResult(RESULT_OK, returnIntent);
-    } catch (ExchangeConfigurationException ex) {
+    }
+    catch (ExchangeConfigurationException ex) {
       Log.e(TAG, Log.getStackTraceString(ex), ex);
       setResult(RESULT_CANCELED, returnIntent);
     }
     finish();
   }
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    submitButton = (Button) findViewById(R.id.add_exchange_configuration_submit_button);
+
+    submitButton = (Button)findViewById(R.id.add_exchange_configuration_submit_button);
     submitButton.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
-        ExchangeConfiguration config = buildExchangeConfiguration();
+        ExchangeConfiguration config = buildExchangeConfiguration(currentConfig);
         if (config != null) {
           saveExchangeConfiguration(config);
         }
       }
     });
+    String exchange = getIntent().getStringExtra(Constants.EXTRA_EXCHANGE);
+    if (!TextUtils.isEmpty(exchange)) {
+      currentConfig = getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfiguration(exchange);
+      if (currentConfig != null) {
+        setExchangeConfiguration(currentConfig);
+      }
+    }
   }
 
   @Override
@@ -64,7 +85,7 @@ public abstract class AbstractExchangeConfigurationSetupActivity extends Abstrac
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
-    getSupportMenuInflater().inflate(R.menu.addexchange_options, menu);
+    getSupportMenuInflater().inflate(R.menu.help_options, menu);
     return true;
   }
 
@@ -77,5 +98,4 @@ public abstract class AbstractExchangeConfigurationSetupActivity extends Abstrac
     }
     return super.onOptionsItemSelected(item);
   }
-
 }

@@ -38,6 +38,7 @@ import de.schildbach.wallet.ui.HelpDialogFragment;
 public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = BitcoinTraderActivity.class.getName();
+  private TextView titleView;
   private Menu mSelectCurrencyItem;
   private ListView mDrawerList;
   private DrawerLayout mDrawerLayout;
@@ -51,8 +52,8 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     setContentView(R.layout.bitcointrader_content);
 
 
-    mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-    mDrawerList = (ListView) findViewById(R.id.bitcointrader_exchange_drawer);
+    mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+    mDrawerList = (ListView)findViewById(R.id.bitcointrader_exchange_drawer);
     getSupportActionBar().setHomeButtonEnabled(true);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -64,19 +65,19 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
        */
       @Override
       public void onDrawerClosed(View view) {
-        getActionBar().setTitle(getExchangeService().getExchangeName());
+        getSupportActionBar().setTitle(getExchangeService().getExchangeName());
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
-              /**
-               * Called when a drawer has settled in a completely open state.
-               */
-              @Override
-              public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle(mDrawerTitle);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-              }
-            };
+      /**
+       * Called when a drawer has settled in a completely open state.
+       */
+      @Override
+      public void onDrawerOpened(View drawerView) {
+        getSupportActionBar().setTitle(mDrawerTitle);
+        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+      }
+    };
 
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -94,6 +95,10 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     });
     updateExchangeDrawer();
     init();
+
+
+
+    getSupportActionBar().setTitle(getExchangeService().getExchangeName());
   }
 
   private void init() {
@@ -102,8 +107,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
     int savedVersionNumber = sharedPref.getInt(Constants.PREFS_KEY_LAST_VERSION_KEY, 0);
 
-    if (true) {
-      //if (currentVersionNumber > savedVersionNumber) {
+    if (currentVersionNumber > savedVersionNumber) {
       showWhatsNewDialog();
 
       Editor editor = sharedPref.edit();
@@ -123,11 +127,11 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
     builder.setView(view).setTitle(R.string.whats_new_title)
             .setPositiveButton(R.string.whats_new_ok, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-              }
-            });
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.dismiss();
+      }
+    });
 
     AlertDialog dialog = builder.create();
     dialog.show();
@@ -136,7 +140,8 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   private void updateExchangeDrawer() {
     try {
       adapter.replace(getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfigurations());
-    } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+    }
+    catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, "Could not load exchange configurations", ece);
     }
   }
@@ -186,7 +191,8 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       case android.R.id.home:
         if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
           mDrawerLayout.closeDrawer(mDrawerList);
-        } else {
+        }
+        else {
           mDrawerLayout.openDrawer(mDrawerList);
         }
         return true;

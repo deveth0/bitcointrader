@@ -41,11 +41,13 @@
   <string name="exchange_configuration_title">Exchange Configurations</string>
   <string name="exchange_configuration_empty_text">No exchanges configured</string>
   <string name="exchange_configuration_add">Add new exchange</string>
+  <string name="exchange_configuration_set_primary">Mark as primary exchange</string>
   <string name="exchange_configuration_edit">Edit exchange</string>
   <string name="exchange_configuration_delete">Delete exchange</string>
   <string name="exchange_configuration_name">Name</string>
   
   <string name="add_exchange_configuration_title">Add exchange</string>
+  <string name="add_exchange_name_duplicate">The name is already used.</string>
   
   <string name="mtgox_setup_activity_title">Add mtGox Account</string>
   <string name="bitstamp_setup_activity_title">Add bitstamp Account</string>
@@ -189,6 +191,7 @@
   <string name="whats_new_title">What\'s new</string>
   <string name="whats_new_text">- Support for the following exchanges:\n** MtGox\n** Bitstamp\n** BTC-China\n- Multiple bugfixes</string>
   <string name="whats_new_ok">OK</string>
-
+  <string name="whats_new_disclaimer_headline">Disclaimer</string>
+  <string name="whats_new_disclaimer_text">This is a spare time project of mine. Therefore I can\'t take over any responsibility for any issues. Only use this app, it that\'s ok for you.\n\nIf you have any problems with the app, please contact me via mail: bitcointrader@dev-eth0.de</string>
   
 </resources>

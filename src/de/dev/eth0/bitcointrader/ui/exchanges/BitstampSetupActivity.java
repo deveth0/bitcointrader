@@ -13,7 +13,6 @@ import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
  */
 public class BitstampSetupActivity extends AbstractExchangeConfigurationSetupActivity {
 
-  private EditText nameEditText;
   private EditText manualSetupKeyEditText;
   private EditText manualSetupSecretKeyEditText;
   private EditText manualSetupUsernameEditText;
@@ -22,13 +21,13 @@ public class BitstampSetupActivity extends AbstractExchangeConfigurationSetupAct
     return "setupBitstamp";
   }
 
-  protected ExchangeConfiguration buildExchangeConfiguration() {
+  protected ExchangeConfiguration buildExchangeConfiguration(ExchangeConfiguration currentConfig) {
     String name = nameEditText.getText().toString();
     String key = manualSetupKeyEditText.getText().toString();
     String secretKey = manualSetupSecretKeyEditText.getText().toString();
     String username = manualSetupUsernameEditText.getText().toString();
     if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(key) && !TextUtils.isEmpty(secretKey)) {
-      return new ExchangeConfiguration(name, username, key, secretKey, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.BITSTAMP);
+      return new ExchangeConfiguration((currentConfig == null ? null : currentConfig.getId()), name, username, key, secretKey, false, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.BITSTAMP);
     }
     return null;
   }
@@ -43,4 +42,11 @@ public class BitstampSetupActivity extends AbstractExchangeConfigurationSetupAct
     super.onCreate(savedInstanceState);
   }
 
+  @Override
+  protected void setExchangeConfiguration(ExchangeConfiguration config) {
+    nameEditText.setText(config.getName());
+    manualSetupKeyEditText.setText(config.getApiKey());
+    manualSetupSecretKeyEditText.setText(config.getSecretKey());
+    manualSetupUsernameEditText.setText(config.getUserName());
+  }
 }

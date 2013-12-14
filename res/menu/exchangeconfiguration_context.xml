@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
   <item
     android:id="@+id/exchange_configuration_context_edit"
-    android:icon="@drawable/ic_action_add"
     android:title="@string/exchange_configuration_edit"/>
   <item
+    android:id="@+id/exchange_configuration_context_set_primary"
+    android:title="@string/exchange_configuration_set_primary"/>
+  <item
     android:id="@+id/exchange_configuration_context_delete"
-    android:icon="@drawable/ic_action_add"
     android:title="@string/exchange_configuration_delete"/>
 </menu>

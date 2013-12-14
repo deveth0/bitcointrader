@@ -25,7 +25,7 @@ public class ExchangeConfigurationListAdapter extends AbstractListAdapter<Exchan
   public void bindView(View row, ExchangeConfiguration entry) {
     TextView rowType = (TextView)row.findViewById(R.id.exchange_configuration_row_type);
     TextView rowName = (TextView)row.findViewById(R.id.exchange_configuration_row_name);
-    rowType.setText(entry.getConnectionSettings().toString());
+    rowType.setText(entry.getConnectionSettings().getDisplayName());
     rowName.setText(entry.getName());
   }
 
