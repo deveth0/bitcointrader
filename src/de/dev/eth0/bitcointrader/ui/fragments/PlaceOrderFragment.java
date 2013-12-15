@@ -219,7 +219,7 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
       totalView.setAmount(totalSpend);
       if (getExchangeService() != null) {
         AccountInfo accountInfo = getExchangeService().getAccountInfo();
-        if (accountInfo != null) {
+        if (accountInfo != null && accountInfo.getTradingFee() != null) {
           if (type.equals(Order.OrderType.ASK)) {
             estimatedFeeView.setPrecision(Constants.PRECISION_CURRENCY);
             estimatedFeeView.setAmount(totalSpend.multipliedBy(accountInfo.getTradingFee().scaleByPowerOfTen(-2)));
