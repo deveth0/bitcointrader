@@ -4,6 +4,7 @@ package de.dev.eth0.bitcointrader.exchanges.wrappers;
 
 import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.btcchina.BTCChinaExchange;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.exchanges.AbstractExchangeWrapper;
 
 /**
@@ -12,8 +13,8 @@ import de.dev.eth0.bitcointrader.exchanges.AbstractExchangeWrapper;
  */
 public class BTCChinaExchangeWrapper extends AbstractExchangeWrapper<BTCChinaExchange> {
 
-  public BTCChinaExchangeWrapper(String name, Exchange exchange) {
-    super(name, (BTCChinaExchange)exchange);
+  public BTCChinaExchangeWrapper(ExchangeConfiguration config, Exchange exchange) {
+    super(config, (BTCChinaExchange)exchange);
   }
 
 }

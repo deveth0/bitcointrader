@@ -11,6 +11,7 @@ import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import java.io.IOException;
@@ -23,17 +24,17 @@ import java.util.List;
  */
 public abstract class AbstractExchangeWrapper<T extends Exchange> implements ExchangeWrapper {
 
-  private final String name;
+  private final ExchangeConfiguration config;
   protected final T exchange;
 
-  public AbstractExchangeWrapper(String name, T exchange) {
-    this.name = name;
+  public AbstractExchangeWrapper(ExchangeConfiguration config, T exchange) {
+    this.config = config;
     this.exchange = exchange;
   }
 
   @Override
-  public String getName() {
-    return name;
+  public ExchangeConfiguration getConfig() {
+    return config;
   }
 
   @Override
@@ -75,6 +76,12 @@ public abstract class AbstractExchangeWrapper<T extends Exchange> implements Exc
   public ExchangeOrderResult getOrderResult(Order lo) {
     // Not supported
     return null;
+  }
+
+  @Override
+  public boolean supportsWalletHistory() {
+    // Usually not supported
+    return false;
   }
 
   @Override

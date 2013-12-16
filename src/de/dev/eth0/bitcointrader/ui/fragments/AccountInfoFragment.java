@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.xeiam.xchange.dto.account.AccountInfo;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
@@ -22,6 +23,7 @@ import de.dev.eth0.bitcointrader.ui.WalletHistoryActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
 import org.joda.money.CurrencyUnit;
+
 /**
  * @author Alexander Muthmann
  */
@@ -45,16 +47,22 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
-    this.application = (BitcoinTraderApplication) activity.getApplication();
+    this.application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view =  inflater.inflate(R.layout.account_info_fragment, container, false);
+    View view = inflater.inflate(R.layout.account_info_fragment, container, false);
     view.setOnClickListener(new View.OnClickListener() {
-
       public void onClick(View v) {
-        startActivity(new Intent(getActivity(), WalletHistoryActivity.class));
+        if (getExchangeService() != null) {
+          if (getExchangeService().getExchange().supportsWalletHistory()) {
+            startActivity(new Intent(getActivity(), WalletHistoryActivity.class));
+          }
+          else {
+            Toast.makeText(getActivity(), R.string.wallet_history_not_supported, Toast.LENGTH_LONG).show();
+          }
+        }
       }
     });
     return view;
@@ -87,12 +95,12 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-    viewName = (TextView) view.findViewById(R.id.your_wallet_name);
-    viewDollar = (CurrencyTextView) view.findViewById(R.id.your_wallet_dollar);
+    viewName = (TextView)view.findViewById(R.id.your_wallet_name);
+    viewDollar = (CurrencyTextView)view.findViewById(R.id.your_wallet_dollar);
     viewDollar.setPrecision(Constants.PRECISION_CURRENCY);
-    viewBtc = (CurrencyTextView) view.findViewById(R.id.your_wallet_btc);
+    viewBtc = (CurrencyTextView)view.findViewById(R.id.your_wallet_btc);
     viewBtc.setPrecision(Constants.PRECISION_BITCOIN);
-    viewTradeFee = (AmountTextView) view.findViewById(R.id.your_wallet_tradefee);
+    viewTradeFee = (AmountTextView)view.findViewById(R.id.your_wallet_tradefee);
     viewTradeFee.setPostfix("%");
     viewTradeFee.setPrefix(getActivity().getString(R.string.account_info_trade_fee_label));
   }

@@ -64,7 +64,9 @@ public class AmountTextView extends TextView {
       if (postfix != null) {
         text.append(postfix);
       }
-      setText(text);
     }
+    else
+      text = new SpannableStringBuilder();
+    setText(text);
   }
 }

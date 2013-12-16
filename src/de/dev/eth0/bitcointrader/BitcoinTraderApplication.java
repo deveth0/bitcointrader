@@ -19,7 +19,6 @@ import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
-import java.util.List;
 
 /**
  * @author Alexander Muthmann
@@ -36,15 +35,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName name, IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder) binder).getService();
-      List<ExchangeConfiguration> configs;
-      try {
-        configs = getExchangeConfigurationDAO().getExchangeConfigurations();
-        if (!configs.isEmpty()) {
-          exchangeService.setExchange(configs.get(0));
-        }
-      } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ex) {
-        Log.e(TAG, Log.getStackTraceString(ex));
-      }
+      exchangeService.setExchange(getExchangeConfigurationDAO().getPrimaryExchangeConfiguration());
       createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));
       BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
     }
@@ -66,7 +57,7 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
       try {
         Log.i(TAG, "Creating exchangeconfiguration for the old config");
         getExchangeConfigurationDAO().addExchangeConfiguration(
-                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
+                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
         edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);

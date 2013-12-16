@@ -24,7 +24,7 @@ public class ExchangeWrapperFactory {
 
   public static ExchangeWrapper forExchangeConfiguration(ExchangeConfiguration config) {
     if (config.getConnectionSettings() == ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO) {
-      return new DemoExchangeWrapper();
+      return new DemoExchangeWrapper(config);
     }
     Exchange exchange = ExchangeFactory.INSTANCE.createExchange(config.getConnectionSettings().getExchangeClassName());
     ExchangeSpecification exchangeSpec = exchange.getDefaultExchangeSpecification();
@@ -35,9 +35,9 @@ public class ExchangeWrapperFactory {
 
     switch (config.getConnectionSettings()) {
       case MTGOX:
-        return new MtGoxExchangeWrapper(config.getName(), exchange);
+        return new MtGoxExchangeWrapper(config, exchange);
       case BITSTAMP:
-        return new BitstampExchangeWrapper(config.getName(), exchange);
+        return new BitstampExchangeWrapper(config, exchange);
       case BTCN:
     }
     return null;

@@ -42,9 +42,17 @@
   <string name="exchange_configuration_empty_text">No exchanges configured</string>
   <string name="exchange_configuration_add">Add new exchange</string>
   <string name="exchange_configuration_set_primary">Mark as primary exchange</string>
+  <string name="exchange_configuration_toogle_enabled">Toogle enabled</string>
   <string name="exchange_configuration_edit">Edit exchange</string>
   <string name="exchange_configuration_delete">Delete exchange</string>
   <string name="exchange_configuration_name">Name</string>
+  <string name="exchange_configuration_primary">(Primary)</string>
+  <string name="exchange_configuration_disabled">(Disabled)</string>
+  <string name="exchange_configuration_active">(Active)</string>
+  <string name="exchange_configuration_toogle_primary_error">You can\'t disable the primary exchange!</string>
+  <string name="exchange_configuration_delete_confirm_message">Do you really want to delete this exchange configuration?</string>
+  <string name="exchange_configuration_delete_confirm_ok">Delete</string>
+  <string name="exchange_configuration_delete_confirm_cancel">Cancel</string>
   
   <string name="add_exchange_configuration_title">Add exchange</string>
   <string name="add_exchange_name_duplicate">The name is already used.</string>
@@ -66,6 +74,7 @@
   <string name="wallet_history_price">Price:</string>
   <string name="wallet_history_info_bought">BTC bought: %1$s at %2$s</string>
   <string name="wallet_history_info_sold">BTC sold: %1$s at %2$s</string>
+  <string name="wallet_history_not_supported">Wallet history currently not supported for this exchange.</string>
 
   <string name="price_chart_title">Price Chart</string>
   <string name="price_chart_symbol">Symbol</string>

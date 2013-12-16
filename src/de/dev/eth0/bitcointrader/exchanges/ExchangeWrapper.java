@@ -9,6 +9,7 @@ import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import java.io.IOException;
@@ -21,12 +22,18 @@ import java.util.List;
 public interface ExchangeWrapper {
 
   /**
-   * Returns name for the exchange
+   * Returns the configuration used for this exchange
    *
-   * @return name
+   * @return config
    */
-  public String getName();
+  public ExchangeConfiguration getConfig();
 
+  /**
+   * Does the exchange support wallet history?
+   *
+   * @return
+   */
+  public boolean supportsWalletHistory();
   /**
    * Returns the wallet history for the given currency
    *

@@ -3,8 +3,11 @@
 package de.dev.eth0.bitcointrader.ui;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
@@ -29,6 +32,7 @@ import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeDrawerListAdapter;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 
@@ -38,13 +42,15 @@ import de.schildbach.wallet.ui.HelpDialogFragment;
 public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
   private static final String TAG = BitcoinTraderActivity.class.getName();
-  private TextView titleView;
-  private Menu mSelectCurrencyItem;
+  private Menu mSelectCurrencyOptionMenu;
+  private MenuItem mWalletHistoryOptionMenuItem;
   private ListView mDrawerList;
   private DrawerLayout mDrawerLayout;
   private ActionBarDrawerToggle mDrawerToggle;
   private CharSequence mDrawerTitle;
-  private ExchangeConfigurationListAdapter adapter;
+  private ExchangeDrawerListAdapter adapter;
+  private BroadcastReceiver broadcastReceiver;
+  private LocalBroadcastManager broadcastManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +71,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
        */
       @Override
       public void onDrawerClosed(View view) {
-        getSupportActionBar().setTitle(getExchangeService().getExchangeName());
+        getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
@@ -82,7 +88,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-    adapter = new ExchangeConfigurationListAdapter(this);
+    adapter = new ExchangeDrawerListAdapter(this);
     mDrawerList.setAdapter(adapter);
     mDrawerList.setOnItemClickListener(new ListView.OnItemClickListener() {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -91,14 +97,21 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
           getExchangeService().setExchange(config);
           mDrawerLayout.closeDrawer(mDrawerList);
         }
+        updateView();
       }
     });
-    updateExchangeDrawer();
     init();
 
 
+  }
 
-    getSupportActionBar().setTitle(getExchangeService().getExchangeName());
+  @Override
+  public void onPause() {
+    super.onPause();
+    if (broadcastReceiver != null) {
+      broadcastManager.unregisterReceiver(broadcastReceiver);
+      broadcastReceiver = null;
+    }
   }
 
   private void init() {
@@ -137,9 +150,16 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     dialog.show();
   }
 
-  private void updateExchangeDrawer() {
+  private void updateView() {
+    if (getExchangeService() != null) {
+      getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
+      if (mWalletHistoryOptionMenuItem != null) {
+        mWalletHistoryOptionMenuItem.setVisible(getExchangeService().getExchange().supportsWalletHistory());
+      }
+    }
+
     try {
-      adapter.replace(getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfigurations());
+      adapter.replace(getBitcoinTraderApplication().getExchangeConfigurationDAO().getActiveExchangeConfigurations());
     }
     catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, "Could not load exchange configurations", ece);
@@ -162,7 +182,20 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   @Override
   protected void onResume() {
     getBitcoinTraderApplication().startExchangeService();
-    updateExchangeDrawer();
+    updateView();
+    broadcastReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, ".onReceive");
+        updateView();
+      }
+    };
+    broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+
+    if (getExchangeService() != null) {
+      getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
+    }
     super.onResume();
   }
 
@@ -170,9 +203,9 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
     getSupportMenuInflater().inflate(R.menu.bitcointrader_options, menu);
-
-    mSelectCurrencyItem = menu.findItem(R.id.bitcointrader_options_select_currency).getSubMenu();
-    mSelectCurrencyItem.clear();
+    mWalletHistoryOptionMenuItem = menu.findItem(R.id.bitcointrader_options_wallet_history);
+    mSelectCurrencyOptionMenu = menu.findItem(R.id.bitcointrader_options_select_currency).getSubMenu();
+    mSelectCurrencyOptionMenu.clear();
     return true;
   }
 
@@ -231,14 +264,14 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   }
 
   private void showSelectCurrencyPopup() {
-    if (mSelectCurrencyItem.size() == 0) {
+    if (mSelectCurrencyOptionMenu.size() == 0) {
       int idx = 0;
       if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
         for (Wallet wallet : getExchangeService().getAccountInfo().getWallets()) {
           if (wallet != null && wallet.getBalance() != null
                   && !TextUtils.isEmpty(wallet.getCurrency())
                   && !wallet.getCurrency().equals(Constants.CURRENCY_CODE_BITCOIN)) {
-            MenuItem mi = mSelectCurrencyItem.add(Menu.NONE, idx++, Menu.NONE, wallet.getCurrency());
+            MenuItem mi = mSelectCurrencyOptionMenu.add(Menu.NONE, idx++, Menu.NONE, wallet.getCurrency());
             mi.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
               public boolean onMenuItemClick(MenuItem item) {
                 getExchangeService().setCurrency(item.getTitle().toString());

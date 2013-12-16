@@ -3,6 +3,8 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -124,16 +127,27 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   @Override
   public boolean onContextItemSelected(android.view.MenuItem item) {
     AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
-    ExchangeConfiguration selectedConfig = adapter.getItem(info.position);
+    final ExchangeConfiguration selectedConfig = adapter.getItem(info.position);
     switch (item.getItemId()) {
       case R.id.exchange_configuration_context_delete:
-        try {
-          application.getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
-        }
-        catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
-          Log.w(TAG, Log.getStackTraceString(ece));
-        }
-        updateView();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
+        alertDialogBuilder.setPositiveButton(R.string.exchange_configuration_delete_confirm_ok, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            try {
+              application.getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
+            }
+            catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+              Log.w(TAG, Log.getStackTraceString(ece));
+            }
+            updateView();
+          }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.exchange_configuration_delete_confirm_cancel, new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+          }
+        });
+        alertDialogBuilder.setMessage(R.string.exchange_configuration_delete_confirm_message);
+        alertDialogBuilder.create().show();
         return true;
       case R.id.exchange_configuration_context_edit:
         startActivity(new Intent(activity, selectedConfig.getConnectionSettings().getSetupActivity()).putExtra(Constants.EXTRA_EXCHANGE, selectedConfig.getId()));
@@ -146,6 +160,20 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
           Log.w(TAG, Log.getStackTraceString(ece));
         }
         updateView();
+        return true;
+      case R.id.exchange_configuration_context_toogle_enabled:
+        if (selectedConfig.isPrimary()) {
+          Toast.makeText(getActivity(), R.string.exchange_configuration_toogle_primary_error, Toast.LENGTH_LONG).show();
+        }
+        else {
+        try {
+          application.getExchangeConfigurationDAO().toogleExchangeConfigurationEnabled(selectedConfig.getId());
+        }
+        catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+          Log.w(TAG, Log.getStackTraceString(ece));
+        }
+          updateView();
+        }
         return true;
     }
 

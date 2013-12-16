@@ -4,6 +4,7 @@ package de.dev.eth0.bitcointrader.exchanges.wrappers;
 
 import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.bitstamp.BitstampExchange;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.exchanges.AbstractExchangeWrapper;
 
 /**
@@ -12,8 +13,8 @@ import de.dev.eth0.bitcointrader.exchanges.AbstractExchangeWrapper;
  */
 public class BitstampExchangeWrapper extends AbstractExchangeWrapper<BitstampExchange> {
 
-  public BitstampExchangeWrapper(String name, Exchange exchange) {
-    super(name, (BitstampExchange)exchange);
+  public BitstampExchangeWrapper(ExchangeConfiguration config, Exchange exchange) {
+    super(config, (BitstampExchange)exchange);
   }
 
 }

@@ -25,7 +25,7 @@ public class MtGoxSetupActivity extends AbstractExchangeConfigurationSetupActivi
     String key = manualSetupKeyEditText.getText().toString();
     String secretKey = manualSetupSecretKeyEditText.getText().toString();
     if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(key) && !TextUtils.isEmpty(secretKey)) {
-      return new ExchangeConfiguration(currentConfig == null ? null : currentConfig.getId(), name, null, key, secretKey, false, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX);
+      return new ExchangeConfiguration(currentConfig == null ? null : currentConfig.getId(), name, null, key, secretKey, false, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX);
     }
     return null;
   }

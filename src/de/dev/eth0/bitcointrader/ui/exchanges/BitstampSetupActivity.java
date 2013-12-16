@@ -27,7 +27,7 @@ public class BitstampSetupActivity extends AbstractExchangeConfigurationSetupAct
     String secretKey = manualSetupSecretKeyEditText.getText().toString();
     String username = manualSetupUsernameEditText.getText().toString();
     if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(key) && !TextUtils.isEmpty(secretKey)) {
-      return new ExchangeConfiguration((currentConfig == null ? null : currentConfig.getId()), name, username, key, secretKey, false, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.BITSTAMP);
+      return new ExchangeConfiguration((currentConfig == null ? null : currentConfig.getId()), name, username, key, secretKey, false, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.BITSTAMP);
     }
     return null;
   }

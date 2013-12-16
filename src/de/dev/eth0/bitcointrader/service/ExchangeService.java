@@ -136,8 +136,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     broadcastUpdate();
   }
 
-  public String getExchangeName() {
-    return exchange == null ? "" : exchange.getName();
+  public ExchangeConfiguration getExchangeConfig() {
+    return exchange == null ? null : exchange.getConfig();
   }
 
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

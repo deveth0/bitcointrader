@@ -51,13 +51,15 @@ public class ExchangeConfiguration {
   private final String apiKey;
   private final String secretKey;
   private boolean primary;
+  private boolean enabled;
   private final EXCHANGE_CONNECTION_SETTING connectionSettings;
 
   public ExchangeConfiguration(@JsonProperty("id") String id, @JsonProperty("name") String name, @JsonProperty("userName") String userName, @JsonProperty("apiKey") String apiKey,
-          @JsonProperty("secretKey") String secretKey, @JsonProperty("primary") Boolean primary,
+          @JsonProperty("secretKey") String secretKey, @JsonProperty("primary") Boolean primary, @JsonProperty("enabled") Boolean enabled,
           @JsonProperty("connectionSettings") EXCHANGE_CONNECTION_SETTING connectionSettings) {
     this.id = id == null ? UUID.randomUUID().toString() : id;
     this.primary = primary == null ? false : primary;
+    this.enabled = enabled == null ? true : enabled;
     this.name = name;
     this.userName = userName;
     this.apiKey = apiKey;
@@ -95,6 +97,14 @@ public class ExchangeConfiguration {
 
   public void setPrimary(boolean primary) {
     this.primary = primary;
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 
   @Override

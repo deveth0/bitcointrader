@@ -6,6 +6,8 @@
   <item
     android:id="@+id/exchange_configuration_context_set_primary"
     android:title="@string/exchange_configuration_set_primary"/>
+  <item android:id="@+id/exchange_configuration_context_toogle_enabled"
+        android:title="@string/exchange_configuration_toogle_enabled"/>
   <item
     android:id="@+id/exchange_configuration_context_delete"
     android:title="@string/exchange_configuration_delete"/>

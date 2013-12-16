@@ -11,11 +11,11 @@ import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 /**
  * @author Alexander Muthmann
  */
-public class ExchangeConfigurationListAdapter extends AbstractListAdapter<ExchangeConfiguration> {
+public class ExchangeDrawerListAdapter extends AbstractListAdapter<ExchangeConfiguration> {
 
-  protected final AbstractBitcoinTraderActivity bitcoinTraderActivity;
+  private final AbstractBitcoinTraderActivity bitcoinTraderActivity;
 
-  public ExchangeConfigurationListAdapter(AbstractBitcoinTraderActivity activity) {
+  public ExchangeDrawerListAdapter(AbstractBitcoinTraderActivity activity) {
     super(activity);
     this.bitcoinTraderActivity = activity;
   }
@@ -30,11 +30,10 @@ public class ExchangeConfigurationListAdapter extends AbstractListAdapter<Exchan
     TextView rowName = (TextView)row.findViewById(R.id.exchange_configuration_row_name);
     rowType.setText(entry.getConnectionSettings().getDisplayName());
     rowName.setText(entry.getName());
-    if (entry.isPrimary()) {
-      rowName.append(" " + bitcoinTraderActivity.getString(R.string.exchange_configuration_primary));
-    }
-    if (!entry.isEnabled()) {
-      rowName.append(" " + bitcoinTraderActivity.getString(R.string.exchange_configuration_disabled));
+    if (bitcoinTraderActivity.getBitcoinTraderApplication().getExchangeService() != null) {
+      if (entry.equals(bitcoinTraderActivity.getBitcoinTraderApplication().getExchangeService().getExchangeConfig())) {
+        rowName.append(" " + bitcoinTraderActivity.getString(R.string.exchange_configuration_active));
+      }
     }
   }
 

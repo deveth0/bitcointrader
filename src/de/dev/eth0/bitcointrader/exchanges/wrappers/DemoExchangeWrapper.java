@@ -10,6 +10,7 @@ import com.xeiam.xchange.dto.marketdata.Trades;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import com.xeiam.xchange.dto.trade.Wallet;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapper;
@@ -32,9 +33,13 @@ public class DemoExchangeWrapper implements ExchangeWrapper {
   private final static Wallet BTC = new Wallet("BTC", BigMoney.parse("BTC 1.4923"));
   private final static Wallet USD = new Wallet("USD", BigMoney.parse("USD 842.123"));
   private final static List<Wallet> wallets = Arrays.asList(BTC, USD);
+  private final ExchangeConfiguration config;
+
+  public DemoExchangeWrapper(ExchangeConfiguration config) {
+    this.config = config;
+  }
 
   public AccountInfo getAccountInfo() throws IOException {
-
     return new AccountInfo("bitcoinTraderDemo", BigDecimal.valueOf(0.35), wallets);
   }
 
@@ -93,6 +98,11 @@ public class DemoExchangeWrapper implements ExchangeWrapper {
   }
 
   @Override
+  public boolean supportsWalletHistory() {
+    return false;
+  }
+
+  @Override
   public ExchangeWalletHistory getWalletHistory(String currency) {
     //TODO: implement
     return null;
@@ -100,6 +110,10 @@ public class DemoExchangeWrapper implements ExchangeWrapper {
 
   public String getName() {
     return "Demo Exchange";
+  }
+
+  public ExchangeConfiguration getConfig() {
+    return config;
   }
 
 }

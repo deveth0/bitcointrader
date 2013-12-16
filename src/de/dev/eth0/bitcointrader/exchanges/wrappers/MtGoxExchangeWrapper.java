@@ -5,6 +5,7 @@ package de.dev.eth0.bitcointrader.exchanges.wrappers;
 import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.dto.Order;
 import com.xeiam.xchange.mtgox.v2.dto.account.polling.MtGoxWalletHistory;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import de.dev.eth0.bitcointrader.exchanges.AbstractExchangeWrapper;
@@ -18,13 +19,18 @@ import java.util.List;
  */
 public class MtGoxExchangeWrapper extends AbstractExchangeWrapper<ExtendedMtGoxExchange> {
 
-  public MtGoxExchangeWrapper(String name, Exchange exchange) {
-    super(name, (ExtendedMtGoxExchange)exchange);
+  public MtGoxExchangeWrapper(ExchangeConfiguration config, Exchange exchange) {
+    super(config, (ExtendedMtGoxExchange)exchange);
   }
 
   @Override
   public ExchangeOrderResult getOrderResult(Order lo) {
     return ExchangeOrderResult.from(exchange.getPollingTradeService().getOrderResult(lo));
+  }
+
+  @Override
+  public boolean supportsWalletHistory() {
+    return true;
   }
 
   @Override
