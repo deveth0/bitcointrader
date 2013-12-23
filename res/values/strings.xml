@@ -2,6 +2,7 @@
 <resources>
   <string name="app_name">Bitcoin Trader</string>
   <string name="empty"></string>
+  <string name="network_not_available">Network not available</string>
 
   <string name="loading_info">Loading&#8230;</string>
   <string name="connecting_info">Connecting&#8230;</string>

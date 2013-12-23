@@ -191,7 +191,7 @@ public class PriceChartFragment extends SherlockListFragment {
       }
     }
     GetTickerTask tradesTask = new GetTickerTask();
-    tradesTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR);
+    application.getExchangeService().executeTask(tradesTask, (Void)null);
   }
 
   protected void updateView(BitcoinChartsTicker[] tradesList) {

@@ -34,6 +34,7 @@ import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.exceptions.NetworkNotAvailableException;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
@@ -47,6 +48,7 @@ import de.dev.eth0.bitcointrader.ui.widgets.AccountInfoWidgetProvider;
 import de.dev.eth0.bitcointrader.ui.widgets.PriceInfoWidgetProvider;
 import de.dev.eth0.bitcointrader.util.FormatHelper;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.dev.eth0.bitcointrader.util.MiscHelper;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -271,8 +273,13 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     executeTask(new PlaceOrderTask(activity), order);
   }
 
-  private <S, T, U> void executeTask(ICSAsyncTask<S, T, U> task, S... params) {
-    task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
+  public <S, T, U> void executeTask(ICSAsyncTask<S, T, U> task, S... params) {
+    if (MiscHelper.isNetworkAvailable(this)) {
+      task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
+    }
+    else {
+      broadcastUpdateFailure(new NetworkNotAvailableException(getString(R.string.network_not_available)));
+    }
   }
 
   private void broadcastUpdate() {
@@ -285,9 +292,11 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
 
   private void broadcastUpdateFailure(Exception e) {
     Intent intent = new Intent(Constants.UPDATE_FAILED);
-    if (PreferenceManager.getDefaultSharedPreferences(ExchangeService.this).getBoolean(Constants.PREFS_KEY_DEBUG, false)
-            && e != null) {
-      intent.putExtra(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
+    if (e != null) {
+      if (PreferenceManager.getDefaultSharedPreferences(ExchangeService.this).getBoolean(Constants.PREFS_KEY_DEBUG, false)
+              || e instanceof NetworkNotAvailableException) {
+        intent.putExtra(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
+      }
     }
     sendBroadcast(intent);
   }
@@ -435,8 +444,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         if (notifyOnUpdate) {
           Toast.makeText(ExchangeService.this,
                   R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
-          NotificationCompat.Builder mBuilder
-                  = new NotificationCompat.Builder(getApplicationContext())
+          NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext())
                   .setSmallIcon(R.drawable.ic_action_bitcoin)
                   .setContentTitle(getApplicationContext().getString(R.string.notify_update_success_text))
                   .setContentText(getApplicationContext().getString(R.string.notify_update_success_text));

@@ -148,7 +148,7 @@ public class WalletHistoryFragment extends AbstractBitcoinTraderFragment {
 
   protected void updateView(boolean forceUpdate) {
     GetWalletHistoryTask walletTask = new GetWalletHistoryTask();
-    walletTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, forceUpdate);
+    getExchangeService().executeTask(walletTask, forceUpdate);
   }
 
   protected void updateView(ExchangeWalletHistory history) {

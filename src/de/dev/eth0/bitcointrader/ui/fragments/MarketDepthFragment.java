@@ -26,6 +26,7 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
+import de.dev.eth0.bitcointrader.util.MiscHelper;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -113,7 +114,7 @@ public class MarketDepthFragment extends AbstractBitcoinTraderFragment {
     OrderBook ob = application.getCache().getEntry(OrderBook.class);
     if (ob == null) {
       MarketDepthFragment.GetOrderBookTask tradesTask = new MarketDepthFragment.GetOrderBookTask();
-      tradesTask.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR);
+      getExchangeService().executeTask(tradesTask, (Void)null);
     }
     else {
       updateView(ob);
