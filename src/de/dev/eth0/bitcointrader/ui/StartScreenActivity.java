@@ -44,7 +44,7 @@ public class StartScreenActivity extends AbstractBitcoinTraderActivity {
       // if there has been no initial setup, we need to start the initalSetupActivity
       boolean setupCompleted = false;
       try {
-        setupCompleted = !getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfigurations().isEmpty();
+        setupCompleted = !getExchangeConfigurationDAO().getExchangeConfigurations().isEmpty();
       } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
         Log.w(TAG, Log.getStackTraceString(ece));
       }

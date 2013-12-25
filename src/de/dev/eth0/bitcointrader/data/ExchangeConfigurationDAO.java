@@ -4,8 +4,11 @@ package de.dev.eth0.bitcointrader.data;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  *
@@ -29,8 +35,8 @@ public class ExchangeConfigurationDAO {
   private static final String TAG = ExchangeConfigurationDAO.class.getName();
   private ObjectMapper mMapper;
   private final Application mApplication;
-  private static List<ExchangeConfiguration> exchangeConfigs = null;
-  private static List<ExchangeConfiguration> activeExchangeConfigs = null;
+  private static Map<String, ExchangeConfiguration> exchangeConfigs = null;
+  private static Map<String, ExchangeConfiguration> activeExchangeConfigs = null;
 
   public ExchangeConfigurationDAO(Application pApplication) {
     mApplication = pApplication;
@@ -42,18 +48,18 @@ public class ExchangeConfigurationDAO {
    * @return
    * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
    */
-  public List<ExchangeConfiguration> getActiveExchangeConfigurations() throws ExchangeConfigurationException {
+  public Map<String, ExchangeConfiguration> getActiveExchangeConfigurations() throws ExchangeConfigurationException {
     if (activeExchangeConfigs == null) {
-      List<ExchangeConfiguration> configs = getExchangeConfigurations();
-      activeExchangeConfigs = new ArrayList<ExchangeConfiguration>();
-      for (ExchangeConfiguration config : configs) {
-        if (config.isEnabled()) {
-          activeExchangeConfigs.add(config);
+      Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
+      activeExchangeConfigs = new TreeMap<String, ExchangeConfiguration>();
+      for (Entry<String, ExchangeConfiguration> config : configs.entrySet()) {
+        if (config.getValue().isEnabled()) {
+          activeExchangeConfigs.put(config.getKey(), config.getValue());
         }
       }
     }
     return activeExchangeConfigs;
-    }
+  }
 
   /**
    * Returns a list with all exchangeconfigurations. if Demo mode is activated, this returns a list with the demo account
@@ -61,19 +67,22 @@ public class ExchangeConfigurationDAO {
    * @throws ExchangeConfigurationException
    * @return
    */
-  public List<ExchangeConfiguration> getExchangeConfigurations() throws ExchangeConfigurationException {
+  public Map<String, ExchangeConfiguration> getExchangeConfigurations() throws ExchangeConfigurationException {
     if (exchangeConfigs == null) {
       Log.d(TAG, "Reading exchange configurations from file");
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mApplication);
+      exchangeConfigs = new TreeMap<String, ExchangeConfiguration>();
       if (prefs.getBoolean(Constants.PREFS_KEY_DEMO, false)) {
-        exchangeConfigs = new ArrayList<ExchangeConfiguration>();
-        exchangeConfigs.add(new ExchangeConfiguration(null, null, null, null, null, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO));
+        exchangeConfigs.put("demo", new ExchangeConfiguration(null, null, null, null, null, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.DEMO, null));
       }
       else {
         try {
           FileInputStream fis = mApplication.openFileInput("exchangeConfigurationTest");
-          exchangeConfigs = getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
+          List<ExchangeConfiguration> configs = getObjectMapper().readValue(fis, new TypeReference<List<ExchangeConfiguration>>() {
           });
+          for (ExchangeConfiguration conf : configs) {
+            exchangeConfigs.put(conf.getId(), conf);
+          }
         }
         catch (FileNotFoundException ex) {
           Log.w(TAG, "Could not read exchange configurations", ex);
@@ -94,16 +103,16 @@ public class ExchangeConfigurationDAO {
    * @return
    */
   public ExchangeConfiguration getPrimaryExchangeConfiguration() {
-    List<ExchangeConfiguration> configs;
+    Map<String, ExchangeConfiguration> configs;
     try {
       configs = getActiveExchangeConfigurations();
-      for (ExchangeConfiguration config : configs) {
-        if (config.isPrimary()) {
-          return config;
+      for (Entry<String, ExchangeConfiguration> config : configs.entrySet()) {
+        if (config.getValue().isPrimary()) {
+          return config.getValue();
         }
       }
       if (configs.size() > 0) {
-        return configs.get(0);
+        return configs.values().iterator().next();
       }
     }
     catch (ExchangeConfigurationException ex) {
@@ -113,17 +122,14 @@ public class ExchangeConfigurationDAO {
   }
 
   public ExchangeConfiguration getExchangeConfiguration(String id) {
-    List<ExchangeConfiguration> configs;
-    try {
-      configs = getExchangeConfigurations();
-      for (ExchangeConfiguration config : configs) {
-        if (TextUtils.equals(config.getId(), id)) {
-          return config;
-        }
+    if (!TextUtils.isEmpty(id)) {
+      try {
+        Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
+        return configs.get(id);
       }
-    }
-    catch (ExchangeConfigurationException ex) {
-      Log.w(TAG, Log.getStackTraceString(ex), ex);
+      catch (ExchangeConfigurationException ex) {
+        Log.w(TAG, Log.getStackTraceString(ex), ex);
+      }
     }
     return null;
   }
@@ -142,8 +148,8 @@ public class ExchangeConfigurationDAO {
    * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
    */
   public void removeExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) throws ExchangeConfigurationException {
-    List<ExchangeConfiguration> configs = getExchangeConfigurations();
-    configs.remove(exchangeConfiguration);
+    Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
+    configs.remove(exchangeConfiguration.getId());
     writeExchangeConfiguration(configs);
   }
 
@@ -154,10 +160,9 @@ public class ExchangeConfigurationDAO {
    * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
    */
   public void addExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) throws ExchangeConfigurationException {
-    List<ExchangeConfiguration> configs = getExchangeConfigurations();
+    Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
     // take care, it's not added twice
-    configs.remove(exchangeConfiguration);
-    configs.add(exchangeConfiguration);
+    configs.put(exchangeConfiguration.getId(), exchangeConfiguration);
     writeExchangeConfiguration(configs);
   }
 
@@ -168,8 +173,8 @@ public class ExchangeConfigurationDAO {
    * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
    */
   public void setExchangeConfigurationPrimary(String exchangeConfigurationId) throws ExchangeConfigurationException {
-    List<ExchangeConfiguration> configs = getExchangeConfigurations();
-    for (ExchangeConfiguration config : configs) {
+    Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
+    for (ExchangeConfiguration config : configs.values()) {
       config.setPrimary(TextUtils.equals(config.getId(), exchangeConfigurationId));
     }
     writeExchangeConfiguration(configs);
@@ -182,31 +187,43 @@ public class ExchangeConfigurationDAO {
    * @throws de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO.ExchangeConfigurationException
    */
   public void toogleExchangeConfigurationEnabled(String id) throws ExchangeConfigurationException {
-    List<ExchangeConfiguration> configs = getExchangeConfigurations();
-    for (ExchangeConfiguration config : configs) {
-      if (TextUtils.equals(config.getId(), id)) {
-        config.setEnabled(!config.isEnabled());
-      }
+    ExchangeConfiguration config = getExchangeConfiguration(id);
+    if (config != null) {
+      config.setEnabled(!config.isEnabled());
+      updateExchangeConfig(config);
     }
-    writeExchangeConfiguration(configs);
   }
 
-  private void writeExchangeConfiguration(List<ExchangeConfiguration> configs) throws ExchangeConfigurationException {
+  public void setTrailingStopLossConfiguration(ExchangeConfiguration exchangeConfig, ExchangeConfiguration.TrailingStopLossConfiguration trailingconfig) throws ExchangeConfigurationException {
+    exchangeConfig.setTrailingStopLossConfig(trailingconfig);
+    updateExchangeConfig(exchangeConfig);
+  }
+
+  private void updateExchangeConfig(ExchangeConfiguration exchangeConfig) throws ExchangeConfigurationException {
+    Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
+    configs.put(exchangeConfig.getId(), exchangeConfig);
+    writeExchangeConfiguration(configs);
+    LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_UPDATED).putExtra(Constants.EXTRA_EXCHANGE, exchangeConfig.getId()));
+  }
+
+  private void writeExchangeConfiguration(Map<String, ExchangeConfiguration> configs) throws ExchangeConfigurationException {
     // if only one exchange is available, this has to be the primary one
     if (configs.size() == 1) {
-      configs.get(0).setPrimary(true);
+      configs.values().iterator().next().setPrimary(true);
     }
-    Collections.sort(configs, new Comparator<ExchangeConfiguration>() {
+    List<ExchangeConfiguration> list = new ArrayList<ExchangeConfiguration>(configs.values());
+    Collections.sort(list, new Comparator<ExchangeConfiguration>() {
       public int compare(ExchangeConfiguration lhs, ExchangeConfiguration rhs) {
         return Boolean.compare(rhs.isPrimary(), lhs.isPrimary());
       }
     });
     try {
       FileOutputStream fos = mApplication.openFileOutput("exchangeConfigurationTest", Context.MODE_PRIVATE);
-      getObjectMapper().writeValue(fos, configs);
+      getObjectMapper().writeValue(fos, list);
       // reset cache
       exchangeConfigs = null;
       activeExchangeConfigs = null;
+      LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_UPDATED));
     }
     catch (IOException ioe) {
       Log.w(TAG, Log.getStackTraceString(ioe), ioe);

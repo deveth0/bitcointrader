@@ -4,11 +4,11 @@ package de.dev.eth0.bitcointrader.ui;
 
 import android.os.Bundle;
 import android.util.Log;
-
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
 import de.schildbach.wallet.ui.ReportIssueDialogBuilder;
@@ -25,7 +25,7 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    application = (BitcoinTraderApplication) getApplication();
+    application = (BitcoinTraderApplication)getApplication();
     super.onCreate(savedInstanceState);
     hadErrors = false;
     if (savedInstanceState == null) {
@@ -41,6 +41,10 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
     return application.getExchangeService();
   }
 
+  protected ExchangeConfigurationDAO getExchangeConfigurationDAO() {
+    return getExchangeService().getExchangeConfigurationDAO();
+  }
+
   private void checkAlerts() {
     if (CrashReporter.hasSavedCrashTrace()) {
       final StringBuilder stackTrace = new StringBuilder();
@@ -50,7 +54,8 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
         hadErrors = true;
         CrashReporter.appendSavedCrashTrace(stackTrace);
         CrashReporter.appendSavedCrashApplicationLog(applicationLog);
-      } catch (final IOException x) {
+      }
+      catch (final IOException x) {
         Log.w(TAG, "IO Exception", x);
       }
 
@@ -68,7 +73,8 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
             if (CrashReporter.hasReason()) {
               return CrashReporter.getReason();
             }
-          } catch (IOException ioe) {
+          }
+          catch (IOException ioe) {
             Log.w(TAG, "Exception", ioe);
           }
           return Constants.REPORT_SUBJECT_CRASH + " " + getBitcoinTraderApplication().applicationVersionName();
@@ -85,7 +91,8 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
         protected CharSequence collectStackTrace() throws IOException {
           if (stackTrace.length() > 0) {
             return stackTrace;
-          } else {
+          }
+          else {
             return null;
           }
         }
@@ -97,15 +104,16 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
           return deviceInfo;
         }
 
-        @Override
-        protected CharSequence collectApplicationLog() throws IOException {
-          if (applicationLog.length() > 0) {
-            return applicationLog;
-          } else {
-            return null;
-          }
-        }
-      };
+                @Override
+                protected CharSequence collectApplicationLog() throws IOException {
+                  if (applicationLog.length() > 0) {
+                    return applicationLog;
+                  }
+                  else {
+                    return null;
+                  }
+                }
+              };
       dialog.show();
     }
   }

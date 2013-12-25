@@ -29,12 +29,6 @@ public interface ExchangeWrapper {
   public ExchangeConfiguration getConfig();
 
   /**
-   * Does the exchange support wallet history?
-   *
-   * @return
-   */
-  public boolean supportsWalletHistory();
-  /**
    * Returns the wallet history for the given currency
    *
    * @param currency
@@ -124,4 +118,11 @@ public interface ExchangeWrapper {
    */
   public String placeLimitOrder(LimitOrder lo) throws IOException;
 
+  /**
+   * Checks if the exchange supports this feature
+   *
+   * @param feature
+   * @return
+   */
+  public boolean supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE feature);
 }

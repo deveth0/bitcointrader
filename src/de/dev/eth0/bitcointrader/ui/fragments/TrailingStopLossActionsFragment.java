@@ -7,9 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,9 +19,12 @@ import android.widget.Button;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.TrailingStopLossActivity;
 import de.dev.eth0.bitcointrader.util.FormatHelper;
+import java.math.BigDecimal;
 import org.joda.money.BigMoney;
 
 /**
@@ -53,6 +54,7 @@ public class TrailingStopLossActionsFragment extends AbstractBitcoinTraderFragme
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.TRAILING_LOSS_EVENT));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.CURRENCY_CHANGE_EVENT));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_UPDATED));
     updateView();
   }
 
@@ -82,10 +84,7 @@ public class TrailingStopLossActionsFragment extends AbstractBitcoinTraderFragme
 
   private void updateView() {
     activateStopLossButton.setClickable(false);
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-    Float threashold = prefs.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
-    String value = prefs.getString(Constants.PREFS_TRAILING_STOP_VALUE, "");
-    if (threashold == Float.MIN_VALUE) {
+    if (getExchangeService() == null || getExchangeService().getExchangeConfig().getTrailingStopLossConfig() == null) {
       activateStopLossButton.setOnClickListener(new OnClickListener() {
         public void onClick(View v) {
           activity.startActivity(new Intent(activity, TrailingStopLossActivity.class));
@@ -94,13 +93,20 @@ public class TrailingStopLossActionsFragment extends AbstractBitcoinTraderFragme
       activateStopLossButton.setText(R.string.trailing_stop_activate_stop_loss);
     }
     else {
+      ExchangeConfiguration config = getExchangeService().getExchangeConfig();
+      Float threshold = config.getTrailingStopLossConfig().getThreshold();
+      BigDecimal value = config.getTrailingStopLossConfig().getPrice();
       if (getExchangeService() != null && !TextUtils.isEmpty(getExchangeService().getCurrency())) {
-        BigMoney valueBM = BigMoney.parse(getExchangeService().getCurrency() + " " + value);
-        activateStopLossButton.setText(getString(R.string.trailing_stop_cancel_stop_loss, threashold, FormatHelper.formatBigMoney(FormatHelper.DISPLAY_MODE.CURRENCY_CODE, valueBM)) + "%)");
+        BigMoney valueBM = BigMoney.parse(getExchangeService().getCurrency() + " " + value.toString());
+        activateStopLossButton.setText(getString(R.string.trailing_stop_cancel_stop_loss, threshold, FormatHelper.formatBigMoney(FormatHelper.DISPLAY_MODE.CURRENCY_CODE, valueBM)) + "%)");
         activateStopLossButton.setOnClickListener(new OnClickListener() {
           public void onClick(View v) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            prefs.edit().remove(Constants.PREFS_TRAILING_STOP_THREASHOLD).apply();
+            try {
+              getExchangeConfigurationDAO().setTrailingStopLossConfiguration(getExchangeService().getExchangeConfig(), null);
+            }
+            catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+              Log.d(TAG, Log.getStackTraceString(ece));
+            }
             updateView();
           }
         });

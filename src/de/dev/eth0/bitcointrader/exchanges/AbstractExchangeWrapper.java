@@ -26,10 +26,12 @@ public abstract class AbstractExchangeWrapper<T extends Exchange> implements Exc
 
   private final ExchangeConfiguration config;
   protected final T exchange;
+  private final List<ExchangeConfiguration.EXCHANGE_FEATURE> supportedFeatures;
 
-  public AbstractExchangeWrapper(ExchangeConfiguration config, T exchange) {
+  public AbstractExchangeWrapper(ExchangeConfiguration config, T exchange, List<ExchangeConfiguration.EXCHANGE_FEATURE> supportedFeatures) {
     this.config = config;
     this.exchange = exchange;
+    this.supportedFeatures = supportedFeatures;
   }
 
   @Override
@@ -79,16 +81,14 @@ public abstract class AbstractExchangeWrapper<T extends Exchange> implements Exc
   }
 
   @Override
-  public boolean supportsWalletHistory() {
-    // Usually not supported
-    return false;
-  }
-
-  @Override
   public ExchangeWalletHistory getWalletHistory(String currency) {
     // Not supported
     return null;
   }
 
+  @Override
+  public boolean supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE feature) {
+    return supportedFeatures.contains(feature);
+  }
 
 }

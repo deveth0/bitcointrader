@@ -19,11 +19,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
@@ -35,10 +33,9 @@ import de.schildbach.wallet.ui.HelpDialogFragment;
 /**
  * @author Alexander Muthmann
  */
-public class ExchangeConfigurationFragment extends SherlockListFragment {
+public class ExchangeConfigurationFragment extends AbstractBitcoinTraderListFragment {
 
   private static final String TAG = ExchangeConfigurationFragment.class.getSimpleName();
-  private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
   private ExchangeConfigurationListAdapter adapter;
 
@@ -61,7 +58,6 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   public void onAttach(final Activity activity) {
     super.onAttach(activity);
     this.activity = (AbstractBitcoinTraderActivity)activity;
-    this.application = (BitcoinTraderApplication)activity.getApplication();
   }
 
   @Override
@@ -87,7 +83,7 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   public void onListItemClick(ListView l, View v, int position, long id) {
     ExchangeConfiguration entry = adapter.getItem(position);
     if (entry != null) {
-      application.getExchangeService().setExchange(entry);
+      getExchangeService().setExchange(entry);
     }
     super.onListItemClick(l, v, position, id);
   }
@@ -134,7 +130,7 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
         alertDialogBuilder.setPositiveButton(R.string.exchange_configuration_delete_confirm_ok, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
             try {
-              application.getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
+              getExchangeConfigurationDAO().removeExchangeConfiguration(selectedConfig);
             }
             catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
               Log.w(TAG, Log.getStackTraceString(ece));
@@ -154,7 +150,7 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
         return true;
       case R.id.exchange_configuration_context_set_primary:
         try {
-          application.getExchangeConfigurationDAO().setExchangeConfigurationPrimary(selectedConfig.getId());
+          getExchangeConfigurationDAO().setExchangeConfigurationPrimary(selectedConfig.getId());
         }
         catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
           Log.w(TAG, Log.getStackTraceString(ece));
@@ -166,12 +162,12 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
           Toast.makeText(getActivity(), R.string.exchange_configuration_toogle_primary_error, Toast.LENGTH_LONG).show();
         }
         else {
-        try {
-          application.getExchangeConfigurationDAO().toogleExchangeConfigurationEnabled(selectedConfig.getId());
-        }
-        catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
-          Log.w(TAG, Log.getStackTraceString(ece));
-        }
+          try {
+            getExchangeConfigurationDAO().toogleExchangeConfigurationEnabled(selectedConfig.getId());
+          }
+          catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
+            Log.w(TAG, Log.getStackTraceString(ece));
+          }
           updateView();
         }
         return true;
@@ -194,10 +190,11 @@ public class ExchangeConfigurationFragment extends SherlockListFragment {
   protected void updateView() {
     Log.d(TAG, ".updateView");
     try {
-      adapter.replace(application.getExchangeConfigurationDAO().getExchangeConfigurations());
+      adapter.replace(getExchangeConfigurationDAO().getExchangeConfigurations().values());
     }
     catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, Log.getStackTraceString(ece));
     }
   }
+
 }

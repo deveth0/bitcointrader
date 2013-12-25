@@ -6,6 +6,7 @@ import android.app.Activity;
 import com.actionbarsherlock.app.SherlockFragment;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 
@@ -28,5 +29,9 @@ public abstract class AbstractBitcoinTraderFragment extends SherlockFragment {
 
   protected ExchangeService getExchangeService() {
     return application.getExchangeService();
+  }
+
+  protected ExchangeConfigurationDAO getExchangeConfigurationDAO() {
+    return getExchangeService().getExchangeConfigurationDAO();
   }
 }

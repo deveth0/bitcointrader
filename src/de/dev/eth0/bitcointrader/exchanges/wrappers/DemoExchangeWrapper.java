@@ -98,11 +98,6 @@ public class DemoExchangeWrapper implements ExchangeWrapper {
   }
 
   @Override
-  public boolean supportsWalletHistory() {
-    return false;
-  }
-
-  @Override
   public ExchangeWalletHistory getWalletHistory(String currency) {
     //TODO: implement
     return null;
@@ -116,4 +111,13 @@ public class DemoExchangeWrapper implements ExchangeWrapper {
     return config;
   }
 
+  public boolean supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE feature) {
+    switch (feature) {
+      case SUPPORTS_MARKET_ORDER:
+        return true;
+      case SUPPORTS_WALLET_HISTORY:
+        return false;
+    }
+    return false;
+  }
 }

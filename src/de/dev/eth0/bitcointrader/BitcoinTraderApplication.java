@@ -31,11 +31,9 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   private boolean serviceBound = false;
   private ExchangeService exchangeService;
   private Cache cache;
-  private ExchangeConfigurationDAO mExchangeConfigurationDAO;
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     public void onServiceConnected(ComponentName name, IBinder binder) {
       exchangeService = ((ExchangeService.LocalBinder) binder).getService();
-      exchangeService.setExchange(getExchangeConfigurationDAO().getPrimaryExchangeConfiguration());
       createDataFromPreferences(PreferenceManager.getDefaultSharedPreferences(BitcoinTraderApplication.this));
       BitcoinTraderApplication.this.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
     }
@@ -56,8 +54,8 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
       try {
         Log.i(TAG, "Creating exchangeconfiguration for the old config");
-        getExchangeConfigurationDAO().addExchangeConfiguration(
-                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX));
+        new ExchangeConfigurationDAO(this).addExchangeConfiguration(
+                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX, null));
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
         edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);
@@ -144,12 +142,4 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
   public String getCurrency() {
     return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, "USD");
   }
-
-  public ExchangeConfigurationDAO getExchangeConfigurationDAO() {
-    if (mExchangeConfigurationDAO == null) {
-      mExchangeConfigurationDAO = new ExchangeConfigurationDAO(this);
-    }
-    return mExchangeConfigurationDAO;
-  }
-
 }

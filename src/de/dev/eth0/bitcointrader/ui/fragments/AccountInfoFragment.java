@@ -16,9 +16,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.xeiam.xchange.dto.account.AccountInfo;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.ui.WalletHistoryActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyTextView;
@@ -56,7 +57,7 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     view.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
         if (getExchangeService() != null) {
-          if (getExchangeService().getExchange().supportsWalletHistory()) {
+          if (getExchangeService().getExchange().supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE.SUPPORTS_WALLET_HISTORY)) {
             startActivity(new Intent(getActivity(), WalletHistoryActivity.class));
           }
           else {

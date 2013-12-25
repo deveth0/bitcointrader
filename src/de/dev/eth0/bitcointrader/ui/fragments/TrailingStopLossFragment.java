@@ -18,10 +18,10 @@ import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.xeiam.xchange.dto.account.AccountInfo;
+import com.xeiam.xchange.dto.marketdata.Ticker;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
-import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
 import de.schildbach.wallet.ui.HelpDialogFragment;
@@ -114,16 +114,14 @@ public class TrailingStopLossFragment extends AbstractBitcoinTraderFragment {
             BigMoney priceCurrency = BigMoney.parse(currency + " 0" + price.toString());
 
             // check if the entered price is higher than the current price (this would trigger a sell):
-            AccountInfo accountInfo = getExchangeService().getAccountInfo();
-            if (accountInfo != null && priceCurrency.isGreaterThan(accountInfo.getBalance(priceCurrency.getCurrencyUnit()))) {
+            Ticker ticker = getExchangeService().getTicker();
+            if (ticker != null && priceCurrency.isGreaterThan(ticker.getLast())) {
                 throw new Exception();
             }
 
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, threashold);
-            editor.putString(Constants.PREFS_TRAILING_STOP_VALUE, priceCurrency.getAmount().toString());
-            editor.putInt(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES, numberUpdates);
-            editor.apply();
+            ExchangeConfiguration.TrailingStopLossConfiguration config = new ExchangeConfiguration.TrailingStopLossConfiguration(threashold, priceCurrency.getAmount(), numberUpdates);
+            getExchangeService().getExchangeConfigurationDAO().setTrailingStopLossConfiguration(getExchangeService().getExchangeConfig(), config);
+
             Toast.makeText(getActivity(), R.string.trailing_stop_loss_submitted, Toast.LENGTH_LONG).show();
             activity.setResult(Activity.RESULT_OK);
             activity.finish();

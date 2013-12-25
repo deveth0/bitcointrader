@@ -37,6 +37,7 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.exceptions.NetworkNotAvailableException;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
 import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapper;
@@ -65,22 +66,29 @@ import org.joda.money.CurrencyUnit;
  * @author Alexander Muthmann
  */
 public class ExchangeService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
-
+  
   private static final String TAG = ExchangeService.class.getSimpleName();
   private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     @Override
     public void onReceive(Context context, Intent intent) {
       Log.d(TAG, ".onReceive()");
-      // only run if currently no running task
       if (exchange != null) {
+        if (intent.getAction().equals(Constants.EXCHANGE_UPDATED)) {
+          if (intent.hasExtra(Constants.EXTRA_EXCHANGE)) {
+            setExchange(getExchangeConfigurationDAO().getExchangeConfiguration(intent.getStringExtra(Constants.EXTRA_EXCHANGE)));
+          }
+        }
+        else {
+      // only run if currently no running task
         executeTask(new UpdateTask(), (Void)null);
+        }
       }
     }
   };
   private LocalBroadcastManager broadcastManager;
-
+  
   public class LocalBinder extends Binder {
-
+    
     public ExchangeService getService() {
       return ExchangeService.this;
     }
@@ -89,8 +97,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private final Binder binder = new LocalBinder();
   private AccountInfo accountInfo;
   private List<LimitOrder> openOrders = new ArrayList<LimitOrder>();
-  private Float trailingStopThreadhold;
-  private BigDecimal trailingStopValue;
+  private ExchangeConfiguration.TrailingStopLossConfiguration trailingStopLossConfig;
   private BigDecimal[] trailingStopChecks = new BigDecimal[1];
   private boolean notifyOnUpdate;
   private int updateInterval;
@@ -99,15 +106,17 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private Date lastUpdateWalletHistory;
   private final Map<String, ExchangeWalletHistory> walletHistoryCache = new HashMap<String, ExchangeWalletHistory>();
   private boolean hasStarted = false;
-
+  private ExchangeConfigurationDAO mExchangeConfigurationDAO;
+  
   @Override
   public void onCreate() {
     super.onCreate();
     hasStarted = false;
     broadcastManager = LocalBroadcastManager.getInstance(this);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SERVICE_ACTION));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_UPDATED));
   }
-
+  
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (!hasStarted) {
@@ -115,33 +124,26 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       prefs.registerOnSharedPreferenceChangeListener(this);
       notifyOnUpdate = prefs.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
       updateInterval = Integer.parseInt(prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
-      float th = prefs.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
-      if (th != Float.MIN_VALUE) {
-        trailingStopThreadhold = th;
-      }
-      String tvalue = prefs.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
-      if (!TextUtils.isEmpty(tvalue)) {
-        trailingStopValue = new BigDecimal(tvalue);
-      }
-      else {
-        trailingStopValue = null;
-      }
       hasStarted = true;
     }
     return Service.START_STICKY;
   }
-
+  
   public void setExchange(ExchangeConfiguration config) {
     Log.d(TAG, "Setting exchange to " + config.getName());
     exchange = ExchangeWrapperFactory.forExchangeConfiguration(config);
     accountInfo = null;
+    if (config.getTrailingStopLossConfig() != null) {
+      trailingStopLossConfig = config.getTrailingStopLossConfig();
+      trailingStopChecks = new BigDecimal[trailingStopLossConfig.getNumberUpdates()];
+    }
     broadcastUpdate();
   }
-
+  
   public ExchangeConfiguration getExchangeConfig() {
     return exchange == null ? null : exchange.getConfig();
   }
-
+  
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (key.equals(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE)) {
       notifyOnUpdate = sharedPreferences.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
@@ -149,27 +151,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     else if (key.equals(Constants.PREFS_KEY_GENERAL_UPDATE)) {
       updateInterval = Integer.parseInt(sharedPreferences.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
     }
-    else if (key.equals(Constants.PREFS_TRAILING_STOP_THREASHOLD)) {
-      float th = sharedPreferences.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
-      if (th != Float.MIN_VALUE) {
-        trailingStopThreadhold = th;
-      }
-    }
-    else if (key.equals(Constants.PREFS_TRAILING_STOP_VALUE)) {
-      String tvalue = sharedPreferences.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
-      if (!TextUtils.isEmpty(tvalue)) {
-        trailingStopValue = new BigDecimal(tvalue);
-      }
-      else {
-        trailingStopValue = null;
-      }
-    }
-    else if (key.equals(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES)) {
-      int updates = sharedPreferences.getInt(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES, 1);
-      trailingStopChecks = new BigDecimal[updates];
-    }
   }
-
+  
   @Override
   public void onDestroy() {
     if (broadcastReceiver != null) {
@@ -178,12 +161,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
     super.onDestroy();
   }
-
+  
   @Override
   public IBinder onBind(Intent arg0) {
     return binder;
   }
-
+  
   public void setCurrency(String currency) {
     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     if (!TextUtils.equals(prefs.getString(Constants.PREFS_KEY_CURRENCY, null), currency)) {
@@ -192,22 +175,29 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       sendBroadcast(new Intent(Constants.CURRENCY_CHANGE_EVENT));
     }
   }
-
+  
   public String getCurrency() {
     return PreferenceManager.getDefaultSharedPreferences(this).getString(Constants.PREFS_KEY_CURRENCY, "USD");
   }
-
+  
   private void deleteTrailingStopLoss() {
-    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-    SharedPreferences.Editor editor = prefs.edit();
-    editor.remove(Constants.PREFS_TRAILING_STOP_THREASHOLD);
-    editor.remove(Constants.PREFS_TRAILING_STOP_VALUE);
-    editor.remove(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES);
-    editor.apply();
+    try {
+      getExchangeConfigurationDAO().setTrailingStopLossConfiguration(getExchangeConfig(), null);
+    }
+    catch (ExchangeConfigurationDAO.ExchangeConfigurationException ex) {
+      Log.w(TAG, Log.getStackTraceString(ex));
+    }
   }
-
+  
   public ExchangeWrapper getExchange() {
     return exchange;
+  }
+
+  public ExchangeConfigurationDAO getExchangeConfigurationDAO() {
+    if (mExchangeConfigurationDAO == null) {
+      mExchangeConfigurationDAO = new ExchangeConfigurationDAO(getApplication());
+    }
+    return mExchangeConfigurationDAO;
   }
 
   public OrderBook getOrderBook() throws IOException {
@@ -246,33 +236,33 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     lastUpdateWalletHistory = new Date();
     return ret;
   }
-
+  
   public AccountInfo getAccountInfo() {
     return accountInfo;
   }
-
+  
   public List<LimitOrder> getOpenOrders() {
     return openOrders;
   }
-
+  
   public Ticker getTicker() {
     return ticker;
   }
-
+  
   public Date getLastUpdate() {
     return lastUpdate;
   }
-
+  
   public void deleteOrder(Order order) {
     Log.d(TAG, ".deleteOrder()");
     executeTask(new DeleteOrderTask(), order);
   }
-
+  
   public void placeOrder(Order order, FragmentActivity activity) {
     Log.d(TAG, ".placeOrder()");
     executeTask(new PlaceOrderTask(activity), order);
   }
-
+  
   public <S, T, U> void executeTask(ICSAsyncTask<S, T, U> task, S... params) {
     if (MiscHelper.isNetworkAvailable(this)) {
       task.executeOnExecutor(ICSAsyncTask.SERIAL_EXECUTOR, params);
@@ -281,15 +271,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       broadcastUpdateFailure(new NetworkNotAvailableException(getString(R.string.network_not_available)));
     }
   }
-
+  
   private void broadcastUpdate() {
     broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
   }
-
+  
   private void broadcastUpdateSuccess() {
     sendBroadcast(new Intent(Constants.UPDATE_SUCCEDED));
   }
-
+  
   private void broadcastUpdateFailure(Exception e) {
     Intent intent = new Intent(Constants.UPDATE_FAILED);
     if (e != null) {
@@ -300,21 +290,21 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
     sendBroadcast(intent);
   }
-
+  
   private void broadcastTrailingStopEvent(BigDecimal trailingStopValue, BigDecimal currentPrice) {
     Intent intent = new Intent(Constants.TRAILING_LOSS_EVENT);
     intent.putExtra(Constants.EXTRA_TRAILING_LOSS_EVENT_VALUE, trailingStopValue.toString());
     intent.putExtra(Constants.EXTRA_TRAILING_LOSS_EVENT_CURRENTPRICE, currentPrice.toString());
     sendBroadcast(intent);
   }
-
+  
   private void broadcastTrailingStopAlignmentEvent(BigDecimal trailingStopValue, BigDecimal currentPrice) {
     Intent intent = new Intent(Constants.TRAILING_LOSS_ALIGNMENT_EVENT);
     intent.putExtra(Constants.EXTRA_TRAILING_LOSS_ALIGNMENT_OLDVALUE, trailingStopValue.toString());
     intent.putExtra(Constants.EXTRA_TRAILING_LOSS_ALIGNMENT_NEWVALUE, currentPrice.toString());
     sendBroadcast(intent);
   }
-
+  
   private <T extends Order> void broadcastOrderExecuted(Collection<T> openOrders) {
     Intent intent = new Intent(Constants.ORDER_EXECUTED);
     List<Parcelable> extras = new ArrayList<Parcelable>();
@@ -342,9 +332,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       sendBroadcast(intent);
     }
   }
-
+  
   private class UpdateTask extends ICSAsyncTask<Void, Void, Boolean> {
-
+    
     @Override
     protected Boolean doInBackground(Void... params) {
       Log.d(TAG, "performing update...");
@@ -352,7 +342,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         accountInfo = exchange.getAccountInfo();
         ticker = exchange.getTicker(getCurrency());
         checkTrailingStop();
-
+        
         if (TextUtils.isEmpty(getCurrency())) {
           setCurrency(accountInfo.getWallets().get(1).getCurrency());
         }
@@ -383,10 +373,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
       return true;
     }
-
+    
     private void checkTrailingStop() {
       // Check trailing stop loss
-      if (trailingStopThreadhold != null && trailingStopValue != null) {
+      if (trailingStopLossConfig != null) {
         Log.d(TAG, "checking trailing stop loss");
         // compare current price from array with last updates
         // first move all items one step to the left
@@ -405,6 +395,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           currentPrice = currentPrice.add(bd);
         }
         currentPrice = currentPrice.divide(new BigDecimal(trailingStopChecks.length));
+        BigDecimal trailingStopValue = trailingStopLossConfig.getPrice();
         // check if price has fallen below the limit
         if (currentPrice.compareTo(trailingStopValue) < 0) {
           Log.d(TAG, "selling btc as the price has fallen from " + trailingStopValue.toString() + " to " + currentPrice.toString());
@@ -419,18 +410,24 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         }
         if (currentPrice.compareTo(trailingStopValue) > 0) {
           // check if price has risen and a alignment is required
-          BigDecimal threshold = new BigDecimal(trailingStopThreadhold).divide(new BigDecimal(100));
+          BigDecimal threshold = new BigDecimal(trailingStopLossConfig.getThreshold()).divide(new BigDecimal(100));
           BigDecimal newTrailingStopValue = currentPrice.subtract(currentPrice.multiply(threshold));
           if (newTrailingStopValue.compareTo(currentPrice) < 0 && newTrailingStopValue.compareTo(trailingStopValue) > 0) {
             Log.d(TAG, "updating trailing stop value from " + trailingStopValue.toString() + " to " + newTrailingStopValue.toString());
             broadcastTrailingStopAlignmentEvent(trailingStopValue, newTrailingStopValue);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ExchangeService.this);
-            prefs.edit().putString(Constants.PREFS_TRAILING_STOP_VALUE, newTrailingStopValue.toString()).apply();
+            
+            trailingStopLossConfig.setPrice(newTrailingStopValue);
+            try {
+              getExchangeConfigurationDAO().setTrailingStopLossConfiguration(getExchangeConfig(), trailingStopLossConfig);
+            }
+            catch (ExchangeConfigurationDAO.ExchangeConfigurationException ex) {
+              Log.w(TAG, Log.getStackTraceString(ex));
+            }
           }
         }
       }
     }
-
+    
     @Override
     protected void onPostExecute(Boolean success) {
       if (success) {
@@ -440,7 +437,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         AccountInfoWidgetProvider.updateWidgets(ExchangeService.this, gm, ids, ExchangeService.this);
         ids = gm.getAppWidgetIds(new ComponentName(ExchangeService.this, PriceInfoWidgetProvider.class));
         PriceInfoWidgetProvider.updateWidgets(ExchangeService.this, gm, ids, ExchangeService.this);
-
+        
         if (notifyOnUpdate) {
           Toast.makeText(ExchangeService.this,
                   R.string.notify_update_success_text, Toast.LENGTH_LONG).show();
@@ -465,9 +462,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
     }
   };
-
+  
   private class DeleteOrderTask extends ICSAsyncTask<Order, Void, Boolean> {
-
+    
     @Override
     protected Boolean doInBackground(Order... params) {
       Log.d(TAG, "Deleting order");
@@ -489,23 +486,23 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       }
       return false;
     }
-
+    
     @Override
     protected void onPostExecute(Boolean success) {
       Toast.makeText(ExchangeService.this, (success ? R.string.order_deleted : R.string.order_delete_failed), Toast.LENGTH_LONG).show();
     }
   };
-
+  
   private class PlaceOrderTask extends ICSAsyncTask<Order, Void, Boolean> {
-
+    
     private ProgressDialog mDialog;
     private final FragmentActivity activity;
-
+    
     public PlaceOrderTask(FragmentActivity activity) {
       super();
       this.activity = activity;
     }
-
+    
     @Override
     protected void onPreExecute() {
       if (activity != null) {
@@ -516,7 +513,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         mDialog.show();
       }
     }
-
+    
     @Override
     protected void onPostExecute(Boolean success) {
       if (success) {
@@ -542,7 +539,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         }
       }
     }
-
+    
     @Override
     protected Boolean doInBackground(Order... params) {
       String orderId = null;

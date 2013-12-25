@@ -29,7 +29,7 @@ import java.util.Locale;
 public class ExtendedMtGoxExchange extends MtGoxExchange {
 
   private static final String TAG = ExtendedMtGoxExchange.class.getSimpleName();
-
+ 
   @Override
   public void applySpecification(ExchangeSpecification exchangeSpecification) {
 

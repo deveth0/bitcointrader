@@ -129,6 +129,7 @@
         <action android:name="de.dev.eth0.bitcointrader.CURRENCY_CHANGE_EVENT" />
         <action android:name="de.dev.eth0.bitcointrader.TRAILING_LOSS_EVENT" />
         <action android:name="de.dev.eth0.bitcointrader.TRAILING_LOSS_ALIGNMENT_EVENT" />
+        <action android:name="de.dev.eth0.bitcointrader.EXCHANGE_UPDATED"/>
       </intent-filter>
     </receiver>
     

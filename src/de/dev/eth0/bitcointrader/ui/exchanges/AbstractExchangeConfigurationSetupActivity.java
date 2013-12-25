@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import de.dev.eth0.bitcointrader.Constants;
@@ -44,7 +43,7 @@ public abstract class AbstractExchangeConfigurationSetupActivity extends Abstrac
   protected final void saveExchangeConfiguration(ExchangeConfiguration exchangeConfiguration) {
     Intent returnIntent = new Intent();
     try {
-      getBitcoinTraderApplication().getExchangeConfigurationDAO().addExchangeConfiguration(exchangeConfiguration);
+      getExchangeConfigurationDAO().addExchangeConfiguration(exchangeConfiguration);
       setResult(RESULT_OK, returnIntent);
     }
     catch (ExchangeConfigurationException ex) {
@@ -69,7 +68,7 @@ public abstract class AbstractExchangeConfigurationSetupActivity extends Abstrac
     });
     String exchange = getIntent().getStringExtra(Constants.EXTRA_EXCHANGE);
     if (!TextUtils.isEmpty(exchange)) {
-      currentConfig = getBitcoinTraderApplication().getExchangeConfigurationDAO().getExchangeConfiguration(exchange);
+      currentConfig = getExchangeConfigurationDAO().getExchangeConfiguration(exchange);
       if (currentConfig != null) {
         setExchangeConfiguration(currentConfig);
       }

@@ -17,13 +17,12 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.widget.TextView;
-
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.xeiam.xchange.dto.trade.Wallet;
@@ -31,7 +30,6 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
-import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeConfigurationListAdapter;
 import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.ExchangeDrawerListAdapter;
 import de.schildbach.wallet.integration.android.BitcoinIntegration;
 import de.schildbach.wallet.ui.HelpDialogFragment;
@@ -154,12 +152,12 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     if (getExchangeService() != null) {
       getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
       if (mWalletHistoryOptionMenuItem != null) {
-        mWalletHistoryOptionMenuItem.setVisible(getExchangeService().getExchange().supportsWalletHistory());
+        mWalletHistoryOptionMenuItem.setVisible(getExchangeService().getExchange().supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE.SUPPORTS_WALLET_HISTORY));
       }
     }
 
     try {
-      adapter.replace(getBitcoinTraderApplication().getExchangeConfigurationDAO().getActiveExchangeConfigurations());
+      adapter.replace(getExchangeConfigurationDAO().getActiveExchangeConfigurations().values());
     }
     catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, "Could not load exchange configurations", ece);

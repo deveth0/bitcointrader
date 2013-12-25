@@ -37,6 +37,7 @@ import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PlaceOrderActivity;
 import de.dev.eth0.bitcointrader.ui.views.CurrencyAmountView;
@@ -178,6 +179,9 @@ public class PlaceOrderFragment extends AbstractBitcoinTraderFragment {
         }
       }
     });
+    if (!getExchangeService().getExchange().supportsFeature(ExchangeConfiguration.EXCHANGE_FEATURE.SUPPORTS_MARKET_ORDER)) {
+      marketOrderCheckbox.setVisibility(View.GONE);
+    }
     viewGo = (Button)view.findViewById(R.id.place_order_perform);
     viewGo.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
