@@ -3,6 +3,7 @@
 package de.dev.eth0.bitcointrader.ui;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,12 +50,12 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
   private ExchangeDrawerListAdapter adapter;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
+  private ProgressDialog mDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.bitcointrader_content);
-
 
     mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
     mDrawerList = (ListView)findViewById(R.id.bitcointrader_exchange_drawer);
@@ -73,15 +74,15 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
       }
 
-      /**
-       * Called when a drawer has settled in a completely open state.
-       */
-      @Override
-      public void onDrawerOpened(View drawerView) {
-        getSupportActionBar().setTitle(mDrawerTitle);
-        invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-      }
-    };
+              /**
+               * Called when a drawer has settled in a completely open state.
+               */
+              @Override
+              public void onDrawerOpened(View drawerView) {
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+              }
+            };
 
     // Set the drawer toggle as the DrawerListener
     mDrawerLayout.setDrawerListener(mDrawerToggle);
@@ -92,6 +93,11 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ExchangeConfiguration config = adapter.getItem(position);
         if (config != null) {
+          mDialog = new ProgressDialog(BitcoinTraderActivity.this);
+          mDialog.setMessage(getString(R.string.place_order_submitting));
+          mDialog.setCancelable(false);
+          mDialog.setOwnerActivity(BitcoinTraderActivity.this);
+          mDialog.show();
           getExchangeService().setExchange(config);
           mDrawerLayout.closeDrawer(mDrawerList);
         }
@@ -99,7 +105,6 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
       }
     });
     init();
-
 
   }
 
@@ -138,17 +143,20 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
 
     builder.setView(view).setTitle(R.string.whats_new_title)
             .setPositiveButton(R.string.whats_new_ok, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-      }
-    });
+              @Override
+              public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+              }
+            });
 
     AlertDialog dialog = builder.create();
     dialog.show();
   }
 
   private void updateView() {
+    if (mDialog != null && mDialog.isShowing()) {
+      mDialog.dismiss();
+    }
     if (getExchangeService() != null) {
       getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
       if (mWalletHistoryOptionMenuItem != null) {

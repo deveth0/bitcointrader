@@ -54,7 +54,7 @@ public class TrailingStopLossActionsFragment extends AbstractBitcoinTraderFragme
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.TRAILING_LOSS_EVENT));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.CURRENCY_CHANGE_EVENT));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_UPDATED));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_CHANGED));
     updateView();
   }
 

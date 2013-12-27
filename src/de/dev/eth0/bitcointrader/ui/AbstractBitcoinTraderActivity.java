@@ -42,7 +42,7 @@ public abstract class AbstractBitcoinTraderActivity extends SherlockFragmentActi
   }
 
   protected ExchangeConfigurationDAO getExchangeConfigurationDAO() {
-    return getExchangeService().getExchangeConfigurationDAO();
+    return getExchangeService() == null ? null : getExchangeService().getExchangeConfigurationDAO();
   }
 
   private void checkAlerts() {

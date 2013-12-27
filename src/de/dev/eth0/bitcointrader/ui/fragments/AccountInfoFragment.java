@@ -29,7 +29,7 @@ import org.joda.money.CurrencyUnit;
  * @author Alexander Muthmann
  */
 public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
-
+  
   private static final String TAG = AccountInfoFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
   private TextView viewName;
@@ -38,19 +38,19 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
   private AmountTextView viewTradeFee;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
-
+  
   @Override
   public void onStart() {
     super.onStart();
     updateView();
   }
-
+  
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
     this.application = (BitcoinTraderApplication)activity.getApplication();
   }
-
+  
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.account_info_fragment, container, false);
@@ -68,7 +68,7 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     });
     return view;
   }
-
+  
   @Override
   public void onResume() {
     super.onResume();
@@ -80,10 +80,11 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
       }
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_CHANGED));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
     updateView();
   }
-
+  
   @Override
   public void onPause() {
     super.onPause();
@@ -92,7 +93,7 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
       broadcastReceiver = null;
     }
   }
-
+  
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
@@ -105,17 +106,21 @@ public class AccountInfoFragment extends AbstractBitcoinTraderFragment {
     viewTradeFee.setPostfix("%");
     viewTradeFee.setPrefix(getActivity().getString(R.string.account_info_trade_fee_label));
   }
-
+  
   public void updateView() {
     Log.d(TAG, ".updateView");
-    if (getExchangeService() != null) {
+    if (getExchangeService() != null && getExchangeService().getAccountInfo() != null) {
       AccountInfo accountInfo = getExchangeService().getAccountInfo();
-      if (accountInfo != null) {
-        viewName.setText(accountInfo.getUsername());
-        viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.of(application.getCurrency())));
-        viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
-        viewTradeFee.setAmount(accountInfo.getTradingFee());
-      }
+      viewName.setText(accountInfo.getUsername());
+      viewDollar.setAmount(accountInfo.getBalance(CurrencyUnit.of(application.getCurrency())));
+      viewBtc.setAmount(accountInfo.getBalance(CurrencyUnit.of("BTC")));
+      viewTradeFee.setAmount(accountInfo.getTradingFee());
+    }
+    else {
+      viewName.setText(null);
+      viewDollar.setAmount(null);
+      viewBtc.setAmount(null);
+      viewTradeFee.setAmount(null);
     }
   }
 }

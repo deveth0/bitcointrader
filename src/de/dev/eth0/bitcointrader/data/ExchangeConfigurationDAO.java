@@ -203,7 +203,7 @@ public class ExchangeConfigurationDAO {
     Map<String, ExchangeConfiguration> configs = getExchangeConfigurations();
     configs.put(exchangeConfig.getId(), exchangeConfig);
     writeExchangeConfiguration(configs);
-    LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_UPDATED).putExtra(Constants.EXTRA_EXCHANGE, exchangeConfig.getId()));
+    LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_CHANGED).putExtra(Constants.EXTRA_EXCHANGE, exchangeConfig.getId()));
   }
 
   private void writeExchangeConfiguration(Map<String, ExchangeConfiguration> configs) throws ExchangeConfigurationException {
@@ -223,7 +223,7 @@ public class ExchangeConfigurationDAO {
       // reset cache
       exchangeConfigs = null;
       activeExchangeConfigs = null;
-      LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_UPDATED));
+      LocalBroadcastManager.getInstance(mApplication).sendBroadcast(new Intent(Constants.EXCHANGE_CHANGED));
     }
     catch (IOException ioe) {
       Log.w(TAG, Log.getStackTraceString(ioe), ioe);

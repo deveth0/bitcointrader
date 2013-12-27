@@ -15,9 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.xeiam.xchange.dto.marketdata.Ticker;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.ui.PriceChartActivity;
 import de.dev.eth0.bitcointrader.ui.views.AmountTextView;
@@ -72,6 +72,7 @@ public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
       }
     };
     broadcastManager = LocalBroadcastManager.getInstance(application);
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_CHANGED));
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
     updateView();
   }
@@ -89,39 +90,47 @@ public class PriceInfoFragment extends AbstractBitcoinTraderFragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     viewPriceInfoLow = (CurrencyTextView) view.findViewById(R.id.price_info_low);
-    viewPriceInfoCurrent = (CurrencyTextView) view.findViewById(R.id.price_info_current);
-    viewPriceInfoHigh = (CurrencyTextView) view.findViewById(R.id.price_info_high);
-    viewPriceInfoAsk = (CurrencyTextView) view.findViewById(R.id.price_info_ask);
-    viewPriceInfoBid = (CurrencyTextView) view.findViewById(R.id.price_info_bid);
-    viewPriceInfoVolume = (AmountTextView) view.findViewById(R.id.price_info_volume);
-    viewPriceInfoLastUpdate = (TextView) view.findViewById(R.id.price_info_lastupdate);
+    viewPriceInfoLow.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
+    viewPriceInfoLow.setPrefix(activity.getString(R.string.price_info_low_label));
+    viewPriceInfoCurrent = (CurrencyTextView)view.findViewById(R.id.price_info_current);
+    viewPriceInfoCurrent.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
+    viewPriceInfoHigh = (CurrencyTextView)view.findViewById(R.id.price_info_high);
+    viewPriceInfoHigh.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
+    viewPriceInfoHigh.setPrefix(activity.getString(R.string.price_info_high_label));
+    viewPriceInfoAsk = (CurrencyTextView)view.findViewById(R.id.price_info_ask);
+    viewPriceInfoAsk.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
+    viewPriceInfoAsk.setPrefix(activity.getString(R.string.price_info_ask_label));
+    viewPriceInfoBid = (CurrencyTextView)view.findViewById(R.id.price_info_bid);
+    viewPriceInfoBid.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
+    viewPriceInfoBid.setPrefix(activity.getString(R.string.price_info_bid_label));
+    viewPriceInfoVolume = (AmountTextView)view.findViewById(R.id.price_info_volume);
+    viewPriceInfoVolume.setPrecision(0);
+    viewPriceInfoVolume.setPrefix(activity.getString(R.string.price_info_volume_label));
+    viewPriceInfoLastUpdate = (TextView)view.findViewById(R.id.price_info_lastupdate);
     updateView();
   }
 
   public void updateView() {
     Log.d(TAG, ".updateView");
-    if (getExchangeService() != null) {
+    if (getExchangeService() != null && getExchangeService().getTicker() != null) {
       Ticker ticker = getExchangeService().getTicker();
-      if (ticker != null) {
         viewPriceInfoLow.setAmount(ticker.getLow());
-        viewPriceInfoLow.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
-        viewPriceInfoLow.setPrefix(activity.getString(R.string.price_info_low_label));
         viewPriceInfoCurrent.setAmount(ticker.getLast());
-        viewPriceInfoCurrent.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
         viewPriceInfoHigh.setAmount(ticker.getHigh());
-        viewPriceInfoHigh.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
-        viewPriceInfoHigh.setPrefix(activity.getString(R.string.price_info_high_label));
         viewPriceInfoAsk.setAmount(ticker.getAsk());
-        viewPriceInfoAsk.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
-        viewPriceInfoAsk.setPrefix(activity.getString(R.string.price_info_ask_label));
         viewPriceInfoBid.setAmount(ticker.getBid());
-        viewPriceInfoBid.setDisplayMode(DISPLAY_MODE.CURRENCY_SYMBOL);
-        viewPriceInfoBid.setPrefix(activity.getString(R.string.price_info_bid_label));
         viewPriceInfoVolume.setAmount(ticker.getVolume());
-        viewPriceInfoVolume.setPrecision(0);
-        viewPriceInfoVolume.setPrefix(activity.getString(R.string.price_info_volume_label));
         viewPriceInfoLastUpdate.setText(FormatHelper.formatDate(activity, ticker.getTimestamp()));
-      }
+    }
+    else {
+      viewPriceInfoLow.setAmount(null);
+      viewPriceInfoCurrent.setAmount(null);
+      viewPriceInfoHigh.setAmount(null);
+      viewPriceInfoAsk.setAmount(null);
+      viewPriceInfoBid.setAmount(null);
+      viewPriceInfoVolume.setAmount(null);
+      viewPriceInfoLastUpdate.setText(null);
+
     }
   }
 }

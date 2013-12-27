@@ -34,12 +34,12 @@ import com.xeiam.xchange.dto.marketdata.Ticker;
 import com.xeiam.xchange.dto.trade.LimitOrder;
 import com.xeiam.xchange.dto.trade.MarketOrder;
 import de.dev.eth0.bitcointrader.Constants;
-import de.dev.eth0.bitcointrader.exceptions.NetworkNotAvailableException;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.data.ExchangeOrderResult;
 import de.dev.eth0.bitcointrader.data.ExchangeWalletHistory;
+import de.dev.eth0.bitcointrader.exceptions.NetworkNotAvailableException;
 import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapper;
 import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapperFactory;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
@@ -72,16 +72,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     @Override
     public void onReceive(Context context, Intent intent) {
       Log.d(TAG, ".onReceive()");
-      if (exchange != null) {
-        if (intent.getAction().equals(Constants.EXCHANGE_UPDATED)) {
-          if (intent.hasExtra(Constants.EXTRA_EXCHANGE)) {
-            setExchange(getExchangeConfigurationDAO().getExchangeConfiguration(intent.getStringExtra(Constants.EXTRA_EXCHANGE)));
-          }
+      if (intent.getAction().equals(Constants.EXCHANGE_CHANGED)) {
+        if (intent.hasExtra(Constants.EXTRA_EXCHANGE)) {
+          setExchange(getExchangeConfigurationDAO().getExchangeConfiguration(intent.getStringExtra(Constants.EXTRA_EXCHANGE)));
         }
-        else {
-      // only run if currently no running task
+      }
+      else {
+        // only run if currently no running task
         executeTask(new UpdateTask(), (Void)null);
-        }
       }
     }
   };
@@ -114,7 +112,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     hasStarted = false;
     broadcastManager = LocalBroadcastManager.getInstance(this);
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SERVICE_ACTION));
-    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_UPDATED));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.EXCHANGE_CHANGED));
   }
   
   @Override
@@ -124,6 +122,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       prefs.registerOnSharedPreferenceChangeListener(this);
       notifyOnUpdate = prefs.getBoolean(Constants.PREFS_KEY_GENERAL_NOTIFY_ON_UPDATE, false);
       updateInterval = Integer.parseInt(prefs.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
+      // set the exchange to the primary one on startup
+      setExchange(getExchangeConfigurationDAO().getPrimaryExchangeConfiguration());
       hasStarted = true;
     }
     return Service.START_STICKY;
@@ -137,6 +137,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       trailingStopLossConfig = config.getTrailingStopLossConfig();
       trailingStopChecks = new BigDecimal[trailingStopLossConfig.getNumberUpdates()];
     }
+    broadcastExchangeChanged();
     broadcastUpdate();
   }
   
@@ -192,14 +193,14 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   public ExchangeWrapper getExchange() {
     return exchange;
   }
-
+  
   public ExchangeConfigurationDAO getExchangeConfigurationDAO() {
     if (mExchangeConfigurationDAO == null) {
       mExchangeConfigurationDAO = new ExchangeConfigurationDAO(getApplication());
     }
     return mExchangeConfigurationDAO;
   }
-
+  
   public OrderBook getOrderBook() throws IOException {
     return getExchange().getOrderBook(getCurrency());
   }
@@ -272,6 +273,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
   }
   
+  private void broadcastExchangeChanged() {
+    broadcastManager.sendBroadcast(new Intent(Constants.EXCHANGE_CHANGED));
+  }
+
   private void broadcastUpdate() {
     broadcastManager.sendBroadcast(new Intent(Constants.UPDATE_SERVICE_ACTION));
   }

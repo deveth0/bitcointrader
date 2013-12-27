@@ -10,7 +10,6 @@ import android.widget.TextView;
 import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.util.FormatHelper;
 import de.dev.eth0.bitcointrader.util.FormatHelper.DISPLAY_MODE;
-import java.math.RoundingMode;
 import org.joda.money.BigMoney;
 
 /**
@@ -64,6 +63,9 @@ public class CurrencyTextView extends TextView {
         text.insert(0, prefix);
       }
       setText(text);
+    }
+    else {
+      setText("");
     }
   }
 }

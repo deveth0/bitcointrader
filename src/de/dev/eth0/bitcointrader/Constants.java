@@ -53,7 +53,7 @@ public class Constants {
   public static final String CURRENCY_CHANGE_EVENT = "de.dev.eth0.bitcointrader.CURRENCY_CHANGE_EVENT";
   public static final String TRAILING_LOSS_EVENT = "de.dev.eth0.bitcointrader.TRAILING_LOSS_EVENT";
   public static final String TRAILING_LOSS_ALIGNMENT_EVENT = "de.dev.eth0.bitcointrader.TRAILING_LOSS_ALIGNMENT_EVENT";
-  public static final String EXCHANGE_UPDATED = "de.dev.eth0.bitcointrader.EXCHANGE_UPDATED";
+  public static final String EXCHANGE_CHANGED = "de.dev.eth0.bitcointrader.EXCHANGE_CHANGED";
   // Extras for intents
   public static final String EXTRA_MESSAGE = "message";
   public static final String EXTRA_EXCHANGE = "exchange";
