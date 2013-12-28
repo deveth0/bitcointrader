@@ -23,14 +23,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.xeiam.xchange.Exchange;
 import com.xeiam.xchange.ExchangeException;
-import com.xeiam.xchange.ExchangeFactory;
-import com.xeiam.xchange.ExchangeSpecification;
 import com.xeiam.xchange.dto.account.AccountInfo;
-import com.xeiam.xchange.mtgox.v2.MtGoxExchange;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
+import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapper;
+import de.dev.eth0.bitcointrader.exchanges.ExchangeWrapperFactory;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.io.BufferedReader;
@@ -313,14 +312,10 @@ public class InitialSetupActivity extends AbstractBitcoinTraderActivity {
       try {
         key = params[0];
         secretKey = params[1];
-        ExchangeSpecification exchangeSpec = new ExchangeSpecification(MtGoxExchange.class);
-        exchangeSpec.setApiKey(key);
-        exchangeSpec.setSecretKey(secretKey);
-        exchangeSpec.setSslUri(Constants.MTGOX_SSL_URI);
-        exchangeSpec.setPlainTextUriStreaming(Constants.MTGOX_PLAIN_WEBSOCKET_URI);
-        exchangeSpec.setSslUriStreaming(Constants.MTGOX_SSL_WEBSOCKET_URI);
-        Exchange exchange = (MtGoxExchange)ExchangeFactory.INSTANCE.createExchange(exchangeSpec);
-        accountInfo = exchange.getPollingAccountService().getAccountInfo();
+        ExchangeConfiguration config = new ExchangeConfiguration(null, "testconnection", null, key, secretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX, null);
+
+        ExchangeWrapper exchange = ExchangeWrapperFactory.forExchangeConfiguration(config);
+        accountInfo = exchange.getAccountInfo();
       }
       catch (Exception e) {
         Log.i(TAG, "Exception", e);

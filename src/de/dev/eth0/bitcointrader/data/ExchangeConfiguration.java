@@ -9,7 +9,6 @@ import de.dev.eth0.bitcointrader.exchanges.extensions.ExtendedMtGoxExchange;
 import de.dev.eth0.bitcointrader.ui.exchanges.BitstampSetupActivity;
 import de.dev.eth0.bitcointrader.ui.exchanges.MtGoxSetupActivity;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.UUID;
 
 /**

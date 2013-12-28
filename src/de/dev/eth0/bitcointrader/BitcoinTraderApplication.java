@@ -19,6 +19,7 @@ import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.data.ExchangeConfigurationDAO;
 import de.dev.eth0.bitcointrader.service.ExchangeService;
 import de.dev.eth0.bitcointrader.util.CrashReporter;
+import java.math.BigDecimal;
 
 /**
  * @author Alexander Muthmann
@@ -54,8 +55,19 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
     if (!TextUtils.isEmpty(mtGoxAPIKey) && !TextUtils.isEmpty(mtGoxSecretKey)) {
       try {
         Log.i(TAG, "Creating exchangeconfiguration for the old config");
+        // check if there is a trailing stop loss configured
+        float tslThreshold = prefs.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
+        String tslValueString = prefs.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
+        BigDecimal tslValue = TextUtils.isEmpty(tslValueString) ? null : new BigDecimal(tslValueString);
+        int tslUpdates = prefs.getInt(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES, 1);
+
+        ExchangeConfiguration.TrailingStopLossConfiguration tslConfig = null;
+        if (tslThreshold != Float.MIN_VALUE && tslValue != null) {
+          tslConfig = new ExchangeConfiguration.TrailingStopLossConfiguration(tslThreshold, tslValue, tslUpdates);
+        }
+
         new ExchangeConfigurationDAO(this).addExchangeConfiguration(
-                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX, null));
+                new ExchangeConfiguration(null, "mtGox", null, mtGoxAPIKey, mtGoxSecretKey, true, true, ExchangeConfiguration.EXCHANGE_CONNECTION_SETTING.MTGOX, tslConfig));
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
         edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);
