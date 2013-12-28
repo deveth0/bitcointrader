@@ -94,14 +94,13 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
         ExchangeConfiguration config = adapter.getItem(position);
         if (config != null) {
           mDialog = new ProgressDialog(BitcoinTraderActivity.this);
-          mDialog.setMessage(getString(R.string.place_order_submitting));
+          mDialog.setMessage(getString(R.string.change_exchange_message));
           mDialog.setCancelable(false);
           mDialog.setOwnerActivity(BitcoinTraderActivity.this);
           mDialog.show();
           getExchangeService().setExchange(config);
           mDrawerLayout.closeDrawer(mDrawerList);
         }
-        updateView();
       }
     });
     init();
