@@ -133,6 +133,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     Log.d(TAG, "Setting exchange to " + config.getName());
     exchange = ExchangeWrapperFactory.forExchangeConfiguration(config);
     accountInfo = null;
+    ticker = null;
     if (config.getTrailingStopLossConfig() != null) {
       trailingStopLossConfig = config.getTrailingStopLossConfig();
       trailingStopChecks = new BigDecimal[trailingStopLossConfig.getNumberUpdates()];

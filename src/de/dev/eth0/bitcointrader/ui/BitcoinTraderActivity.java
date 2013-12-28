@@ -197,6 +197,7 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     };
     broadcastManager = LocalBroadcastManager.getInstance(getBitcoinTraderApplication());
     broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_SUCCEDED));
+    broadcastManager.registerReceiver(broadcastReceiver, new IntentFilter(Constants.UPDATE_FAILED));
 
     if (getExchangeService() != null) {
       getSupportActionBar().setTitle(getExchangeService().getExchangeConfig() != null ? getExchangeService().getExchangeConfig().getName() : "");
