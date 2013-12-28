@@ -71,6 +71,9 @@ public class BitcoinTraderApplication extends Application implements SharedPrefe
         SharedPreferences.Editor edit = prefs.edit();
         edit.remove(Constants.PREFS_KEY_MTGOX_APIKEY);
         edit.remove(Constants.PREFS_KEY_MTGOX_SECRETKEY);
+        edit.remove(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES);
+        edit.remove(Constants.PREFS_TRAILING_STOP_VALUE);
+        edit.remove(Constants.PREFS_TRAILING_STOP_THREASHOLD);
         edit.commit();
       } catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
         Log.e(TAG, Log.getStackTraceString(ece));
