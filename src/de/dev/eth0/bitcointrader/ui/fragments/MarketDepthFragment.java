@@ -26,7 +26,6 @@ import de.dev.eth0.bitcointrader.Constants;
 import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
 import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
-import de.dev.eth0.bitcointrader.util.MiscHelper;
 import de.schildbach.wallet.ui.HelpDialogFragment;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -173,7 +172,6 @@ public class MarketDepthFragment extends AbstractBitcoinTraderFragment {
         value += entry.getValue();
         GraphViewData gvd = new GraphViewData(entry.getKey(), value);
         ret[i++] = gvd;
-        Log.d(TAG, gvd.valueX + "/" + gvd.valueY);
       }
     }
     else {

@@ -3,41 +3,52 @@
 package de.dev.eth0.bitcointrader.ui.fragments;
 
 
-import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.OrderListAdapter;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
+import android.util.ArrayMap;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-
-import com.actionbarsherlock.app.SherlockListFragment;
-import com.xeiam.xchange.dto.Order;
-import de.dev.eth0.bitcointrader.R;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
+import com.xeiam.xchange.dto.trade.LimitOrder;
 import de.dev.eth0.bitcointrader.BitcoinTraderApplication;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
+import de.dev.eth0.bitcointrader.data.ExchangeConfiguration;
 import de.dev.eth0.bitcointrader.ui.AbstractBitcoinTraderActivity;
-import java.util.HashSet;
-import java.util.Set;
+import de.dev.eth0.bitcointrader.ui.fragments.listAdapter.OrderListAdapter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Alexander Muthmann
  */
-public class OrderListFragment extends SherlockListFragment {
+public class OrderListFragment extends AbstractBitcoinTraderFragment {
 
   private static final String TAG = OrderListFragment.class.getSimpleName();
   private BitcoinTraderApplication application;
   private AbstractBitcoinTraderActivity activity;
+  private ExpandableListView expandableList;
   private OrderListAdapter adapter;
   private BroadcastReceiver broadcastReceiver;
   private LocalBroadcastManager broadcastManager;
-  
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+          Bundle savedInstanceState) {
+    View view = inflater.inflate(
+            R.layout.order_list_fragment, container, false);
+    expandableList = (ExpandableListView)view.findViewById(R.id.order_list_expandable_list);
+    expandableList.setAdapter(adapter);
+    return view;
+  }
+
   @Override
   public void onAttach(Activity activity) {
     super.onAttach(activity);
@@ -50,7 +61,6 @@ public class OrderListFragment extends SherlockListFragment {
     super.onCreate(savedInstanceState);
     setRetainInstance(true);
     adapter = new OrderListAdapter(activity);
-    setListAdapter(adapter);
   }
 
   @Override
@@ -69,17 +79,6 @@ public class OrderListFragment extends SherlockListFragment {
   }
 
   @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
-    int text = R.string.bitcoin_order_fragment_empty_text;
-    SpannableStringBuilder emptyText = new SpannableStringBuilder(
-            getString(text));
-    emptyText.setSpan(new StyleSpan(Typeface.BOLD), 0, emptyText.length(), SpannableStringBuilder.SPAN_POINT_MARK);
-    setEmptyText(emptyText);
-  }
-
-  @Override
   public void onPause() {
     if (broadcastReceiver != null) {
       broadcastManager.unregisterReceiver(broadcastReceiver);
@@ -90,11 +89,15 @@ public class OrderListFragment extends SherlockListFragment {
 
   protected void updateView() {
     Log.d(TAG, ".updateView");
-    Set<Order> orders = new HashSet<Order>();
-    if (application.getExchangeService() != null && application.getExchangeService().getOpenOrders() != null) {
-      orders.addAll(application.getExchangeService().getOpenOrders());
+    Map<ExchangeConfiguration, List<LimitOrder>> map = new ArrayMap<ExchangeConfiguration, List<LimitOrder>>();
+    if (application.getExchangeService() != null && application.getExchangeService().getOpenOrders() != null
+            && !application.getExchangeService().getOpenOrders().isEmpty()) {
+      map.put(application.getExchangeService().getExchangeConfig(), application.getExchangeService().getOpenOrders());
     }
-    Log.d(TAG, "Open orders: " + orders.size());
-    adapter.replace(orders);
+    adapter.replace(map);
+    // expand all groups by default
+    for (int i = 0; i < adapter.getGroupCount(); i++) {
+      expandableList.expandGroup(i);
+    }
   }
 }

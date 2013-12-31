@@ -15,6 +15,8 @@ import java.util.Map;
 
 /**
  * @author Alexander Muthmann
+ * @param <T> The group headline type
+ * @param <U> the group content type
  */
 public abstract class AbstractExpandableListAdapter<T, U> extends BaseExpandableListAdapter {
 
@@ -111,12 +113,34 @@ public abstract class AbstractExpandableListAdapter<T, U> extends BaseExpandable
     return childView;
   }
 
+  /**
+   * return the layout for a group view
+   *
+   * @return
+   */
   public abstract int getGroupLayout();
 
+  /**
+   * Return the layout for a child view
+   *
+   * @return
+   */
   public abstract int getChildLayout();
 
+  /**
+   * Populate the group view
+   *
+   * @param group
+   * @param entry
+   */
   public abstract void bindGroupView(View group, final T entry);
 
+  /**
+   * Populate the child view
+   *
+   * @param child
+   * @param entry
+   */
   public abstract void bindChildView(View child, final U entry);
 
 }

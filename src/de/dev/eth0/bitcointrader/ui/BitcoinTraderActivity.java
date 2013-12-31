@@ -164,7 +164,9 @@ public class BitcoinTraderActivity extends AbstractBitcoinTraderActivity {
     }
 
     try {
-      adapter.replace(getExchangeConfigurationDAO().getActiveExchangeConfigurations().values());
+      if (getExchangeConfigurationDAO() != null && getExchangeConfigurationDAO().getActiveExchangeConfigurations() != null) {
+        adapter.replace(getExchangeConfigurationDAO().getActiveExchangeConfigurations().values());
+      }
     }
     catch (ExchangeConfigurationDAO.ExchangeConfigurationException ece) {
       Log.w(TAG, "Could not load exchange configurations", ece);

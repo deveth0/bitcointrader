@@ -47,12 +47,12 @@
     android:layout_below="@id/order_row_amount"
     android:layout_alignLeft="@id/order_row_value"
   />
-    
+
   <ImageButton
     android:id="@+id/order_row_delete"
     style="@style/My.Widget.Button.Borderless"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginLeft="@dimen/default_padding"
     android:layout_alignParentRight="true"
     android:layout_centerVertical="true"
