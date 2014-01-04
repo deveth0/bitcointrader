@@ -54,6 +54,9 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<Exch
     TextView headerType = (TextView)group.findViewById(R.id.wallet_history_list_group_type);
     addTypeToView(headerType, entry);
 
+    TextView headerDate = (TextView)group.findViewById(R.id.wallet_history_list_group_date);
+    addDateToView(headerDate, entry);
+
     CurrencyTextView headerAmount = (CurrencyTextView)group.findViewById(R.id.wallet_history_list_group_amount);
     addAmountToView(headerAmount, entry);
   }
@@ -76,7 +79,6 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<Exch
           break;
       }
       viewHolder.balanceView = (CurrencyTextView)childView.findViewById(R.id.wallet_history_row_balance);
-      viewHolder.dateView = (TextView)childView.findViewById(R.id.wallet_history_row_date);
       viewHolder.infoView = (TextView)childView.findViewById(R.id.wallet_history_row_info);
       childView.setTag(viewHolder);
     }
@@ -93,9 +95,7 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<Exch
     viewHolder.balanceView.setPrecision(8);
     viewHolder.balanceView.setAmount(entry.getBalance());
 
-    // date
-    viewHolder.dateView.setText(DateUtils.getRelativeDateTimeString(activity, Long.parseLong(entry.getDate()) * 1000, DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
-
+    
     String[] substrings = entry.getInfoText().split(" ");
     if (substrings.length >= 5) {
       if (entry.getInfoText().contains("bought")) {
@@ -124,6 +124,10 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<Exch
     view.setAmount(entry.getValue());
   }
 
+  private void addDateToView(TextView view, ExchangeWalletHistoryEntry entry) {
+    view.setText(DateUtils.getRelativeDateTimeString(activity, Long.parseLong(entry.getDate()) * 1000, DateUtils.MINUTE_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_SHOW_TIME));
+  }
+
   private void addTypeToView(TextView view, ExchangeWalletHistoryEntry entry) {
     view.setText(entry.getType().getText());
     view.setBackgroundColor(activity.getResources().getColor(entry.getType().getColor()));
@@ -137,7 +141,6 @@ public class WalletHistoryListAdapter extends AbstractExpandableListAdapter<Exch
   private static class ViewHolder {
 
     protected CurrencyTextView balanceView;
-    protected TextView dateView;
     protected TextView priceView;
     protected TextView infoView;
   }
