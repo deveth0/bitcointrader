@@ -231,6 +231,10 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       ret = exchange.getWalletHistory(currency);
       walletHistoryCache.put(currency, ret);
     }
+    catch (ExchangeException ee) {
+      Log.i(TAG, Log.getStackTraceString(ee), ee);
+      broadcastUpdateFailure(ee);
+    }
     catch (IOException ex) {
       Log.i(TAG, Log.getStackTraceString(ex), ex);
       broadcastUpdateFailure(ex);
@@ -289,8 +293,8 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
   private void broadcastUpdateFailure(Exception e) {
     Intent intent = new Intent(Constants.UPDATE_FAILED);
     if (e != null) {
-      if (PreferenceManager.getDefaultSharedPreferences(ExchangeService.this).getBoolean(Constants.PREFS_KEY_DEBUG, false)
-              || e instanceof NetworkNotAvailableException) {
+      intent.putExtra(Constants.EXTRA_UPDATE_FAILED_NETWORK_EXCEPTION, e instanceof NetworkNotAvailableException);
+      if (PreferenceManager.getDefaultSharedPreferences(ExchangeService.this).getBoolean(Constants.PREFS_KEY_DEBUG, false)) {
         intent.putExtra(Constants.EXTRA_MESSAGE, e.getLocalizedMessage());
       }
     }

@@ -15,8 +15,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
-import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.Constants;
+import de.dev.eth0.bitcointrader.R;
 import de.dev.eth0.bitcointrader.ui.BitcoinTraderActivity;
 
 /**
@@ -26,6 +26,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
 
   private final static int ORDER_EXECUTED_NOTIFICATION_ID = 1;
   private final static int UPDATE_FAILED_NOTIFICATION_ID = 2;
+  private final static int NETWORK_NOT_AVAILABLE_NOTIFICATION_ID = 5;
   private final static int TRAILING_STOP_NOTIFICATION_ID = 3;
   private final static int TRAILING_STOP_ALIGNMENT_NOTIFICATION_ID = 4;
 
@@ -51,14 +52,18 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
   private void notifyUpdateSucceded(Context context) {
     NotificationManager notificationmanager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     notificationmanager.cancel(UPDATE_FAILED_NOTIFICATION_ID);
+    notificationmanager.cancel(NETWORK_NOT_AVAILABLE_NOTIFICATION_ID);
   }
 
   private void notifyUpdateFailed(Context context, Intent intent) {
+    // TODO: find way to check, if there has been a network not available notification and if so, dont notify again
+
+    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     String message = (intent != null && intent.hasExtra(Constants.EXTRA_MESSAGE))
             ? intent.getStringExtra(Constants.EXTRA_MESSAGE)
             : context.getString(R.string.notify_update_failed_text);
-    NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(context)
+    NotificationCompat.Builder mBuilder
+            = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_action_warning)
             .setContentTitle(context.getString(R.string.notify_update_failed_title))
             .setContentText(message);
@@ -73,8 +78,14 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
     mBuilder.setContentIntent(resultPendingIntent);
     setupNotificationBuilder(mBuilder, context);
-    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-    mNotificationManager.notify(UPDATE_FAILED_NOTIFICATION_ID, mBuilder.build());
+
+    //Check if this was an Network exception and we should use another ID.
+    if (intent != null && intent.getBooleanExtra(Constants.EXTRA_UPDATE_FAILED_NETWORK_EXCEPTION, true)) {
+      mNotificationManager.notify(NETWORK_NOT_AVAILABLE_NOTIFICATION_ID, mBuilder.build());
+    }
+    else {
+      mNotificationManager.notify(UPDATE_FAILED_NOTIFICATION_ID, mBuilder.build());
+    }
   }
 
   private void notifyOrderExecuted(Context context, Parcelable[] executedOrders) {
@@ -95,8 +106,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
                 bundle.getString(Constants.EXTRA_ORDERRESULT_TOTALSPENT)));
       }
     }
-    NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(context)
+    NotificationCompat.Builder mBuilder
+            = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_action_bitcoin)
             .setContentTitle(context.getString(R.string.notify_order_executed_title))
             .setContentText(contentText);
@@ -119,8 +130,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     String text = context.getString(R.string.trailing_stop_notify_text,
             intent.getStringExtra(Constants.EXTRA_TRAILING_LOSS_EVENT_CURRENTPRICE),
             intent.getStringExtra(Constants.EXTRA_TRAILING_LOSS_EVENT_VALUE));
-    NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(context)
+    NotificationCompat.Builder mBuilder
+            = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_action_warning)
             .setContentTitle(context.getString(R.string.trailing_stop_notify_title))
             .setContentText(text);
@@ -143,8 +154,8 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     String text = context.getString(R.string.trailing_stop_alignment_notify_text,
             intent.getStringExtra(Constants.EXTRA_TRAILING_LOSS_ALIGNMENT_OLDVALUE),
             intent.getStringExtra(Constants.EXTRA_TRAILING_LOSS_ALIGNMENT_NEWVALUE));
-    NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(context)
+    NotificationCompat.Builder mBuilder
+            = new NotificationCompat.Builder(context)
             .setSmallIcon(R.drawable.ic_action_warning)
             .setContentTitle(context.getString(R.string.trailing_stop_alignment_notify_title))
             .setContentText(text);

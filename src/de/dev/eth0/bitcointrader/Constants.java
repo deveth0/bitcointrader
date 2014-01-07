@@ -49,6 +49,7 @@ public class Constants {
   public static final String EXCHANGE_CHANGED = "de.dev.eth0.bitcointrader.EXCHANGE_CHANGED";
   // Extras for intents
   public static final String EXTRA_MESSAGE = "message";
+  public static final String EXTRA_UPDATE_FAILED_NETWORK_EXCEPTION = "update_failed_due_to_network_exception";
   public static final String EXTRA_EXCHANGE = "exchange";
   public static final String EXTRA_ORDERRESULT = "orderresults";
   public static final String EXTRA_ORDERRESULT_AVGCOST = "avgcost";
