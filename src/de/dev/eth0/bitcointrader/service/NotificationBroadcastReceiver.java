@@ -56,9 +56,7 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
   }
 
   private void notifyUpdateFailed(Context context, Intent intent) {
-    // TODO: find way to check, if there has been a network not available notification and if so, dont notify again
 
-    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     String message = (intent != null && intent.hasExtra(Constants.EXTRA_MESSAGE))
             ? intent.getStringExtra(Constants.EXTRA_MESSAGE)
             : context.getString(R.string.notify_update_failed_text);
@@ -79,12 +77,16 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
     mBuilder.setContentIntent(resultPendingIntent);
     setupNotificationBuilder(mBuilder, context);
 
-    //Check if this was an Network exception and we should use another ID.
+    // only notify once, so we dont get vibration/sound each time, an update fails
+    Notification notification = mBuilder.build();
+    notification.flags |= Notification.FLAG_ONLY_ALERT_ONCE;
+    // Check if this was an Network exception and we should use another ID.
+    NotificationManager mNotificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
     if (intent != null && intent.getBooleanExtra(Constants.EXTRA_UPDATE_FAILED_NETWORK_EXCEPTION, true)) {
-      mNotificationManager.notify(NETWORK_NOT_AVAILABLE_NOTIFICATION_ID, mBuilder.build());
+      mNotificationManager.notify(NETWORK_NOT_AVAILABLE_NOTIFICATION_ID, notification);
     }
     else {
-      mNotificationManager.notify(UPDATE_FAILED_NOTIFICATION_ID, mBuilder.build());
+      mNotificationManager.notify(UPDATE_FAILED_NOTIFICATION_ID, notification);
     }
   }
 
