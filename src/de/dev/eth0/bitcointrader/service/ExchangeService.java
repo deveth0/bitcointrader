@@ -161,17 +161,15 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
       updateInterval = Integer.parseInt(sharedPreferences.getString(Constants.PREFS_KEY_GENERAL_UPDATE, "0"));
     } else if (key.equals(Constants.PREFS_TRAILING_STOP_THREASHOLD)) {
       float th = sharedPreferences.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
-      if (th != Float.MIN_VALUE) {
-        trailingStopThreadhold = th;
-      }
-    } else if (key.equals(Constants.PREFS_TRAILING_STOP_VALUE)) {
+      trailingStopThreadhold = th != Float.MIN_VALUE ? th : null;
+
+    }
+    else if (key.equals(Constants.PREFS_TRAILING_STOP_VALUE)) {
       String tvalue = sharedPreferences.getString(Constants.PREFS_TRAILING_STOP_VALUE, null);
-      if (!TextUtils.isEmpty(tvalue)) {
-        trailingStopValue = new BigDecimal(tvalue);
-      } else {
-        trailingStopValue = null;
-      }
-    } else if (key.equals(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES)) {
+      trailingStopValue = !TextUtils.isEmpty(tvalue) ? new BigDecimal(tvalue) : null;
+
+    }
+    else if (key.equals(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES)) {
       int updates = sharedPreferences.getInt(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES, 1);
       trailingStopChecks = new BigDecimal[updates];
     }
@@ -210,7 +208,9 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     editor.remove(Constants.PREFS_TRAILING_STOP_THREASHOLD);
     editor.remove(Constants.PREFS_TRAILING_STOP_VALUE);
     editor.remove(Constants.PREFS_TRAILING_STOP_NUMBER_UPDATES);
-    editor.apply();
+    editor.commit();
+    trailingStopThreadhold = null;
+    trailingStopValue = null;
   }
 
   public MtGoxExchangeWrapper getExchange() {
@@ -407,6 +407,12 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
     }
 
     private void checkTrailingStop() {
+      // load values from preferences to enforce up-to-date data #217
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ExchangeService.this);
+      float th = prefs.getFloat(Constants.PREFS_TRAILING_STOP_THREASHOLD, Float.MIN_VALUE);
+      trailingStopThreadhold = th != Float.MIN_VALUE ? th : null;
+
+
       // Check trailing stop loss
       if (trailingStopThreadhold != null && trailingStopValue != null) {
         Log.d(TAG, "checking trailing stop loss");
@@ -432,7 +438,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           Log.d(TAG, "selling btc as the price has fallen from " + trailingStopValue.toString() + " to " + currentPrice.toString());
           broadcastTrailingStopEvent(trailingStopValue, currentPrice);
           deleteTrailingStopLoss();
-          SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ExchangeService.this);
           if (prefs.getBoolean(Constants.PREFS_KEY_TRAILING_STOP_SELLING_ENABLED, false)) {
             Log.d(TAG, "selling is enabled, selling btc");
             AccountInfo accountInfo = MtGoxAdapters.adaptAccountInfo(getAccountInfo());
@@ -447,7 +452,6 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           if (newTrailingStopValue.compareTo(currentPrice) < 0 && newTrailingStopValue.compareTo(trailingStopValue) > 0) {
             Log.d(TAG, "updating trailing stop value from " + trailingStopValue.toString() + " to " + newTrailingStopValue.toString());
             broadcastTrailingStopAlignmentEvent(trailingStopValue, newTrailingStopValue);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ExchangeService.this);
             prefs.edit().putString(Constants.PREFS_TRAILING_STOP_VALUE, newTrailingStopValue.toString()).apply();
           }
         }

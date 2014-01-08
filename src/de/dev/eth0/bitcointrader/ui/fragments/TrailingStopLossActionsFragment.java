@@ -100,7 +100,7 @@ public class TrailingStopLossActionsFragment extends AbstractBitcoinTraderFragme
         activateStopLossButton.setOnClickListener(new OnClickListener() {
           public void onClick(View v) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-            prefs.edit().remove(Constants.PREFS_TRAILING_STOP_THREASHOLD).apply();
+            prefs.edit().remove(Constants.PREFS_TRAILING_STOP_THREASHOLD).commit();
             updateView();
           }
         });
