@@ -52,6 +52,7 @@ import de.dev.eth0.bitcointrader.util.ICSAsyncTask;
 import de.dev.eth0.bitcointrader.util.MiscHelper;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -404,7 +405,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
           }
           currentPrice = currentPrice.add(bd);
         }
-        currentPrice = currentPrice.divide(new BigDecimal(trailingStopChecks.length));
+        currentPrice = currentPrice.divide(new BigDecimal(trailingStopChecks.length), 2, RoundingMode.HALF_UP);
         BigDecimal trailingStopValue = trailingStopLossConfig.getPrice();
         // check if price has fallen below the limit
         if (currentPrice.compareTo(trailingStopValue) < 0) {
@@ -420,7 +421,7 @@ public class ExchangeService extends Service implements SharedPreferences.OnShar
         }
         if (currentPrice.compareTo(trailingStopValue) > 0) {
           // check if price has risen and a alignment is required
-          BigDecimal threshold = new BigDecimal(trailingStopLossConfig.getThreshold()).divide(new BigDecimal(100));
+          BigDecimal threshold = new BigDecimal(trailingStopLossConfig.getThreshold()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
           BigDecimal newTrailingStopValue = currentPrice.subtract(currentPrice.multiply(threshold));
           if (newTrailingStopValue.compareTo(currentPrice) < 0 && newTrailingStopValue.compareTo(trailingStopValue) > 0) {
             Log.d(TAG, "updating trailing stop value from " + trailingStopValue.toString() + " to " + newTrailingStopValue.toString());
